@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>دردشتنا</title>
+<style>
+  :root {
+    --bg: #f4f6f6; --card: #ffffff; --text: #17201f; --muted: #66716f;
+    --brand: #0f766e; --brand-text: #ffffff; --mine: #d9f3ee; --theirs: #ffffff;
+    --line: #dfe5e4; --danger: #b42318;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101615; --card: #19211f; --text: #e8eeed; --muted: #93a09d;
+      --brand: #14998e; --brand-text: #ffffff; --mine: #14483f; --theirs: #202a28;
+      --line: #2b3735; --danger: #f97066;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif;
+    font-size: 16px; -webkit-text-size-adjust: 100%;
+  }
+  #root { height: 100%; }
+  .center { min-height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; max-width: 420px; margin: 0 auto; }
+  .center h1 { margin: 0; color: var(--brand); }
+  .center p { margin: 0; color: var(--muted); }
+  input[type="text"] {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--card); color: var(--text); font-size: 16px; font-family: inherit;
+  }
+  input[type="text"]:focus { outline: 2px solid var(--brand); border-color: transparent; }
+  button { font-family: inherit; font-size: 16px; cursor: pointer; border: 0; border-radius: 12px; }
+  button.primary { background: var(--brand); color: var(--brand-text); padding: 12px 18px; }
+  button.primary:disabled { opacity: .6; }
+  button.small { background: transparent; color: var(--brand); padding: 4px 10px; border: 1px solid var(--brand); border-radius: 999px; font-size: 14px; }
+  .msg { min-height: 1.3em; color: var(--danger); font-size: 14px; }
+  .screen { height: 100dvh; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
+  header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--brand); color: var(--brand-text); }
+  header h2 { margin: 0; font-size: 18px; flex: 1; }
+  header .me { font-size: 14px; opacity: .9; }
+  header button.back { background: transparent; color: var(--brand-text); font-size: 22px; padding: 0 6px; }
+  .codebox { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+  .codebox .code { letter-spacing: 3px; font-size: 18px; direction: ltr; }
+  .add { display: flex; gap: 8px; padding: 12px 16px 0; }
+  .add input { flex: 1; direction: ltr; text-transform: uppercase; }
+  #addMsg { padding: 0 16px; margin: 6px 0 0; }
+  .list { flex: 1; overflow-y: auto; padding: 8px 0 env(safe-area-inset-bottom, 0px); }
+  .contact { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer; background: var(--card); }
+  .contact:active { background: var(--bg); }
+  .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--brand); color: var(--brand-text); display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; }
+  .empty { color: var(--muted); text-align: center; padding: 32px 24px; }
+  .msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .bubble { max-width: 80%; padding: 8px 10px; border-radius: 14px; word-break: break-word; white-space: pre-wrap; border: 1px solid var(--line); }
+  .bubble.mine { align-self: flex-start; background: var(--mine); }
+  .bubble.theirs { align-self: flex-end; background: var(--theirs); }
+  .bubble img { display: block; max-width: 100%; max-height: 320px; border-radius: 10px; margin-bottom: 4px; cursor: zoom-in; }
+  .bubble .time { font-size: 11px; color: var(--muted); margin-top: 2px; text-align: end; direction: ltr; }
+  .composer { display: flex; gap: 8px; align-items: center; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--card); border-top: 1px solid var(--line); }
+  .composer input[type="text"] { flex: 1; }
+  .composer button { padding: 10px 14px; }
+  .composer button.attach { background: transparent; font-size: 22px; padding: 6px 8px; }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: flex; align-items: center; justify-content: center; z-index: 10; }
+  .overlay img { max-width: 100%; max-height: 100%; }
+  .contact .acts { margin-inline-start: auto; display: flex; gap: 6px; }
+  .contact.req { background: var(--mine); }
+  .del { background: none; color: var(--muted); font-size: 12px; padding: 0 4px; border: 0; }
+  button.danger { background: var(--danger); color: #fff; padding: 12px 18px; }
+  .phrase { direction: ltr; font-family: monospace; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 18px; line-height: 1.7; word-spacing: 6px; user-select: all; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, addDoc, collection, query, orderBy, limit,
+  onSnapshot, serverTimestamp, updateDoc, deleteDoc, deleteField
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+/* ============ الإعدادات: الصق هنا إعدادات Firebase الخاصة بك ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAbASkibKo_2Vc6Oog1o1V1EOdiB2cSYyI",
+  authDomain: "ibeefree.firebaseapp.com",
+  projectId: "ibeefree",
+  appId: "1:152240669138:web:27cef60434c4a694d2480b"
+};
+const APP_NAME = "دردشتنا";
+/* ======================================================================== */
+
+const root = document.getElementById("root");
+let me = null;            // { uid, name, code }
+let contacts = [];        // جهات الاتصال
+let listEl = null;        // عنصر قائمة الأصدقاء الحالي
+let unsubContacts = null;
+let unsubMsgs = null;
+let auth = null;
+let db = null;
+
+/* ---------- أدوات صغيرة ---------- */
+function h(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === undefined || v === null) continue;
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid === null || kid === undefined) continue;
+    e.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return e;
+}
+function mount(node) { root.replaceChildren(node); }
+function explain(e) { return (e && (e.code || e.message)) || String(e); }
+function stopMsgs() { if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+
+function showFatal(text) {
+  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), h("p", { class: "msg" }, text)));
+}
+
+/* ---------- كود الصديق ---------- */
+const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // بدون أحرف متشابهة (O/0 و I/1)
+function randomCode() {
+  const a = new Uint32Array(6);
+  crypto.getRandomValues(a);
+  return Array.from(a, (n) => ALPHABET[n % ALPHABET.length]).join("");
+}
+function chatIdFor(uidA, uidB) { return [uidA, uidB].sort().join("_"); }
+
+async function createProfile(name) {
+  const uid = auth.currentUser.uid;
+  let code = null;
+  let lastErr = null;
+  for (let i = 0; i < 8 && !code; i++) {
+    const c = randomCode();
+    try {
+      const snap = await getDoc(doc(db, "codes", c));
+      if (snap.exists()) continue;
+      await setDoc(doc(db, "codes", c), { uid, name });
+      code = c;
+    } catch (e) { lastErr = e; }
+  }
+  if (!code) throw lastErr || new Error("تعذر إنشاء الكود");
+  await setDoc(doc(db, "users", uid), { name, code });
+  me = { uid, name, code };
+}
+
+/* ---------- شاشة الاسم ---------- */
+const WORDS = "able acid aged also arch area army atom aunt axis baby back bake ball band bank barn base bath bead beam bean bear beat bell belt bend bike bill bird bite blue boat body bold bolt bone book boot born boss bowl bulb bull bush busy cafe cage cake calm camp card care cart case cash cave cell chef chin chip city clay clip club coal coat code coin cold cook cool cord corn cost crab crew crop crow cube cup dark dart dash data dawn deal deck deer desk dial dice dish dive dock dome door dove down draw drum duck dust duty east edge fair farm fast fawn fern file fill film fire fish flag flat flax flow foam fold food foot fork form fort frog fuel gain game gate gear gift girl glad glow glue goat gold golf gown grab gray grid grip gulf gust hair hall hand harp hawk heap herb hill hint hive hold home hood hook hope horn host hour hunt idea inch iron isle jade jar jazz join joy jump keen kelp key kick kite knot lake lamp land lane lark lava leaf lens lily lime line lion list loaf lock loft loop lord luck lung mail main male malt map mask mast meal melt mesh mild milk mill mind mint mist moon moss moth nail navy nest news node note oak oath oven pace page palm park path pear pine pipe plan plum pond pool port pump quay rain ramp reed rice ring road robe rock roof root".split(" ");
+let pendingPhrase = null, busy = false;
+function makePhrase() {
+  const a = new Uint8Array(12);
+  crypto.getRandomValues(a);
+  return Array.from(a, (n) => WORDS[n]).join(" ");
+}
+async function deriveCreds(phrase) {
+  const norm = phrase.toLowerCase().trim().split(/\s+/).join(" ");
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", enc.encode(norm), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode("ibeefree-v1"), iterations: 100000 }, key, 384);
+  const hex = Array.from(new Uint8Array(bits), (b) => b.toString(16).padStart(2, "0")).join("");
+  return { email: hex.slice(0, 32) + "@ibeefree.app", password: hex.slice(32) };
+}
+function showStart() {
+  let ok = false;
+  try { ok = localStorage.getItem("ibf_ok") === "1"; } catch (_) {}
+  if (!ok) { showWelcome(); return; }
+  const nb = h("button", { class: "primary" }, "حساب جديد");
+  nb.addEventListener("click", showNewAccount);
+  const rb = h("button", { class: "small" }, "عندي كود استرجاع");
+  rb.addEventListener("click", showRestore);
+  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), nb, rb));
+}
+function showNewAccount() {
+  pendingPhrase = makePhrase();
+  const chk = h("input", { type: "checkbox", id: "saved" });
+  const go = h("button", { class: "primary", disabled: "true" }, "متابعة");
+  chk.addEventListener("change", () => { go.disabled = !chk.checked; });
+  go.addEventListener("click", showNameForm);
+  mount(h("div", { class: "center" }, h("h1", {}, "كود الاسترجاع"),
+    h("p", {}, "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك."),
+    h("div", { class: "phrase" }, pendingPhrase),
+    h("label", {}, chk, " حفظتُ الكود"), go));
+}
+function showRestore() {
+  const input = h("input", { type: "text", placeholder: "الكلمات الـ12 بالترتيب", autocomplete: "off", style: "direction:ltr" });
+  const msg = h("p", { class: "msg" });
+  const btn = h("button", { class: "primary" }, "استرجاع");
+  btn.addEventListener("click", async () => {
+    if (input.value.trim().split(/\s+/).length !== 12) { msg.textContent = "الكود من 12 كلمة"; return; }
+    btn.disabled = true;
+    msg.textContent = "جارٍ الاسترجاع...";
+    try { const c = await deriveCreds(input.value); await signInWithEmailAndPassword(auth, c.email, c.password); }
+    catch (e) { msg.textContent = "الكود غير صحيح"; btn.disabled = false; }
+  });
+  const back = h("button", { class: "small" }, "رجوع");
+  back.addEventListener("click", showStart);
+  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), input, btn, back, msg));
+}
+
+function showNameForm() {
+  const input = h("input", { type: "text", maxlength: "30", placeholder: "اسمك", autocomplete: "off" });
+  const msg = h("p", { class: "msg" });
+  const btn = h("button", { class: "primary" }, "ابدأ");
+  btn.addEventListener("click", async () => {
+    const name = input.value.trim();
+    if (name.length < 2) { msg.textContent = "اكتب اسماً من حرفين على الأقل"; return; }
+    btn.disabled = true;
+    msg.textContent = "جارٍ الإنشاء...";
+    busy = true;
+    try {
+      if (pendingPhrase) {
+        const c = await deriveCreds(pendingPhrase);
+        await createUserWithEmailAndPassword(auth, c.email, c.password);
+        pendingPhrase = null;
+      }
+      await createProfile(name);
+      showList();
+    } catch (e) {
+      console.error(e);
+      msg.textContent = "حدث خطأ: " + explain(e);
+      btn.disabled = false;
+    } finally { busy = false; }
+  });
+  mount(h("div", { class: "center" },
+    h("h1", {}, APP_NAME),
+    h("p", {}, "اختر اسماً يظهر لأصدقائك"),
+    input, btn, msg));
+}
+
+const ABOUT = [
+  "تطبيق تجريبي، وقد توجد فيه أخطاء.",
+  "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.",
+  "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.",
+  "تستطيع حذف حسابك في أي وقت من صفحة «حول»."
+];
+function showName() {
+  let ok = false;
+  try { ok = localStorage.getItem("ibf_ok") === "1"; } catch (_) {}
+  if (ok) showNameForm(); else showWelcome();
+}
+function showWelcome() {
+  const btn = h("button", { class: "primary" }, "فهمت");
+  btn.addEventListener("click", () => {
+    try { localStorage.setItem("ibf_ok", "1"); } catch (_) {}
+    showStart();
+  });
+  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), ...ABOUT.slice(0, 3).map((t) => h("p", {}, t)), btn));
+}
+async function deleteAccount() {
+  if (!confirm("سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟")) return;
+  const ph = prompt("لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):");
+  if (!ph) return;
+  try {
+    const cr = await deriveCreds(ph);
+    await signInWithEmailAndPassword(auth, cr.email, cr.password);
+    if (auth.currentUser.uid !== me.uid) throw new Error("wrong-account");
+  } catch (e) { alert("كود الاسترجاع غير صحيح لهذا الحساب"); return; }
+  try {
+    for (const c of contacts) {
+      await deleteDoc(doc(db, "users", me.uid, "contacts", c.id));
+      try { await deleteDoc(doc(db, "users", c.id, "contacts", me.uid)); } catch (_) {}
+    }
+    await deleteDoc(doc(db, "codes", me.code));
+    await deleteDoc(doc(db, "users", me.uid));
+    await auth.currentUser.delete();
+    location.reload();
+  } catch (e) { console.error(e); alert("تعذر الحذف: " + explain(e)); }
+}
+function showAbout() {
+  const ds = h("input", { type: "checkbox", id: "ds" });
+  ds.checked = dataSaver();
+  ds.addEventListener("change", () => { try { localStorage.setItem("ibf_ds", ds.checked ? "1" : "0"); } catch (_) {} });
+  const del = h("button", { class: "danger" }, "حذف حسابي");
+  del.addEventListener("click", deleteAccount);
+  const back = h("button", { class: "back", "aria-label": "رجوع" }, "→");
+  back.addEventListener("click", showList);
+  mount(h("div", { class: "screen" },
+    h("header", {}, back, h("h2", {}, "حول " + APP_NAME)),
+    h("div", { class: "center", style: "flex:1;overflow:auto" }, ...ABOUT.map((t) => h("p", {}, t)), h("label", {}, ds, " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)"), del)));
+}
+
+/* ---------- شاشة قائمة الأصدقاء ---------- */
+function renderContacts() {
+  if (!listEl) return;
+  if (!contacts.length) {
+    listEl.replaceChildren(h("div", { class: "empty" }, "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك."));
+    return;
+  }
+  const sorted = [...contacts].filter((c) => c.status !== "blocked").sort((a, b) => {
+    const ta = a.lastTs && a.lastTs.toMillis ? a.lastTs.toMillis() : 0;
+    const tb = b.lastTs && b.lastTs.toMillis ? b.lastTs.toMillis() : 0;
+    return tb - ta;
+  });
+  const setStatus = (c, status) => updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status }).catch((e) => alert(explain(e)));
+  listEl.replaceChildren(...sorted.map((c) => {
+    const avatar = h("div", { class: "avatar" }, (c.name || "?").trim().charAt(0));
+    if (c.status === "pending") {
+      return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || "؟", " يريد محادثتك"),
+        h("div", { class: "acts" },
+          h("button", { class: "small accept", onclick: () => setStatus(c, "accepted") }, "قبول"),
+          h("button", { class: "small block", onclick: () => setStatus(c, "blocked") }, "حظر")));
+    }
+    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || "؟"));
+  }));
+}
+
+async function addFriend(rawCode) {
+  const code = rawCode.trim().toUpperCase();
+  if (code.length !== 6) throw new Error("الكود من 6 خانات");
+  const snap = await getDoc(doc(db, "codes", code));
+  if (!snap.exists()) throw new Error("لا يوجد أحد بهذا الكود");
+  const friend = snap.data();
+  if (friend.uid === me.uid) throw new Error("هذا كودك أنت");
+  const chatId = chatIdFor(me.uid, friend.uid);
+  const mine = doc(db, "users", me.uid, "contacts", friend.uid);
+  const ex = await getDoc(mine);
+  if (ex.exists()) {
+    if (ex.data().status === "pending") await updateDoc(mine, { status: "accepted" });
+    else if (ex.data().status === "blocked") throw new Error("هذا الشخص محظور عندك");
+    return { id: friend.uid, name: friend.name, chatId };
+  }
+  await setDoc(mine, { name: friend.name, chatId, status: "accepted", lastTs: serverTimestamp() });
+  try {
+    await setDoc(doc(db, "users", friend.uid, "contacts", me.uid),
+      { name: me.name, chatId, status: "pending", lastTs: serverTimestamp() });
+  } catch (e) {
+    await deleteDoc(mine).catch(() => {});
+    throw new Error("تعذر إرسال الطلب إلى هذا الشخص");
+  }
+  return { id: friend.uid, name: friend.name, chatId };
+}
+
+function showList() {
+  stopMsgs();
+  listEl = h("div", { class: "list" });
+  const copyBtn = h("button", { class: "small" }, "نسخ");
+  copyBtn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(me.code); copyBtn.textContent = "تم"; }
+    catch (_) { copyBtn.textContent = "انسخه يدوياً"; }
+    setTimeout(() => { copyBtn.textContent = "نسخ"; }, 1500);
+  });
+  const addInput = h("input", { type: "text", maxlength: "6", placeholder: "كود الصديق", autocapitalize: "characters", autocomplete: "off" });
+  const addMsg = h("p", { class: "msg", id: "addMsg" });
+  const addBtn = h("button", { class: "primary" }, "إضافة");
+  addBtn.addEventListener("click", async () => {
+    addMsg.textContent = "";
+    addBtn.disabled = true;
+    try {
+      const c = await addFriend(addInput.value);
+      addInput.value = "";
+      openChat(c);
+    } catch (e) {
+      if (e.code) console.error(e);
+      addMsg.textContent = e.message && !e.code ? e.message : "تعذرت الإضافة: " + explain(e);
+    } finally { addBtn.disabled = false; }
+  });
+
+  mount(h("div", { class: "screen" },
+    h("header", {}, h("h2", {}, APP_NAME), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, "حول")),
+    h("div", { class: "codebox" }, h("span", {}, "كودك:"), h("b", { class: "code" }, me.code), copyBtn),
+    h("div", { class: "add" }, addInput, addBtn),
+    addMsg,
+    listEl));
+  renderContacts();
+
+  if (!unsubContacts) {
+    unsubContacts = onSnapshot(collection(db, "users", me.uid, "contacts"),
+      (snap) => {
+        contacts = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
+        renderContacts();
+      },
+      (err) => console.error(err));
+  }
+}
+
+/* ---------- الصور: تصغيرها قبل الإرسال ---------- */
+async function shrinkImage(file, limitChars = 250000, maxSide = 1280) {
+  const bmp = await createImageBitmap(file);
+  let quality = 0.72;
+  for (let i = 0; i < 6; i++) {
+    const s = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+    const cv = document.createElement("canvas");
+    cv.width = Math.max(1, Math.round(bmp.width * s));
+    cv.height = Math.max(1, Math.round(bmp.height * s));
+    const ctx = cv.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.drawImage(bmp, 0, 0, cv.width, cv.height);
+    const url = cv.toDataURL("image/jpeg", quality);
+    if (url.length < limitChars) return url;
+    maxSide = Math.round(maxSide * 0.75);
+    quality = Math.max(0.5, quality - 0.05);
+  }
+  throw new Error("الصورة كبيرة جداً");
+}
+
+const mediaCache = new Map();
+function dataSaver() {
+  try {
+    const v = localStorage.getItem("ibf_ds");
+    if (v !== null) return v === "1";
+  } catch (_) {}
+  return !!(navigator.connection && navigator.connection.saveData);
+}
+async function fullOf(m, c) {
+  if (!(m.thumb || m.hasFile)) return m.image || null;
+  if (mediaCache.has(m.id)) return mediaCache.get(m.id);
+  try {
+    const sn = await getDoc(doc(db, "chats", c.chatId, "media", m.id));
+    const d = sn.exists() ? sn.data().data : null;
+    if (d) mediaCache.set(m.id, d);
+    return d;
+  } catch (_) { return null; }
+}
+async function fullRetry(m, c) {
+  for (let i = 0; i < 4; i++) {
+    const f = await fullOf(m, c);
+    if (f) return f;
+    await new Promise((r) => setTimeout(r, 1200));
+  }
+  return null;
+}
+function openImage(src) {
+  const save = h("a", { href: src, download: "ibeefree.jpg", style: "position:fixed;top:12px;inset-inline-end:12px;color:#fff;background:#0008;padding:8px 12px;border-radius:10px;text-decoration:none" }, "حفظ في الهاتف");
+  save.addEventListener("click", (e) => e.stopPropagation());
+  const ov = h("div", { class: "overlay" }, h("img", { src, alt: "صورة" }), save);
+  ov.addEventListener("click", () => ov.remove());
+  document.body.append(ov);
+}
+
+/* ---------- شاشة المحادثة ---------- */
+function renderMsg(m, c) {
+  const mine = m.from === me.uid;
+  const bubble = h("div", { class: "bubble " + (mine ? "mine" : "theirs") });
+  if (m.deleted) {
+    bubble.append(h("div", { style: "font-style:italic;opacity:.7" }, "تم حذف هذه الرسالة"));
+    return bubble;
+  }
+  const small = typeof m.thumb === "string" ? m.thumb : m.image;
+  if (typeof small === "string" && small.startsWith("data:image/jpeg;base64,")) {
+    const img = h("img", { src: small, alt: "صورة" });
+    img.addEventListener("click", async () => openImage((await fullOf(m, c)) || small));
+    bubble.append(img);
+    if (m.thumb && !dataSaver()) fullRetry(m, c).then((f) => { if (f) img.src = f; });
+  }
+  if (m.hasFile) {
+    const fb = h("button", { class: "small" }, "📄 " + (m.fileName || "ملف") + " (" + Math.round((m.fileSize || 0) / 1024) + " ك.ب)");
+    fb.addEventListener("click", async () => {
+      const d = await fullOf(m, c);
+      if (!d) { alert("تعذر تحميل الملف"); return; }
+      const a = h("a", { href: d, download: m.fileName || "file" });
+      document.body.append(a); a.click(); a.remove();
+    });
+    bubble.append(fb);
+  }
+  if (typeof m.text === "string" && m.text) bubble.append(h("div", {}, m.text));
+  if (mine && m.id) {
+    const del = h("button", { class: "del", "aria-label": "حذف الرسالة" }, "🗑");
+    del.addEventListener("click", async () => {
+      if (!confirm("حذف الرسالة للطرفين؟")) return;
+      try { await updateDoc(doc(db, "chats", c.chatId, "messages", m.id), { deleted: true, text: deleteField(), image: deleteField(), thumb: deleteField(), fileName: deleteField() });
+        await deleteDoc(doc(db, "chats", c.chatId, "media", m.id)).catch(() => {}); mediaCache.delete(m.id); }
+      catch (e) { console.error(e); alert("تعذر الحذف: " + explain(e)); }
+    });
+    bubble.append(del);
+  }
+  if (!mine && m.id) {
+    const rp = h("button", { class: "del", "aria-label": "إبلاغ" }, "⚑");
+    rp.addEventListener("click", async () => {
+      if (!confirm("إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.")) return;
+      try {
+        await addDoc(collection(db, "reports"), { reporter: me.uid, reported: c.id, chatId: c.chatId, msgId: m.id, text: (m.text || "").slice(0, 2000), ts: serverTimestamp() });
+        alert("تم الإبلاغ.");
+      } catch (e) { alert("تعذر الإبلاغ: " + explain(e)); }
+    });
+    bubble.append(rp);
+  }
+  const d = m.ts && m.ts.toDate ? m.ts.toDate() : new Date();
+  bubble.append(h("div", { class: "time" }, d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })));
+  return bubble;
+}
+
+function sendErr(e) {
+  alert(e && e.code === "permission-denied"
+    ? "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك."
+    : "تعذر الإرسال: " + explain(e));
+}
+
+async function sendMessage(c, payload, media) {
+  const ref = await addDoc(collection(db, "chats", c.chatId, "messages"),
+    { from: me.uid, ...payload, ts: serverTimestamp() });
+  if (media) await setDoc(doc(db, "chats", c.chatId, "media", ref.id), { from: me.uid, data: media });
+  await Promise.allSettled([
+    setDoc(doc(db, "users", me.uid, "contacts", c.id), { lastTs: serverTimestamp() }, { merge: true }),
+    setDoc(doc(db, "users", c.id, "contacts", me.uid), { lastTs: serverTimestamp() }, { merge: true })
+  ]);
+}
+
+function openChat(c, push = true) {
+  stopMsgs();
+  if (push) history.pushState({ chat: c.id }, "");
+
+  const box = h("div", { class: "msgs" });
+  const input = h("input", { type: "text", placeholder: "اكتب رسالة...", autocomplete: "off" });
+  const fileInput = h("input", { type: "file", style: "display:none" });
+  const attach = h("button", { class: "attach", "aria-label": "إرسال صورة" }, "📎");
+  const sendBtn = h("button", { class: "primary" }, "إرسال");
+
+  const send = async () => {
+    const t = input.value.trim();
+    if (!t) return;
+    input.value = "";
+    try { await sendMessage(c, { text: t }); }
+    catch (e) { console.error(e); input.value = t; sendErr(e); }
+  };
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); send(); } });
+  attach.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", async () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    try {
+      if (f.type.startsWith("image/")) {
+        const full = await shrinkImage(f);
+        const thumb = await shrinkImage(f, 20000, 160);
+        await sendMessage(c, { thumb, hasImage: true }, full);
+      } else {
+        if (f.size > 600000) throw new Error("الملف كبير: الحد الآن 600 كيلوبايت");
+        const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+        await sendMessage(c, { hasFile: true, fileName: f.name.slice(0, 80), fileSize: f.size }, data);
+      }
+    } catch (e) { console.error(e); sendErr(e); }
+    finally { fileInput.value = ""; }
+  });
+
+  const back = h("button", { class: "back", "aria-label": "رجوع" }, "→");
+  back.addEventListener("click", () => history.back());
+
+  mount(h("div", { class: "screen" },
+    h("header", {}, back, h("h2", {}, c.name || "؟"),
+      h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: async () => {
+        if (!confirm("حظر " + (c.name || "هذا الشخص") + "؟")) return;
+        try { await updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status: "blocked" }); history.back(); }
+        catch (e) { alert(explain(e)); }
+      } }, "حظر")),
+    box,
+    h("div", { class: "composer" }, attach, input, sendBtn, fileInput)));
+
+  const q = query(collection(db, "chats", c.chatId, "messages"), orderBy("ts", "desc"), limit(200));
+  unsubMsgs = onSnapshot(q,
+    (snap) => {
+      const items = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) })).reverse();
+      box.replaceChildren(...items.map((m) => renderMsg(m, c)));
+      box.scrollTop = box.scrollHeight;
+    },
+    (err) => {
+      console.error(err);
+      box.replaceChildren(h("p", { class: "msg" }, "تعذر تحميل الرسائل: " + explain(err)));
+    });
+}
+
+window.addEventListener("popstate", () => { if (me) showList(); });
+
+/* ---------- البداية ---------- */
+function start() {
+  if (Object.values(firebaseConfig).some((v) => String(v).startsWith("PASTE"))) {
+    showFatal("لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.");
+    return;
+  }
+  const fbApp = initializeApp(firebaseConfig);
+  auth = getAuth(fbApp);
+  db = getFirestore(fbApp);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (busy) return;
+    if (!user) { showStart(); return; }
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        const d = snap.data();
+        me = { uid: user.uid, name: d.name, code: d.code };
+        showList();
+      } else {
+        showNameForm();
+      }
+    } catch (e) {
+      console.error(e);
+      showFatal("تعذر الاتصال بالقاعدة: " + explain(e));
+    }
+  });
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+}
+start();
+</script>
+</body>
+</html>
