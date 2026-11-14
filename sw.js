@@ -1,6 +1,6 @@
 // يحفظ نسخة من واجهة التطبيق ليفتح بسرعة. يجرّب الشبكة أولاً حتى تصل التحديثات.
-const CACHE = "chat-shell-v1";
-const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png"];
+const CACHE = "chat-shell-v2";
+const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "logo.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)));

@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#0D1C39">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>دردشتنا</title>
+<title>I Bee Free</title>
 <style>
   :root {
-    --bg: #f4f6f6; --card: #ffffff; --text: #17201f; --muted: #66716f;
-    --brand: #0f766e; --brand-text: #ffffff; --mine: #d9f3ee; --theirs: #ffffff;
-    --line: #dfe5e4; --danger: #b42318;
+    --bg: #F4F1E8; --card: #FFFFFF; --text: #0D1C39; --muted: #5B6785;
+    --brand: #FBBE0E; --brand-text: #14131A; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #14131A; --theirs: #FFFFFF;
+    --line: #E0D9C6; --danger: #B42318;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #101615; --card: #19211f; --text: #e8eeed; --muted: #93a09d;
-      --brand: #14998e; --brand-text: #ffffff; --mine: #14483f; --theirs: #202a28;
-      --line: #2b3735; --danger: #f97066;
+      --bg: #081630; --card: #112347; --text: #EAF0FA; --muted: #9FB0CE;
+      --brand: #FBBE0E; --brand-text: #14131A; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #14131A; --theirs: #172E5C;
+      --line: #223869; --danger: #F97066;
     }
   }
   * { box-sizing: border-box; }
@@ -29,7 +29,7 @@
   }
   #root { height: 100%; }
   .center { min-height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; max-width: 420px; margin: 0 auto; }
-  .center h1 { margin: 0; color: var(--brand); }
+  .center h1 { margin: 0; color: var(--title); }
   .center p { margin: 0; color: var(--muted); }
   input[type="text"] {
     width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
@@ -39,13 +39,13 @@
   button { font-family: inherit; font-size: 16px; cursor: pointer; border: 0; border-radius: 12px; }
   button.primary { background: var(--brand); color: var(--brand-text); padding: 12px 18px; }
   button.primary:disabled { opacity: .6; }
-  button.small { background: transparent; color: var(--brand); padding: 4px 10px; border: 1px solid var(--brand); border-radius: 999px; font-size: 14px; }
+  button.small { background: transparent; color: var(--title); padding: 4px 10px; border: 1px solid var(--title); border-radius: 999px; font-size: 14px; }
   .msg { min-height: 1.3em; color: var(--danger); font-size: 14px; }
   .screen { height: 100dvh; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
-  header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--brand); color: var(--brand-text); }
+  header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--hdr); color: #fff; }
   header h2 { margin: 0; font-size: 18px; flex: 1; }
   header .me { font-size: 14px; opacity: .9; }
-  header button.back { background: transparent; color: var(--brand-text); font-size: 22px; padding: 0 6px; }
+  header button.back { background: transparent; color: #fff; font-size: 22px; padding: 0 6px; }
   .codebox { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
   .codebox .code { letter-spacing: 3px; font-size: 18px; direction: ltr; }
   .add { display: flex; gap: 8px; padding: 12px 16px 0; }
@@ -73,6 +73,11 @@
   .del { background: none; color: var(--muted); font-size: 12px; padding: 0 4px; border: 0; }
   button.danger { background: var(--danger); color: #fff; padding: 12px 18px; }
   .phrase { direction: ltr; font-family: monospace; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 18px; line-height: 1.7; word-spacing: 6px; user-select: all; }
+  .bubble { color: var(--text); }
+  .bubble.mine { color: var(--mine-text); }
+  .bubble.mine .time, .bubble.mine .del { color: #5b4300; }
+  [dir="ltr"] .bubble.mine { align-self: flex-end; }
+  [dir="ltr"] .bubble.theirs { align-self: flex-start; }
 </style>
 </head>
 <body>
@@ -93,9 +98,17 @@ const firebaseConfig = {
   projectId: "ibeefree",
   appId: "1:152240669138:web:27cef60434c4a694d2480b"
 };
-const APP_NAME = "دردشتنا";
+const APP_NAME = "I Bee Free";
 /* ======================================================================== */
 
+const T = {"ar": ["تعذر إنشاء الكود", "حساب جديد", "عندي كود استرجاع", "متابعة", "كود الاسترجاع", "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك.", " حفظتُ الكود", "الكلمات الـ12 بالترتيب", "استرجاع", "الكود من 12 كلمة", "جارٍ الاسترجاع...", "الكود غير صحيح", "رجوع", "اسمك", "ابدأ", "اكتب اسماً من حرفين على الأقل", "جارٍ الإنشاء...", "حدث خطأ: ", "اختر اسماً يظهر لأصدقائك", "تطبيق تجريبي، وقد توجد فيه أخطاء.", "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.", "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.", "تستطيع حذف حسابك في أي وقت من صفحة «حول».", "فهمت", "سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟", "لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):", "كود الاسترجاع غير صحيح لهذا الحساب", "تعذر الحذف: ", "حذف حسابي", "حول التطبيق", " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)", "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك.", "؟", " يريد محادثتك", "قبول", "حظر", "الكود من 6 خانات", "لا يوجد أحد بهذا الكود", "هذا كودك أنت", "هذا الشخص محظور عندك", "تعذر إرسال الطلب إلى هذا الشخص", "نسخ", "تم", "انسخه يدوياً", "كود الصديق", "إضافة", "تعذرت الإضافة: ", "حول", "كودك:", "الصورة كبيرة جداً", "حفظ في الهاتف", "صورة", "تم حذف هذه الرسالة", "ملف", " ك.ب)", "تعذر تحميل الملف", "حذف الرسالة", "حذف الرسالة للطرفين؟", "إبلاغ", "إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.", "تم الإبلاغ.", "تعذر الإبلاغ: ", "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك.", "تعذر الإرسال: ", "اكتب رسالة...", "إرسال صورة", "إرسال", "الملف كبير: الحد الآن 600 كيلوبايت", "حظر ", "هذا الشخص", "تعذر تحميل الرسائل: ", "لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.", "تعذر الاتصال بالقاعدة: ", "→"], "en": ["Could not create the code", "New account", "I have a recovery code", "Continue", "Recovery code", "Write these 12 words on paper and keep them safe. If you lose your phone, they are the only way to recover your account, and we cannot recover them for you.", " I saved the code", "The 12 words in order", "Recover", "The code has 12 words", "Recovering...", "Incorrect code", "Back", "Your name", "Start", "Write a name of at least 2 letters", "Creating...", "Error: ", "Choose a name your friends will see", "Experimental app, it may contain errors.", "Messages are not fully encrypted, so do not send secret or banking information. Imagine you are talking in a café full of people.", "The app owner does not read messages and collects only your name and code. There are no ads and no profit.", "You can delete your account at any time from the About page.", "Got it", "Your account, code and friends list will be permanently deleted. Are you sure?", "To confirm deletion, enter your recovery code (12 words):", "This recovery code is not valid for this account", "Could not delete: ", "Delete my account", "About the app", " Data saver mode (images appear as thumbnails until you tap them)", "No conversations yet. Enter a friend's code above and add them, or give them your code.", "?", " wants to chat with you", "Accept", "Block", "The code has 6 characters", "Nobody has this code", "This is your own code", "You blocked this person", "Could not send the request to this person", "Copy", "Done", "Copy it manually", "Friend's code", "Add", "Could not add: ", "About", "Your code:", "The image is too large", "Save to phone", "Image", "This message was deleted", "File", " KB)", "Could not load the file", "Delete message", "Delete the message for both?", "Report", "Report this message? A copy will be sent to the app owner only.", "Reported.", "Could not report: ", "Cannot send: your friend has not accepted your request yet, or has blocked you.", "Could not send: ", "Write a message...", "Send an image", "Send", "File too large: the limit is 600 KB for now", "Block ", "this person", "Could not load messages: ", "Firebase settings are missing. Open index.html and paste them at the top.", "Could not connect to the database: ", "←"], "fr": ["Impossible de créer le code", "Nouveau compte", "J'ai un code de récupération", "Continuer", "Code de récupération", "Écrivez ces 12 mots sur papier et gardez-les précieusement. Si vous perdez votre téléphone, c'est le seul moyen de récupérer votre compte, et nous ne pouvons pas les récupérer pour vous.", " J'ai noté le code", "Les 12 mots dans l'ordre", "Récupérer", "Le code comporte 12 mots", "Récupération...", "Code incorrect", "Retour", "Votre nom", "Commencer", "Écrivez un nom d'au moins 2 lettres", "Création...", "Erreur : ", "Choisissez un nom visible par vos amis", "Application expérimentale, elle peut contenir des erreurs.", "Les messages ne sont pas entièrement chiffrés : n'envoyez pas d'informations secrètes ou bancaires. Imaginez que vous parlez dans un café plein de monde.", "Le propriétaire de l'application ne lit pas les messages et ne collecte que votre nom et votre code. Aucune publicité, aucun profit.", "Vous pouvez supprimer votre compte à tout moment depuis la page « À propos ».", "Compris", "Votre compte, votre code et votre liste d'amis seront supprimés définitivement. Êtes-vous sûr ?", "Pour confirmer la suppression, saisissez votre code de récupération (12 mots) :", "Ce code de récupération n'est pas valide pour ce compte", "Suppression impossible : ", "Supprimer mon compte", "À propos de l'application", " Mode économie de données (les images restent en miniature jusqu'au toucher)", "Aucune conversation pour l'instant. Saisissez le code d'un ami ci-dessus, ou donnez-lui votre code.", "?", " veut discuter avec vous", "Accepter", "Bloquer", "Le code comporte 6 caractères", "Personne n'a ce code", "C'est votre propre code", "Vous avez bloqué cette personne", "Impossible d'envoyer la demande à cette personne", "Copier", "Fait", "Copiez-le manuellement", "Code de l'ami", "Ajouter", "Ajout impossible : ", "À propos", "Votre code :", "L'image est trop grande", "Enregistrer sur le téléphone", "Image", "Ce message a été supprimé", "Fichier", " Ko)", "Impossible de charger le fichier", "Supprimer le message", "Supprimer le message pour les deux ?", "Signaler", "Signaler ce message ? Une copie sera envoyée uniquement au propriétaire de l'application.", "Signalé.", "Signalement impossible : ", "Envoi impossible : votre ami n'a pas encore accepté votre demande, ou vous a bloqué.", "Envoi impossible : ", "Écrivez un message...", "Envoyer une image", "Envoyer", "Fichier trop volumineux : la limite est de 600 Ko pour l'instant", "Bloquer ", "cette personne", "Impossible de charger les messages : ", "Les paramètres Firebase manquent. Ouvrez index.html et collez-les en haut.", "Connexion à la base impossible : ", "←"]};
+const LANGS = ["ar", "en", "fr"];
+let LANG = "";
+try { LANG = localStorage.getItem("ibf_lang") || ""; } catch (_) {}
+if (!LANGS.includes(LANG)) { const nl = (navigator.language || "en").slice(0, 2).toLowerCase(); LANG = LANGS.includes(nl) ? nl : "en"; }
+document.documentElement.lang = LANG;
+document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+const t = (i) => T[LANG][i];
 const root = document.getElementById("root");
 let me = null;            // { uid, name, code }
 let contacts = [];        // جهات الاتصال
@@ -150,7 +163,7 @@ async function createProfile(name) {
       code = c;
     } catch (e) { lastErr = e; }
   }
-  if (!code) throw lastErr || new Error("تعذر إنشاء الكود");
+  if (!code) throw lastErr || new Error(t(0));
   await setDoc(doc(db, "users", uid), { name, code });
   me = { uid, name, code };
 }
@@ -175,48 +188,48 @@ function showStart() {
   let ok = false;
   try { ok = localStorage.getItem("ibf_ok") === "1"; } catch (_) {}
   if (!ok) { showWelcome(); return; }
-  const nb = h("button", { class: "primary" }, "حساب جديد");
+  const nb = h("button", { class: "primary" }, t(1));
   nb.addEventListener("click", showNewAccount);
-  const rb = h("button", { class: "small" }, "عندي كود استرجاع");
+  const rb = h("button", { class: "small" }, t(2));
   rb.addEventListener("click", showRestore);
-  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), nb, rb));
+  mount(h("div", { class: "center" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(78%,320px);align-self:center;border-radius:22px" }), nb, rb));
 }
 function showNewAccount() {
   pendingPhrase = makePhrase();
   const chk = h("input", { type: "checkbox", id: "saved" });
-  const go = h("button", { class: "primary", disabled: "true" }, "متابعة");
+  const go = h("button", { class: "primary", disabled: "true" }, t(3));
   chk.addEventListener("change", () => { go.disabled = !chk.checked; });
   go.addEventListener("click", showNameForm);
-  mount(h("div", { class: "center" }, h("h1", {}, "كود الاسترجاع"),
-    h("p", {}, "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك."),
+  mount(h("div", { class: "center" }, h("h1", {}, t(4)),
+    h("p", {}, t(5)),
     h("div", { class: "phrase" }, pendingPhrase),
-    h("label", {}, chk, " حفظتُ الكود"), go));
+    h("label", {}, chk, t(6)), go));
 }
 function showRestore() {
-  const input = h("input", { type: "text", placeholder: "الكلمات الـ12 بالترتيب", autocomplete: "off", style: "direction:ltr" });
+  const input = h("input", { type: "text", placeholder: t(7), autocomplete: "off", style: "direction:ltr" });
   const msg = h("p", { class: "msg" });
-  const btn = h("button", { class: "primary" }, "استرجاع");
+  const btn = h("button", { class: "primary" }, t(8));
   btn.addEventListener("click", async () => {
-    if (input.value.trim().split(/\s+/).length !== 12) { msg.textContent = "الكود من 12 كلمة"; return; }
+    if (input.value.trim().split(/\s+/).length !== 12) { msg.textContent = t(9); return; }
     btn.disabled = true;
-    msg.textContent = "جارٍ الاسترجاع...";
+    msg.textContent = t(10);
     try { const c = await deriveCreds(input.value); await signInWithEmailAndPassword(auth, c.email, c.password); }
-    catch (e) { msg.textContent = "الكود غير صحيح"; btn.disabled = false; }
+    catch (e) { msg.textContent = t(11); btn.disabled = false; }
   });
-  const back = h("button", { class: "small" }, "رجوع");
+  const back = h("button", { class: "small" }, t(12));
   back.addEventListener("click", showStart);
   mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), input, btn, back, msg));
 }
 
 function showNameForm() {
-  const input = h("input", { type: "text", maxlength: "30", placeholder: "اسمك", autocomplete: "off" });
+  const input = h("input", { type: "text", maxlength: "30", placeholder: t(13), autocomplete: "off" });
   const msg = h("p", { class: "msg" });
-  const btn = h("button", { class: "primary" }, "ابدأ");
+  const btn = h("button", { class: "primary" }, t(14));
   btn.addEventListener("click", async () => {
     const name = input.value.trim();
-    if (name.length < 2) { msg.textContent = "اكتب اسماً من حرفين على الأقل"; return; }
+    if (name.length < 2) { msg.textContent = t(15); return; }
     btn.disabled = true;
-    msg.textContent = "جارٍ الإنشاء...";
+    msg.textContent = t(16);
     busy = true;
     try {
       if (pendingPhrase) {
@@ -228,44 +241,50 @@ function showNameForm() {
       showList();
     } catch (e) {
       console.error(e);
-      msg.textContent = "حدث خطأ: " + explain(e);
+      msg.textContent = t(17) + explain(e);
       btn.disabled = false;
     } finally { busy = false; }
   });
   mount(h("div", { class: "center" },
     h("h1", {}, APP_NAME),
-    h("p", {}, "اختر اسماً يظهر لأصدقائك"),
+    h("p", {}, t(18)),
     input, btn, msg));
 }
 
 const ABOUT = [
-  "تطبيق تجريبي، وقد توجد فيه أخطاء.",
-  "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.",
-  "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.",
-  "تستطيع حذف حسابك في أي وقت من صفحة «حول»."
+  t(19),
+  t(20),
+  t(21),
+  t(22)
 ];
 function showName() {
   let ok = false;
   try { ok = localStorage.getItem("ibf_ok") === "1"; } catch (_) {}
   if (ok) showNameForm(); else showWelcome();
 }
+function langPicker() {
+  const sel = h("select", { "aria-label": "Language", style: "padding:8px;border-radius:10px;background:var(--card);color:var(--text);border:1px solid var(--line)" });
+  for (const [c, n] of [["ar", "العربية"], ["en", "English"], ["fr", "Français"]]) { const o = h("option", { value: c }, n); if (c === LANG) o.selected = true; sel.append(o); }
+  sel.addEventListener("change", () => { try { localStorage.setItem("ibf_lang", sel.value); } catch (_) {} location.reload(); });
+  return sel;
+}
 function showWelcome() {
-  const btn = h("button", { class: "primary" }, "فهمت");
+  const btn = h("button", { class: "primary" }, t(23));
   btn.addEventListener("click", () => {
     try { localStorage.setItem("ibf_ok", "1"); } catch (_) {}
     showStart();
   });
-  mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), ...ABOUT.slice(0, 3).map((t) => h("p", {}, t)), btn));
+  mount(h("div", { class: "center" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(78%,320px);align-self:center;border-radius:22px" }), ...ABOUT.slice(0, 3).map((x) => h("p", {}, x)), langPicker(), btn));
 }
 async function deleteAccount() {
-  if (!confirm("سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟")) return;
-  const ph = prompt("لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):");
+  if (!confirm(t(24))) return;
+  const ph = prompt(t(25));
   if (!ph) return;
   try {
     const cr = await deriveCreds(ph);
     await signInWithEmailAndPassword(auth, cr.email, cr.password);
     if (auth.currentUser.uid !== me.uid) throw new Error("wrong-account");
-  } catch (e) { alert("كود الاسترجاع غير صحيح لهذا الحساب"); return; }
+  } catch (e) { alert(t(26)); return; }
   try {
     for (const c of contacts) {
       await deleteDoc(doc(db, "users", me.uid, "contacts", c.id));
@@ -275,26 +294,26 @@ async function deleteAccount() {
     await deleteDoc(doc(db, "users", me.uid));
     await auth.currentUser.delete();
     location.reload();
-  } catch (e) { console.error(e); alert("تعذر الحذف: " + explain(e)); }
+  } catch (e) { console.error(e); alert(t(27) + explain(e)); }
 }
 function showAbout() {
   const ds = h("input", { type: "checkbox", id: "ds" });
   ds.checked = dataSaver();
   ds.addEventListener("change", () => { try { localStorage.setItem("ibf_ds", ds.checked ? "1" : "0"); } catch (_) {} });
-  const del = h("button", { class: "danger" }, "حذف حسابي");
+  const del = h("button", { class: "danger" }, t(28));
   del.addEventListener("click", deleteAccount);
-  const back = h("button", { class: "back", "aria-label": "رجوع" }, "→");
+  const back = h("button", { class: "back", "aria-label": t(12) }, t(73));
   back.addEventListener("click", showList);
   mount(h("div", { class: "screen" },
-    h("header", {}, back, h("h2", {}, "حول " + APP_NAME)),
-    h("div", { class: "center", style: "flex:1;overflow:auto" }, ...ABOUT.map((t) => h("p", {}, t)), h("label", {}, ds, " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)"), del)));
+    h("header", {}, back, h("h2", {}, t(29))),
+    h("div", { class: "center", style: "flex:1;overflow:auto" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(60%,240px);align-self:center;border-radius:18px" }), ...ABOUT.map((x) => h("p", {}, x)), langPicker(), h("label", {}, ds, t(30)), del)));
 }
 
 /* ---------- شاشة قائمة الأصدقاء ---------- */
 function renderContacts() {
   if (!listEl) return;
   if (!contacts.length) {
-    listEl.replaceChildren(h("div", { class: "empty" }, "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك."));
+    listEl.replaceChildren(h("div", { class: "empty" }, t(31)));
     return;
   }
   const sorted = [...contacts].filter((c) => c.status !== "blocked").sort((a, b) => {
@@ -306,28 +325,28 @@ function renderContacts() {
   listEl.replaceChildren(...sorted.map((c) => {
     const avatar = h("div", { class: "avatar" }, (c.name || "?").trim().charAt(0));
     if (c.status === "pending") {
-      return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || "؟", " يريد محادثتك"),
+      return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || t(32), t(33)),
         h("div", { class: "acts" },
-          h("button", { class: "small accept", onclick: () => setStatus(c, "accepted") }, "قبول"),
-          h("button", { class: "small block", onclick: () => setStatus(c, "blocked") }, "حظر")));
+          h("button", { class: "small accept", onclick: () => setStatus(c, "accepted") }, t(34)),
+          h("button", { class: "small block", onclick: () => setStatus(c, "blocked") }, t(35))));
     }
-    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || "؟"));
+    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)));
   }));
 }
 
 async function addFriend(rawCode) {
   const code = rawCode.trim().toUpperCase();
-  if (code.length !== 6) throw new Error("الكود من 6 خانات");
+  if (code.length !== 6) throw new Error(t(36));
   const snap = await getDoc(doc(db, "codes", code));
-  if (!snap.exists()) throw new Error("لا يوجد أحد بهذا الكود");
+  if (!snap.exists()) throw new Error(t(37));
   const friend = snap.data();
-  if (friend.uid === me.uid) throw new Error("هذا كودك أنت");
+  if (friend.uid === me.uid) throw new Error(t(38));
   const chatId = chatIdFor(me.uid, friend.uid);
   const mine = doc(db, "users", me.uid, "contacts", friend.uid);
   const ex = await getDoc(mine);
   if (ex.exists()) {
     if (ex.data().status === "pending") await updateDoc(mine, { status: "accepted" });
-    else if (ex.data().status === "blocked") throw new Error("هذا الشخص محظور عندك");
+    else if (ex.data().status === "blocked") throw new Error(t(39));
     return { id: friend.uid, name: friend.name, chatId };
   }
   await setDoc(mine, { name: friend.name, chatId, status: "accepted", lastTs: serverTimestamp() });
@@ -336,7 +355,7 @@ async function addFriend(rawCode) {
       { name: me.name, chatId, status: "pending", lastTs: serverTimestamp() });
   } catch (e) {
     await deleteDoc(mine).catch(() => {});
-    throw new Error("تعذر إرسال الطلب إلى هذا الشخص");
+    throw new Error(t(40));
   }
   return { id: friend.uid, name: friend.name, chatId };
 }
@@ -344,15 +363,15 @@ async function addFriend(rawCode) {
 function showList() {
   stopMsgs();
   listEl = h("div", { class: "list" });
-  const copyBtn = h("button", { class: "small" }, "نسخ");
+  const copyBtn = h("button", { class: "small" }, t(41));
   copyBtn.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(me.code); copyBtn.textContent = "تم"; }
-    catch (_) { copyBtn.textContent = "انسخه يدوياً"; }
-    setTimeout(() => { copyBtn.textContent = "نسخ"; }, 1500);
+    try { await navigator.clipboard.writeText(me.code); copyBtn.textContent = t(42); }
+    catch (_) { copyBtn.textContent = t(43); }
+    setTimeout(() => { copyBtn.textContent = t(41); }, 1500);
   });
-  const addInput = h("input", { type: "text", maxlength: "6", placeholder: "كود الصديق", autocapitalize: "characters", autocomplete: "off" });
+  const addInput = h("input", { type: "text", maxlength: "6", placeholder: t(44), autocapitalize: "characters", autocomplete: "off" });
   const addMsg = h("p", { class: "msg", id: "addMsg" });
-  const addBtn = h("button", { class: "primary" }, "إضافة");
+  const addBtn = h("button", { class: "primary" }, t(45));
   addBtn.addEventListener("click", async () => {
     addMsg.textContent = "";
     addBtn.disabled = true;
@@ -362,13 +381,13 @@ function showList() {
       openChat(c);
     } catch (e) {
       if (e.code) console.error(e);
-      addMsg.textContent = e.message && !e.code ? e.message : "تعذرت الإضافة: " + explain(e);
+      addMsg.textContent = e.message && !e.code ? e.message : t(46) + explain(e);
     } finally { addBtn.disabled = false; }
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", {}, APP_NAME), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, "حول")),
-    h("div", { class: "codebox" }, h("span", {}, "كودك:"), h("b", { class: "code" }, me.code), copyBtn),
+    h("header", {}, h("h2", {}, APP_NAME), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
     listEl));
@@ -402,7 +421,7 @@ async function shrinkImage(file, limitChars = 250000, maxSide = 1280) {
     maxSide = Math.round(maxSide * 0.75);
     quality = Math.max(0.5, quality - 0.05);
   }
-  throw new Error("الصورة كبيرة جداً");
+  throw new Error(t(49));
 }
 
 const mediaCache = new Map();
@@ -432,9 +451,9 @@ async function fullRetry(m, c) {
   return null;
 }
 function openImage(src) {
-  const save = h("a", { href: src, download: "ibeefree.jpg", style: "position:fixed;top:12px;inset-inline-end:12px;color:#fff;background:#0008;padding:8px 12px;border-radius:10px;text-decoration:none" }, "حفظ في الهاتف");
+  const save = h("a", { href: src, download: "ibeefree.jpg", style: "position:fixed;top:12px;inset-inline-end:12px;color:#fff;background:#0008;padding:8px 12px;border-radius:10px;text-decoration:none" }, t(50));
   save.addEventListener("click", (e) => e.stopPropagation());
-  const ov = h("div", { class: "overlay" }, h("img", { src, alt: "صورة" }), save);
+  const ov = h("div", { class: "overlay" }, h("img", { src, alt: t(51) }), save);
   ov.addEventListener("click", () => ov.remove());
   document.body.append(ov);
 }
@@ -444,21 +463,21 @@ function renderMsg(m, c) {
   const mine = m.from === me.uid;
   const bubble = h("div", { class: "bubble " + (mine ? "mine" : "theirs") });
   if (m.deleted) {
-    bubble.append(h("div", { style: "font-style:italic;opacity:.7" }, "تم حذف هذه الرسالة"));
+    bubble.append(h("div", { style: "font-style:italic;opacity:.7" }, t(52)));
     return bubble;
   }
   const small = typeof m.thumb === "string" ? m.thumb : m.image;
   if (typeof small === "string" && small.startsWith("data:image/jpeg;base64,")) {
-    const img = h("img", { src: small, alt: "صورة" });
+    const img = h("img", { src: small, alt: t(51) });
     img.addEventListener("click", async () => openImage((await fullOf(m, c)) || small));
     bubble.append(img);
     if (m.thumb && !dataSaver()) fullRetry(m, c).then((f) => { if (f) img.src = f; });
   }
   if (m.hasFile) {
-    const fb = h("button", { class: "small" }, "📄 " + (m.fileName || "ملف") + " (" + Math.round((m.fileSize || 0) / 1024) + " ك.ب)");
+    const fb = h("button", { class: "small" }, "📄 " + (m.fileName || t(53)) + " (" + Math.round((m.fileSize || 0) / 1024) + t(54));
     fb.addEventListener("click", async () => {
       const d = await fullOf(m, c);
-      if (!d) { alert("تعذر تحميل الملف"); return; }
+      if (!d) { alert(t(55)); return; }
       const a = h("a", { href: d, download: m.fileName || "file" });
       document.body.append(a); a.click(); a.remove();
     });
@@ -466,23 +485,23 @@ function renderMsg(m, c) {
   }
   if (typeof m.text === "string" && m.text) bubble.append(h("div", {}, m.text));
   if (mine && m.id) {
-    const del = h("button", { class: "del", "aria-label": "حذف الرسالة" }, "🗑");
+    const del = h("button", { class: "del", "aria-label": t(56) }, "🗑");
     del.addEventListener("click", async () => {
-      if (!confirm("حذف الرسالة للطرفين؟")) return;
+      if (!confirm(t(57))) return;
       try { await updateDoc(doc(db, "chats", c.chatId, "messages", m.id), { deleted: true, text: deleteField(), image: deleteField(), thumb: deleteField(), fileName: deleteField() });
         await deleteDoc(doc(db, "chats", c.chatId, "media", m.id)).catch(() => {}); mediaCache.delete(m.id); }
-      catch (e) { console.error(e); alert("تعذر الحذف: " + explain(e)); }
+      catch (e) { console.error(e); alert(t(27) + explain(e)); }
     });
     bubble.append(del);
   }
   if (!mine && m.id) {
-    const rp = h("button", { class: "del", "aria-label": "إبلاغ" }, "⚑");
+    const rp = h("button", { class: "del", "aria-label": t(58) }, "⚑");
     rp.addEventListener("click", async () => {
-      if (!confirm("إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.")) return;
+      if (!confirm(t(59))) return;
       try {
         await addDoc(collection(db, "reports"), { reporter: me.uid, reported: c.id, chatId: c.chatId, msgId: m.id, text: (m.text || "").slice(0, 2000), ts: serverTimestamp() });
-        alert("تم الإبلاغ.");
-      } catch (e) { alert("تعذر الإبلاغ: " + explain(e)); }
+        alert(t(60));
+      } catch (e) { alert(t(61) + explain(e)); }
     });
     bubble.append(rp);
   }
@@ -493,8 +512,8 @@ function renderMsg(m, c) {
 
 function sendErr(e) {
   alert(e && e.code === "permission-denied"
-    ? "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك."
-    : "تعذر الإرسال: " + explain(e));
+    ? t(62)
+    : t(63) + explain(e));
 }
 
 async function sendMessage(c, payload, media) {
@@ -512,10 +531,10 @@ function openChat(c, push = true) {
   if (push) history.pushState({ chat: c.id }, "");
 
   const box = h("div", { class: "msgs" });
-  const input = h("input", { type: "text", placeholder: "اكتب رسالة...", autocomplete: "off" });
+  const input = h("input", { type: "text", placeholder: t(64), autocomplete: "off" });
   const fileInput = h("input", { type: "file", style: "display:none" });
-  const attach = h("button", { class: "attach", "aria-label": "إرسال صورة" }, "📎");
-  const sendBtn = h("button", { class: "primary" }, "إرسال");
+  const attach = h("button", { class: "attach", "aria-label": t(65) }, "📎");
+  const sendBtn = h("button", { class: "primary" }, t(66));
 
   const send = async () => {
     const t = input.value.trim();
@@ -536,7 +555,7 @@ function openChat(c, push = true) {
         const thumb = await shrinkImage(f, 20000, 160);
         await sendMessage(c, { thumb, hasImage: true }, full);
       } else {
-        if (f.size > 600000) throw new Error("الملف كبير: الحد الآن 600 كيلوبايت");
+        if (f.size > 600000) throw new Error(t(67));
         const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
         await sendMessage(c, { hasFile: true, fileName: f.name.slice(0, 80), fileSize: f.size }, data);
       }
@@ -544,16 +563,16 @@ function openChat(c, push = true) {
     finally { fileInput.value = ""; }
   });
 
-  const back = h("button", { class: "back", "aria-label": "رجوع" }, "→");
+  const back = h("button", { class: "back", "aria-label": t(12) }, t(73));
   back.addEventListener("click", () => history.back());
 
   mount(h("div", { class: "screen" },
-    h("header", {}, back, h("h2", {}, c.name || "؟"),
+    h("header", {}, back, h("h2", {}, c.name || t(32)),
       h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: async () => {
-        if (!confirm("حظر " + (c.name || "هذا الشخص") + "؟")) return;
+        if (!confirm(t(68) + (c.name || t(69)) + t(32))) return;
         try { await updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status: "blocked" }); history.back(); }
         catch (e) { alert(explain(e)); }
-      } }, "حظر")),
+      } }, t(35))),
     box,
     h("div", { class: "composer" }, attach, input, sendBtn, fileInput)));
 
@@ -566,7 +585,7 @@ function openChat(c, push = true) {
     },
     (err) => {
       console.error(err);
-      box.replaceChildren(h("p", { class: "msg" }, "تعذر تحميل الرسائل: " + explain(err)));
+      box.replaceChildren(h("p", { class: "msg" }, t(70) + explain(err)));
     });
 }
 
@@ -575,7 +594,7 @@ window.addEventListener("popstate", () => { if (me) showList(); });
 /* ---------- البداية ---------- */
 function start() {
   if (Object.values(firebaseConfig).some((v) => String(v).startsWith("PASTE"))) {
-    showFatal("لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.");
+    showFatal(t(71));
     return;
   }
   const fbApp = initializeApp(firebaseConfig);
@@ -596,7 +615,7 @@ function start() {
       }
     } catch (e) {
       console.error(e);
-      showFatal("تعذر الاتصال بالقاعدة: " + explain(e));
+      showFatal(t(72) + explain(e));
     }
   });
 
