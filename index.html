@@ -9,14 +9,14 @@
 <title>I Bee Free</title>
 <style>
   :root {
-    --bg: #F4F1E8; --card: #FFFFFF; --text: #0D1C39; --muted: #5B6785;
-    --brand: #FBBE0E; --brand-text: #14131A; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #14131A; --theirs: #FFFFFF;
+    --bg: #F4F1E8; --card: #FFFFFF; --text: #0D1C39; --muted: #4A5575;
+    --brand: #FBBE0E; --brand-text: #0A0A0F; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #000000; --theirs: #FFFFFF;
     --line: #E0D9C6; --danger: #B42318;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #081630; --card: #112347; --text: #EAF0FA; --muted: #9FB0CE;
-      --brand: #FBBE0E; --brand-text: #14131A; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #14131A; --theirs: #172E5C;
+      --brand: #FBBE0E; --brand-text: #0A0A0F; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #000000; --theirs: #172E5C;
       --line: #223869; --danger: #F97066;
     }
   }
@@ -75,9 +75,26 @@
   .phrase { direction: ltr; font-family: monospace; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 18px; line-height: 1.7; word-spacing: 6px; user-select: all; }
   .bubble { color: var(--text); }
   .bubble.mine { color: var(--mine-text); }
-  .bubble.mine .time, .bubble.mine .del { color: #5b4300; }
+  .bubble.mine .time, .bubble.mine .del { color: #3d2c00; }
   [dir="ltr"] .bubble.mine { align-self: flex-end; }
   [dir="ltr"] .bubble.theirs { align-self: flex-start; }
+
+  /* ===== وضوح الخط ===== */
+  .bubble { font-size: 16.5px; line-height: 1.55; font-weight: 500; }
+  .bubble.mine { font-weight: 600; }
+  .bubble .time { font-size: 12px; font-weight: 500; }
+  .bubble.mine .time { opacity: 1; }
+  button.primary { font-weight: 700; }
+  .contact { font-weight: 500; }
+  /* ===== اسم التطبيق: موجة الحروف الصفراء ===== */
+  .brand { display: inline-block; direction: ltr; unicode-bidi: isolate; font-weight: 700; letter-spacing: .5px; }
+  .brand .ch { display: inline-block; color: #fff; animation: ibfwave 2.6s linear infinite; }
+  @keyframes ibfwave { 0%, 16%, 100% { color: #fff; } 4%, 10% { color: var(--brand); } }
+  /* ===== عبارة الهوية ===== */
+  .hpu { display: inline-block; direction: ltr; unicode-bidi: isolate; min-width: 8ch; text-align: center; white-space: nowrap; font-size: 12px; color: #cdd6ea;
+         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  header .me { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { .brand .ch { animation: none; } }
 </style>
 </head>
 <body>
@@ -101,7 +118,7 @@ const firebaseConfig = {
 const APP_NAME = "I Bee Free";
 /* ======================================================================== */
 
-const T = {"ar": ["تعذر إنشاء الكود", "حساب جديد", "عندي كود استرجاع", "متابعة", "كود الاسترجاع", "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك.", " حفظتُ الكود", "الكلمات الـ12 بالترتيب", "استرجاع", "الكود من 12 كلمة", "جارٍ الاسترجاع...", "الكود غير صحيح", "رجوع", "اسمك", "ابدأ", "اكتب اسماً من حرفين على الأقل", "جارٍ الإنشاء...", "حدث خطأ: ", "اختر اسماً يظهر لأصدقائك", "تطبيق تجريبي، وقد توجد فيه أخطاء.", "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.", "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.", "تستطيع حذف حسابك في أي وقت من صفحة «حول».", "فهمت", "سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟", "لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):", "كود الاسترجاع غير صحيح لهذا الحساب", "تعذر الحذف: ", "حذف حسابي", "حول التطبيق", " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)", "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك.", "؟", " يريد محادثتك", "قبول", "حظر", "الكود من 6 خانات", "لا يوجد أحد بهذا الكود", "هذا كودك أنت", "هذا الشخص محظور عندك", "تعذر إرسال الطلب إلى هذا الشخص", "نسخ", "تم", "انسخه يدوياً", "كود الصديق", "إضافة", "تعذرت الإضافة: ", "حول", "كودك:", "الصورة كبيرة جداً", "حفظ في الهاتف", "صورة", "تم حذف هذه الرسالة", "ملف", " ك.ب)", "تعذر تحميل الملف", "حذف الرسالة", "حذف الرسالة للطرفين؟", "إبلاغ", "إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.", "تم الإبلاغ.", "تعذر الإبلاغ: ", "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك.", "تعذر الإرسال: ", "اكتب رسالة...", "إرسال صورة", "إرسال", "الملف كبير: الحد الآن 600 كيلوبايت", "حظر ", "هذا الشخص", "تعذر تحميل الرسائل: ", "لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.", "تعذر الاتصال بالقاعدة: ", "→"], "en": ["Could not create the code", "New account", "I have a recovery code", "Continue", "Recovery code", "Write these 12 words on paper and keep them safe. If you lose your phone, they are the only way to recover your account, and we cannot recover them for you.", " I saved the code", "The 12 words in order", "Recover", "The code has 12 words", "Recovering...", "Incorrect code", "Back", "Your name", "Start", "Write a name of at least 2 letters", "Creating...", "Error: ", "Choose a name your friends will see", "Experimental app, it may contain errors.", "Messages are not fully encrypted, so do not send secret or banking information. Imagine you are talking in a café full of people.", "The app owner does not read messages and collects only your name and code. There are no ads and no profit.", "You can delete your account at any time from the About page.", "Got it", "Your account, code and friends list will be permanently deleted. Are you sure?", "To confirm deletion, enter your recovery code (12 words):", "This recovery code is not valid for this account", "Could not delete: ", "Delete my account", "About the app", " Data saver mode (images appear as thumbnails until you tap them)", "No conversations yet. Enter a friend's code above and add them, or give them your code.", "?", " wants to chat with you", "Accept", "Block", "The code has 6 characters", "Nobody has this code", "This is your own code", "You blocked this person", "Could not send the request to this person", "Copy", "Done", "Copy it manually", "Friend's code", "Add", "Could not add: ", "About", "Your code:", "The image is too large", "Save to phone", "Image", "This message was deleted", "File", " KB)", "Could not load the file", "Delete message", "Delete the message for both?", "Report", "Report this message? A copy will be sent to the app owner only.", "Reported.", "Could not report: ", "Cannot send: your friend has not accepted your request yet, or has blocked you.", "Could not send: ", "Write a message...", "Send an image", "Send", "File too large: the limit is 600 KB for now", "Block ", "this person", "Could not load messages: ", "Firebase settings are missing. Open index.html and paste them at the top.", "Could not connect to the database: ", "←"], "fr": ["Impossible de créer le code", "Nouveau compte", "J'ai un code de récupération", "Continuer", "Code de récupération", "Écrivez ces 12 mots sur papier et gardez-les précieusement. Si vous perdez votre téléphone, c'est le seul moyen de récupérer votre compte, et nous ne pouvons pas les récupérer pour vous.", " J'ai noté le code", "Les 12 mots dans l'ordre", "Récupérer", "Le code comporte 12 mots", "Récupération...", "Code incorrect", "Retour", "Votre nom", "Commencer", "Écrivez un nom d'au moins 2 lettres", "Création...", "Erreur : ", "Choisissez un nom visible par vos amis", "Application expérimentale, elle peut contenir des erreurs.", "Les messages ne sont pas entièrement chiffrés : n'envoyez pas d'informations secrètes ou bancaires. Imaginez que vous parlez dans un café plein de monde.", "Le propriétaire de l'application ne lit pas les messages et ne collecte que votre nom et votre code. Aucune publicité, aucun profit.", "Vous pouvez supprimer votre compte à tout moment depuis la page « À propos ».", "Compris", "Votre compte, votre code et votre liste d'amis seront supprimés définitivement. Êtes-vous sûr ?", "Pour confirmer la suppression, saisissez votre code de récupération (12 mots) :", "Ce code de récupération n'est pas valide pour ce compte", "Suppression impossible : ", "Supprimer mon compte", "À propos de l'application", " Mode économie de données (les images restent en miniature jusqu'au toucher)", "Aucune conversation pour l'instant. Saisissez le code d'un ami ci-dessus, ou donnez-lui votre code.", "?", " veut discuter avec vous", "Accepter", "Bloquer", "Le code comporte 6 caractères", "Personne n'a ce code", "C'est votre propre code", "Vous avez bloqué cette personne", "Impossible d'envoyer la demande à cette personne", "Copier", "Fait", "Copiez-le manuellement", "Code de l'ami", "Ajouter", "Ajout impossible : ", "À propos", "Votre code :", "L'image est trop grande", "Enregistrer sur le téléphone", "Image", "Ce message a été supprimé", "Fichier", " Ko)", "Impossible de charger le fichier", "Supprimer le message", "Supprimer le message pour les deux ?", "Signaler", "Signaler ce message ? Une copie sera envoyée uniquement au propriétaire de l'application.", "Signalé.", "Signalement impossible : ", "Envoi impossible : votre ami n'a pas encore accepté votre demande, ou vous a bloqué.", "Envoi impossible : ", "Écrivez un message...", "Envoyer une image", "Envoyer", "Fichier trop volumineux : la limite est de 600 Ko pour l'instant", "Bloquer ", "cette personne", "Impossible de charger les messages : ", "Les paramètres Firebase manquent. Ouvrez index.html et collez-les en haut.", "Connexion à la base impossible : ", "←"]};
+const T = {"ar": ["تعذر إنشاء الكود", "حساب جديد", "عندي كود استرجاع", "متابعة", "كود الاسترجاع", "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك.", " حفظتُ الكود", "الكلمات الـ12 بالترتيب", "استرجاع", "الكود من 12 كلمة", "جارٍ الاسترجاع...", "الكود غير صحيح", "رجوع", "اسمك", "ابدأ", "اكتب اسماً من حرفين على الأقل", "جارٍ الإنشاء...", "حدث خطأ: ", "اختر اسماً يظهر لأصدقائك", "تطبيق تجريبي، وقد توجد فيه أخطاء.", "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.", "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.", "تستطيع حذف حسابك في أي وقت من صفحة «حول».", "فهمت", "سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟", "لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):", "كود الاسترجاع غير صحيح لهذا الحساب", "تعذر الحذف: ", "حذف حسابي", "حول التطبيق", " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)", "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك.", "؟", " يريد محادثتك", "قبول", "حظر", "الكود من 6 خانات", "لا يوجد أحد بهذا الكود", "هذا كودك أنت", "هذا الشخص محظور عندك", "تعذر إرسال الطلب إلى هذا الشخص", "نسخ", "تم", "انسخه يدوياً", "كود الصديق", "إضافة", "تعذرت الإضافة: ", "حول", "كودك:", "الصورة كبيرة جداً", "حفظ في الهاتف", "صورة", "تم حذف هذه الرسالة", "ملف", " ك.ب)", "تعذر تحميل الملف", "حذف الرسالة", "حذف الرسالة للطرفين؟", "إبلاغ", "إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.", "تم الإبلاغ.", "تعذر الإبلاغ: ", "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك.", "تعذر الإرسال: ", "اكتب رسالة...", "إرسال صورة", "إرسال", "الملف كبير: الحد الآن 600 كيلوبايت", "حظر ", "هذا الشخص", "تعذر تحميل الرسائل: ", "لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.", "تعذر الاتصال بالقاعدة: ", "→", "إزالة", "إزالة هذا الصديق من قائمتك؟ تبقى الرسائل محفوظة، ويمكنك إعادة إضافته بكوده لاحقاً.", "تعذرت الإزالة: "], "en": ["Could not create the code", "New account", "I have a recovery code", "Continue", "Recovery code", "Write these 12 words on paper and keep them safe. If you lose your phone, they are the only way to recover your account, and we cannot recover them for you.", " I saved the code", "The 12 words in order", "Recover", "The code has 12 words", "Recovering...", "Incorrect code", "Back", "Your name", "Start", "Write a name of at least 2 letters", "Creating...", "Error: ", "Choose a name your friends will see", "Experimental app, it may contain errors.", "Messages are not fully encrypted, so do not send secret or banking information. Imagine you are talking in a café full of people.", "The app owner does not read messages and collects only your name and code. There are no ads and no profit.", "You can delete your account at any time from the About page.", "Got it", "Your account, code and friends list will be permanently deleted. Are you sure?", "To confirm deletion, enter your recovery code (12 words):", "This recovery code is not valid for this account", "Could not delete: ", "Delete my account", "About the app", " Data saver mode (images appear as thumbnails until you tap them)", "No conversations yet. Enter a friend's code above and add them, or give them your code.", "?", " wants to chat with you", "Accept", "Block", "The code has 6 characters", "Nobody has this code", "This is your own code", "You blocked this person", "Could not send the request to this person", "Copy", "Done", "Copy it manually", "Friend's code", "Add", "Could not add: ", "About", "Your code:", "The image is too large", "Save to phone", "Image", "This message was deleted", "File", " KB)", "Could not load the file", "Delete message", "Delete the message for both?", "Report", "Report this message? A copy will be sent to the app owner only.", "Reported.", "Could not report: ", "Cannot send: your friend has not accepted your request yet, or has blocked you.", "Could not send: ", "Write a message...", "Send an image", "Send", "File too large: the limit is 600 KB for now", "Block ", "this person", "Could not load messages: ", "Firebase settings are missing. Open index.html and paste them at the top.", "Could not connect to the database: ", "←", "Remove", "Remove this friend from your list? Messages are kept, and you can add them again with their code.", "Could not remove: "], "fr": ["Impossible de créer le code", "Nouveau compte", "J'ai un code de récupération", "Continuer", "Code de récupération", "Écrivez ces 12 mots sur papier et gardez-les précieusement. Si vous perdez votre téléphone, c'est le seul moyen de récupérer votre compte, et nous ne pouvons pas les récupérer pour vous.", " J'ai noté le code", "Les 12 mots dans l'ordre", "Récupérer", "Le code comporte 12 mots", "Récupération...", "Code incorrect", "Retour", "Votre nom", "Commencer", "Écrivez un nom d'au moins 2 lettres", "Création...", "Erreur : ", "Choisissez un nom visible par vos amis", "Application expérimentale, elle peut contenir des erreurs.", "Les messages ne sont pas entièrement chiffrés : n'envoyez pas d'informations secrètes ou bancaires. Imaginez que vous parlez dans un café plein de monde.", "Le propriétaire de l'application ne lit pas les messages et ne collecte que votre nom et votre code. Aucune publicité, aucun profit.", "Vous pouvez supprimer votre compte à tout moment depuis la page « À propos ».", "Compris", "Votre compte, votre code et votre liste d'amis seront supprimés définitivement. Êtes-vous sûr ?", "Pour confirmer la suppression, saisissez votre code de récupération (12 mots) :", "Ce code de récupération n'est pas valide pour ce compte", "Suppression impossible : ", "Supprimer mon compte", "À propos de l'application", " Mode économie de données (les images restent en miniature jusqu'au toucher)", "Aucune conversation pour l'instant. Saisissez le code d'un ami ci-dessus, ou donnez-lui votre code.", "?", " veut discuter avec vous", "Accepter", "Bloquer", "Le code comporte 6 caractères", "Personne n'a ce code", "C'est votre propre code", "Vous avez bloqué cette personne", "Impossible d'envoyer la demande à cette personne", "Copier", "Fait", "Copiez-le manuellement", "Code de l'ami", "Ajouter", "Ajout impossible : ", "À propos", "Votre code :", "L'image est trop grande", "Enregistrer sur le téléphone", "Image", "Ce message a été supprimé", "Fichier", " Ko)", "Impossible de charger le fichier", "Supprimer le message", "Supprimer le message pour les deux ?", "Signaler", "Signaler ce message ? Une copie sera envoyée uniquement au propriétaire de l'application.", "Signalé.", "Signalement impossible : ", "Envoi impossible : votre ami n'a pas encore accepté votre demande, ou vous a bloqué.", "Envoi impossible : ", "Écrivez un message...", "Envoyer une image", "Envoyer", "Fichier trop volumineux : la limite est de 600 Ko pour l'instant", "Bloquer ", "cette personne", "Impossible de charger les messages : ", "Les paramètres Firebase manquent. Ouvrez index.html et collez-les en haut.", "Connexion à la base impossible : ", "←", "Retirer", "Retirer cet ami de votre liste ? Les messages sont conservés, vous pourrez le rajouter avec son code.", "Retrait impossible : "]};
 const LANGS = ["ar", "en", "fr"];
 let LANG = "";
 try { LANG = localStorage.getItem("ibf_lang") || ""; } catch (_) {}
@@ -136,6 +153,49 @@ function h(tag, attrs = {}, ...kids) {
 function mount(node) { root.replaceChildren(node); }
 function explain(e) { return (e && (e.code || e.message)) || String(e); }
 function stopMsgs() { if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+
+/* ---------- اسم التطبيق: حروف تتلوّن بالتتابع ---------- */
+function brandNode() {
+  const wrap = h("span", { class: "brand", "aria-hidden": "true" });
+  let i = 0;
+  for (const chr of APP_NAME) {
+    if (chr === " ") { wrap.append(" "); continue; }
+    const s = h("span", { class: "ch" }, chr);
+    s.style.animationDelay = (i * 0.22).toFixed(2) + "s";
+    wrap.append(s);
+    i++;
+  }
+  return wrap;
+}
+
+/* ---------- عبارة الهوية: تبديل عشوائي ثم استقرار، وتتكرر ---------- */
+const GLYPHS = "!@#$%&*+=?<>/\\|~^§¤µ¶ΩΣ¥€£0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+function scrambleLoop(el, finalText) {
+  el.textContent = finalText;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const chars = Array.from(finalText);
+  const n = chars.length;
+  let frame = 0;
+  const rnd = () => GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+  function tick() {
+    if (!el.isConnected) return;                       // الشاشة تغيّرت: أوقف الحلقة
+    if (document.hidden) { setTimeout(tick, 1000); return; }
+    let out = "", done = true;
+    for (let i = 0; i < n; i++) {
+      if (frame >= 10 + i * 3) out += chars[i];
+      else { out += rnd(); done = false; }
+    }
+    el.textContent = out;
+    if (done) { frame = 0; setTimeout(tick, 2200); }   // يثبت على النص ثم يعيد الدورة
+    else { frame++; setTimeout(tick, 45); }
+  }
+  tick();
+}
+function hpuNode() {
+  const el = h("span", { class: "hpu", "aria-label": "byHPU" }, "©byHPU™");
+  requestAnimationFrame(() => scrambleLoop(el, "©byHPU™"));
+  return el;
+}
 
 function showFatal(text) {
   mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), h("p", { class: "msg" }, text)));
@@ -310,6 +370,15 @@ function showAbout() {
 }
 
 /* ---------- شاشة قائمة الأصدقاء ---------- */
+async function removeFriend(c) {
+  if (!confirm(t(75))) return;
+  try {
+    // أولاً سجلي في قائمته (مسموح لي بحذفه)، ثم سجله في قائمتي. الرسائل لا تُمَس.
+    await deleteDoc(doc(db, "users", c.id, "contacts", me.uid));
+    await deleteDoc(doc(db, "users", me.uid, "contacts", c.id));
+  } catch (e) { console.error(e); alert(t(76) + explain(e)); }
+}
+
 function renderContacts() {
   if (!listEl) return;
   if (!contacts.length) {
@@ -330,7 +399,9 @@ function renderContacts() {
           h("button", { class: "small accept", onclick: () => setStatus(c, "accepted") }, t(34)),
           h("button", { class: "small block", onclick: () => setStatus(c, "blocked") }, t(35))));
     }
-    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)));
+    const rm = h("button", { class: "small", "aria-label": t(74) }, t(74));
+    rm.addEventListener("click", (ev) => { ev.stopPropagation(); removeFriend(c); });
+    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)), h("div", { class: "acts" }, rm));
   }));
 }
 
@@ -386,7 +457,7 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", {}, APP_NAME), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), hpuNode(), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
