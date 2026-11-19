@@ -457,7 +457,7 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), hpuNode(), h("span", { class: "me" }, me.name), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
