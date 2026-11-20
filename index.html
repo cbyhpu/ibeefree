@@ -10,13 +10,13 @@
 <style>
   :root {
     --bg: #F4F1E8; --card: #FFFFFF; --text: #0D1C39; --muted: #4A5575;
-    --brand: #FBBE0E; --brand-text: #0A0A0F; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #000000; --theirs: #FFFFFF;
+    --brand: #FBBE0E; --brand-text: #000000; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #000000; --theirs: #FFFFFF;
     --line: #E0D9C6; --danger: #B42318;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #081630; --card: #112347; --text: #EAF0FA; --muted: #9FB0CE;
-      --brand: #FBBE0E; --brand-text: #0A0A0F; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #000000; --theirs: #172E5C;
+      --brand: #FBBE0E; --brand-text: #000000; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #000000; --theirs: #172E5C;
       --line: #223869; --danger: #F97066;
     }
   }
@@ -75,7 +75,7 @@
   .phrase { direction: ltr; font-family: monospace; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 18px; line-height: 1.7; word-spacing: 6px; user-select: all; }
   .bubble { color: var(--text); }
   .bubble.mine { color: var(--mine-text); }
-  .bubble.mine .time, .bubble.mine .del { color: #3d2c00; }
+  .bubble.mine .time { color: #000000; }
   [dir="ltr"] .bubble.mine { align-self: flex-end; }
   [dir="ltr"] .bubble.theirs { align-self: flex-start; }
 
@@ -124,7 +124,7 @@
   .bubble { font-size: var(--tb-fs, 16.5px); font-family: var(--tb-ff, inherit); }
   .composer input[type="text"] { font-size: var(--tb-fs, 16px); font-family: var(--tb-ff, inherit); }
   html[data-tb] .bubble.mine, html[data-tb] .composer input[type="text"] { background: var(--tb-bg); color: var(--tb-fg); }
-  html[data-tb] .bubble.mine .time, .bubble.sc .time { color: inherit; opacity: .8; }
+  html[data-tb] .bubble.mine .time, .bubble.sc .time { color: inherit; opacity: 1; }
   .sheetbg { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
   .sheet { width: 100%; max-width: 480px; max-height: 92dvh; overflow: auto; background: var(--card); color: var(--text); border-radius: 18px 18px 0 0;
     padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
@@ -142,17 +142,33 @@
   .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  /* ===== (4) وضوح أيقونة السلة والأزرار الصفراء ===== */
-  .bubble .del, .bubble.mine .del { background: #0D1C39; color: #FBBE0E; border: 1px solid #FBBE0E; border-radius: 10px; padding: 4px 10px;
-    min-width: 34px; min-height: 30px; font-size: 15px; line-height: 1.2; margin-block-start: 6px; margin-inline-end: 6px; }
+  /* ===== (4) أيقونتا السلة والتبليغ: نظيفتان ومنسجمتان مع الرسالة ===== */
+  .bubble .foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
+  .bubble .foot .time { margin-top: 0; margin-inline-start: auto; }
+  .bubble .del, .bubble.mine .del { background: none; border: 0; border-radius: 8px; padding: 3px 5px; min-width: 30px; min-height: 30px;
+    display: inline-flex; align-items: center; justify-content: center; color: inherit; opacity: .8; margin: 0; font-size: 0; }
+  .bubble .del:active { opacity: 1; background: rgba(0,0,0,.12); }
+  .bubble .del svg { width: 18px; height: 18px; display: block; }
   .bubble button.small, .contact.req .small { background: #0D1C39; color: #FBBE0E; border: 1px solid #FBBE0E; border-radius: 10px; }
   .bubble button.small { padding: 6px 12px; }
 
-  /* ===== (2) توقيع About ===== */
-  .sign { display: flex; flex-direction: column; gap: 14px; text-align: center; direction: ltr; }
-  .sign-h { font-weight: 700; color: var(--title); unicode-bidi: plaintext; }
-  .sign-1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+  /* ===== (3) أسود داكن وصريح: سماكة وحدّ خفيف للنص الأسود ===== */
+  .bubble.mine, .pvbox { -webkit-text-stroke: var(--tb-stk, .3px #000000); font-weight: var(--tb-fw, 600); }
+  html[data-tb] .composer input[type="text"] { font-weight: var(--tb-fw, 600); -webkit-text-stroke: var(--tb-stk, 0px transparent); }
+
+  /* ===== (2) الساعة: أكبر قليلاً ===== */
+  #focusbar { min-height: 40px; }
+  .fb-clock { min-height: 34px; }
+  .fb-clock svg { display: block; }
+
+  /* ===== عبارة الهوية: تبقى في أقصى الشريط بجانب الأزرار ===== */
+  header .hpu { flex: none; }
+
+  /* ===== (7) توقيع About: في الأسفل، بلا عناوين ===== */
+  .sign { display: flex; flex-direction: column; gap: 4px; text-align: center; direction: ltr; margin-top: auto; padding-top: 20px; }
+  .sign-1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; color: var(--text); }
   .sign-2 { font-size: 14px; color: var(--muted); }
+  .sign-3 { font-size: 14px; color: var(--muted); direction: rtl; }
 </style>
 </head>
 <body>
@@ -216,22 +232,27 @@ function stopMsgs() { rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMs
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
-  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", f_sys: "الخط الافتراضي", colors: "ألوان مربع النص", preview: "معاينة فورية",
-    ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "Digital / Analog", focus: "وضع التركيز (شاشة كاملة)",
-    c_by: "أسود على أصفر", c_yb: "أصفر على أسود", c_wb: "أبيض على أسود", c_bw: "أسود على أبيض", c_gg: "أخضر على رمادي داكن", others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
-  en: { set_title: "Settings", size: "Font size", font: "Font type", f_sys: "Default font", colors: "Text box colors", preview: "Live preview",
-    ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog", focus: "Focus mode (full screen)",
-    c_by: "Black on yellow", c_yb: "Yellow on black", c_wb: "White on black", c_bw: "Black on white", c_gg: "Green on dark gray", others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
-  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", f_sys: "Police par défaut", colors: "Couleurs de la zone de texte", preview: "Aperçu en direct",
-    ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Digital / Analog", focus: "Mode concentration (plein écran)",
-    c_by: "Noir sur jaune", c_yb: "Jaune sur noir", c_wb: "Blanc sur noir", c_bw: "Noir sur blanc", c_gg: "Vert sur gris foncé", others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
+  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", f_sys: "الخط الافتراضي", f_serif: "سيريف", f_mono: "مونو", f_rounded: "مدوّر", f_casual: "عفوي", lang: "اللغة", colors: "ألوان مربع النص", preview: "معاينة فورية",
+    ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "ساعة رقمية / ساعة بعقارب", focus: "وضع التركيز (شاشة كاملة)",
+    c_by: "أسود على أصفر", c_yb: "أصفر على أسود", c_wb: "أبيض على أسود", c_bw: "أسود على أبيض", c_gg: "أخضر على رمادي داكن", c_pv: "بنفسجي متوهج على داكن", others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
+  en: { set_title: "Settings", size: "Font size", font: "Font type", f_sys: "Default font", f_serif: "Serif", f_mono: "Mono", f_rounded: "Rounded", f_casual: "Casual", lang: "Language", colors: "Text box colors", preview: "Live preview",
+    ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog clock", focus: "Focus mode (full screen)",
+    c_by: "Black on yellow", c_yb: "Yellow on black", c_wb: "White on black", c_bw: "Black on white", c_gg: "Green on dark gray", c_pv: "Glowing violet on deep dark", others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
+  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", f_sys: "Police par défaut", f_serif: "Serif", f_mono: "Mono", f_rounded: "Arrondie", f_casual: "Décontractée", lang: "Langue", colors: "Couleurs de la zone de texte", preview: "Aperçu en direct",
+    ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Horloge numérique / analogique", focus: "Mode concentration (plein écran)",
+    c_by: "Noir sur jaune", c_yb: "Jaune sur noir", c_wb: "Blanc sur noir", c_bw: "Noir sur blanc", c_gg: "Vert sur gris foncé", c_pv: "Violet lumineux sur fond sombre", others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
 };
 const t2 = (k) => T2[LANG][k];
 const PV = {
-  ar: "كل خطوة صغيرة اليوم تصنع إنجازاً كبيراً غداً.",
-  en: "Every small step today builds a big achievement tomorrow.",
-  fr: "Chaque petit pas aujourd'hui construit une grande réussite demain."
+  ar: ["كل خطوة صغيرة اليوم تصنع إنجازاً كبيراً غداً.", "ومن لم يتعلم صعود الجبال عاش أبد الدهر بين الحفر"],
+  en: ["Every small step today builds a big achievement tomorrow.", "Whoever never learns to climb mountains lives forever among the pits."],
+  fr: ["Chaque petit pas aujourd'hui construit une grande réussite demain.", "Celui qui n'apprend pas à gravir les montagnes vit à jamais parmi les fosses."]
 };
+
+/* ---------- (4) أيقونتا السلة والتبليغ (SVG نظيف يتبع لون النص) ---------- */
+const SVG_HEAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const ICON_TRASH = SVG_HEAD + '<path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l.9 12.5h9.2L17.5 7"/><path d="M10 11v5.5M14 11v5.5"/></svg>';
+const ICON_FLAG = SVG_HEAD + '<path d="M6 21V4"/><path d="M6 4.5h11l-2.2 3.8L17 12H6"/></svg>';
 
 /* ---------- (3) إعدادات مربع النص: الحجم والنوع واللون ---------- */
 const SYS_FF = 'system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif';
@@ -240,12 +261,13 @@ const TB_COLORS = [
   { id: "yb", bg: "#000000", fg: "#FBBE0E" },
   { id: "wb", bg: "#000000", fg: "#FFFFFF" },
   { id: "bw", bg: "#FFFFFF", fg: "#000000" },
-  { id: "gg", bg: "#2B2F33", fg: "#6EE7A0" }
+  { id: "gg", bg: "#101214", fg: "#6EE7A0" },
+  { id: "pv", bg: "#12072A", fg: "#C3A0FF" }
 ];
 const TB_FONTS = [
   { id: "sys", name: "", css: "" },
   { id: "serif", name: "Serif", css: 'Georgia, "Noto Naskh Arabic", "Times New Roman", serif' },
-  { id: "mono", name: "Mono", css: 'ui-monospace, Menlo, Consolas, "Courier New", monospace' },
+  { id: "mono", name: "Mono", css: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", "Noto Sans Mono", "DejaVu Sans Mono", monospace' },
   { id: "rounded", name: "Rounded", css: 'ui-rounded, "Trebuchet MS", "Segoe UI", Tahoma, sans-serif' },
   { id: "casual", name: "Casual", css: '"Comic Sans MS", "Chalkboard SE", cursive' }
 ];
@@ -260,6 +282,8 @@ function setTB(el, s, explicit) {
   put("--tb-ff", f && f.css ? f.css : (explicit ? SYS_FF : ""));
   put("--tb-bg", c ? c.bg : (explicit ? "var(--mine)" : ""));
   put("--tb-fg", c ? c.fg : (explicit ? "var(--mine-text)" : ""));
+  put("--tb-stk", c ? (c.fg === "#000000" ? ".3px #000000" : "0px transparent") : (explicit ? ".3px #000000" : ""));
+  put("--tb-fw", s.ff === "mono" ? "700" : "");
 }
 function applyTB() {
   setTB(document.documentElement, TB, false);
@@ -284,13 +308,10 @@ function settingsBtn() {
 function openSettings() {
   if (document.getElementById("tbsheet")) return;
   const d = { fs: TB.fs || 0, ff: TB.ff || "sys", cs: TB.cs || "", th: TB.th === "sender" ? "sender" : "own" };
-  const pv = h("div", { class: "pvbox", "aria-live": "polite" },
-    h("div", { lang: "ar", dir: "rtl" }, PV.ar),
-    h("div", { lang: "en", dir: "ltr" }, PV.en),
-    h("div", { lang: "fr", dir: "ltr" }, PV.fr));
+  const pv = h("div", { class: "pvbox", "aria-live": "polite" }, ...PV[LANG].map((x) => h("div", {}, x)));
   const range = h("input", { type: "range", min: "16", max: "30", step: "1", value: String(d.fs || 17), "aria-label": t2("size") });
   const fontBtns = TB_FONTS.map((f) => {
-    const b = h("button", { class: "chip", type: "button" }, f.id === "sys" ? t2("f_sys") : f.name);
+    const b = h("button", { class: "chip", type: "button" }, t2("f_" + f.id));
     if (f.css) b.style.fontFamily = f.css;
     b.addEventListener("click", () => { d.ff = f.id; refresh(); });
     return b;
@@ -372,11 +393,14 @@ function initFocusBar() {
     const d = new Date();
     if (!analog) { clk.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()); return; }
     const s = d.getSeconds() * 6, m = d.getMinutes() * 6 + d.getSeconds() / 10, hr = (d.getHours() % 12) * 30 + d.getMinutes() / 2;
-    clk.innerHTML = '<svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">' +
-      '<circle r="11" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
-      '<line y2="-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" transform="rotate(' + hr + ')"/>' +
-      '<line y2="-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" transform="rotate(' + m + ')"/>' +
-      '<line y2="-9.5" stroke="#FBBE0E" stroke-width="1" stroke-linecap="round" transform="rotate(' + s + ')"/></svg>';
+    const hand = (len, w, col, rot) => '<line y2="' + (-len) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" transform="rotate(' + rot + ')"/>';
+    const HANDS = [[5.4, 2.4, "#FFFFFF", hr], [7.8, 1.9, "#FFFFFF", m], [8.6, 1.1, "#FBBE0E", s]];
+    clk.innerHTML = '<svg viewBox="-13 -13 26 26" width="32" height="32" aria-hidden="true">' +
+      '<circle r="11" fill="none" stroke="#000000" stroke-width="3.6"/>' +
+      '<circle r="10.6" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>' +
+      HANDS.map((x) => hand(x[0], x[1] + 2.2, "#000000", x[3])).join("") +
+      HANDS.map((x) => hand(x[0], x[1], x[2], x[3])).join("") +
+      '<circle r="2.1" fill="#000000"/><circle r="1.2" fill="#FBBE0E"/></svg>';
   }
   clk.addEventListener("click", () => {
     analog = !analog;
@@ -410,13 +434,10 @@ function initFocusBar() {
 
 /* ---------- (2) توقيع About بالأحرف الثلاث ---------- */
 function signBlock() {
-  const wrap = h("div", { class: "sign" });
-  for (const [lng, title] of [["en", "About"], ["fr", "À propos"], ["ar", "حول"]]) {
-    wrap.append(h("div", { class: "sign-b", lang: lng },
-      h("div", { class: "sign-h" }, title),
-      h("div", { class: "sign-1" }, "©byHPU™"),
-      h("div", { class: "sign-2" }, "created by HPU team")));
-  }
+  const wrap = h("div", { class: "sign", lang: "en", dir: "ltr" },
+    h("div", { class: "sign-1" }, "©byHPU™"),
+    h("div", { class: "sign-2" }, "created by HPU team"));
+  if (LANG === "ar") wrap.append(h("div", { class: "sign-3", lang: "ar", dir: "rtl" }, "تم إنشاؤه بواسطة فريق HPU"));
   return wrap;
 }
 
@@ -593,7 +614,7 @@ function showName() {
   if (ok) showNameForm(); else showWelcome();
 }
 function langPicker() {
-  const sel = h("select", { "aria-label": "Language", style: "padding:8px;border-radius:10px;background:var(--card);color:var(--text);border:1px solid var(--line)" });
+  const sel = h("select", { "aria-label": t2("lang"), style: "padding:8px;border-radius:10px;background:var(--card);color:var(--text);border:1px solid var(--line)" });
   for (const [c, n] of [["ar", "العربية"], ["en", "English"], ["fr", "Français"]]) { const o = h("option", { value: c }, n); if (c === LANG) o.selected = true; sel.append(o); }
   sel.addEventListener("change", () => { try { localStorage.setItem("ibf_lang", sel.value); } catch (_) {} location.reload(); });
   return sel;
@@ -635,8 +656,8 @@ function showAbout() {
   const back = h("button", { class: "back", "aria-label": t(12) }, t(73));
   back.addEventListener("click", showList);
   mount(h("div", { class: "screen" },
-    h("header", {}, back, h("h2", {}, t(29))),
-    h("div", { class: "center", style: "flex:1;overflow:auto" }, ...ABOUT.map((x) => h("p", {}, x)), signBlock(), langPicker(), h("label", {}, ds, t(30)), del)));
+    h("header", {}, back),
+    h("div", { class: "center", style: "flex:1;overflow:auto;justify-content:flex-start" }, ...ABOUT.map((x) => h("p", {}, x)), langPicker(), h("label", {}, ds, t(30)), del, signBlock())));
 }
 
 /* ---------- شاشة قائمة الأصدقاء ---------- */
@@ -804,7 +825,7 @@ function renderMsg(m, c) {
   const mine = m.from === me.uid;
   const bubble = h("div", { class: "bubble " + (mine ? "mine" : "theirs") });
   const sc = !mine && TB.th === "sender" ? TB_COLORS.find((x) => x.id === m.cs) : null;
-  if (sc) { bubble.classList.add("sc"); bubble.style.background = sc.bg; bubble.style.color = sc.fg; }
+  if (sc) { bubble.classList.add("sc"); bubble.style.background = sc.bg; bubble.style.color = sc.fg; bubble.style.setProperty("-webkit-text-stroke", sc.fg === "#000000" ? ".3px #000000" : "0px transparent"); }
   if (m.deleted) {
     bubble.append(h("div", { style: "font-style:italic;opacity:.7" }, t(52)));
     return bubble;
@@ -827,18 +848,21 @@ function renderMsg(m, c) {
     bubble.append(fb);
   }
   if (typeof m.text === "string" && m.text) bubble.append(h("div", {}, m.text));
+  const foot = h("div", { class: "foot" });
   if (mine && m.id) {
-    const del = h("button", { class: "del", "aria-label": t(56) }, "🗑");
+    const del = h("button", { class: "del", type: "button", "aria-label": t(56), title: t(56) });
+    del.innerHTML = ICON_TRASH;
     del.addEventListener("click", async () => {
       if (!confirm(t(57))) return;
       try { await updateDoc(doc(db, "chats", c.chatId, "messages", m.id), { deleted: true, text: deleteField(), image: deleteField(), thumb: deleteField(), fileName: deleteField() });
         await deleteDoc(doc(db, "chats", c.chatId, "media", m.id)).catch(() => {}); mediaCache.delete(m.id); }
       catch (e) { console.error(e); alert(t(27) + explain(e)); }
     });
-    bubble.append(del);
+    foot.append(del);
   }
   if (!mine && m.id) {
-    const rp = h("button", { class: "del", "aria-label": t(58) }, "⚑");
+    const rp = h("button", { class: "del", type: "button", "aria-label": t(58), title: t(58) });
+    rp.innerHTML = ICON_FLAG;
     rp.addEventListener("click", async () => {
       if (!confirm(t(59))) return;
       try {
@@ -846,10 +870,11 @@ function renderMsg(m, c) {
         alert(t(60));
       } catch (e) { alert(t(61) + explain(e)); }
     });
-    bubble.append(rp);
+    foot.append(rp);
   }
   const d = m.ts && m.ts.toDate ? m.ts.toDate() : new Date();
-  bubble.append(h("div", { class: "time" }, d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })));
+  foot.append(h("div", { class: "time" }, d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })));
+  bubble.append(foot);
   return bubble;
 }
 
