@@ -31,11 +31,11 @@
   .center { min-height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; max-width: 420px; margin: 0 auto; }
   .center h1 { margin: 0; color: var(--title); }
   .center p { margin: 0; color: var(--muted); }
-  input[type="text"] {
+  input[type="text"], textarea.msgbox {
     width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
     background: var(--card); color: var(--text); font-size: 16px; font-family: inherit;
   }
-  input[type="text"]:focus { outline: 2px solid var(--brand); border-color: transparent; }
+  input[type="text"]:focus, textarea.msgbox:focus { outline: 2px solid var(--brand); border-color: transparent; }
   button { font-family: inherit; font-size: 16px; cursor: pointer; border: 0; border-radius: 12px; }
   button.primary { background: var(--brand); color: var(--brand-text); padding: 12px 18px; }
   button.primary:disabled { opacity: .6; }
@@ -44,7 +44,6 @@
   .screen { height: 100dvh; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
   header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--hdr); color: #fff; }
   header h2 { margin: 0; font-size: 18px; flex: 1; }
-  header .me { font-size: 14px; opacity: .9; }
   header button.back { background: transparent; color: #fff; font-size: 22px; padding: 0 6px; }
   .codebox { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
   .codebox .code { letter-spacing: 3px; font-size: 18px; direction: ltr; }
@@ -63,7 +62,8 @@
   .bubble img { display: block; max-width: 100%; max-height: 320px; border-radius: 10px; margin-bottom: 4px; cursor: zoom-in; }
   .bubble .time { font-size: 11px; color: var(--muted); margin-top: 2px; text-align: end; direction: ltr; }
   .composer { display: flex; gap: 8px; align-items: center; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: var(--card); border-top: 1px solid var(--line); }
-  .composer input[type="text"] { flex: 1; }
+  .composer textarea.msgbox { flex: 1; min-width: 0; resize: none; overflow-y: auto; line-height: 1.45; max-height: 9em; white-space: pre-wrap; display: block; }
+  .composer { align-items: flex-end; }
   .composer button { padding: 10px 14px; }
   .composer button.attach { background: transparent; font-size: 22px; padding: 6px 8px; }
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: flex; align-items: center; justify-content: center; z-index: 10; }
@@ -93,7 +93,6 @@
   /* ===== عبارة الهوية ===== */
   .hpu { display: inline-block; direction: ltr; unicode-bidi: isolate; min-width: 8ch; text-align: center; white-space: nowrap; font-size: 14px; color: #cdd6ea;
          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-  header .me { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) { .brand .ch { animation: none; } }
 
   /* ===== (1) نبض ©byHPU™ بعد توقف الحروف العشوائية ===== */
@@ -108,7 +107,6 @@
   @media (prefers-reduced-motion: reduce) { .hpu.pulse { animation: none; } }
   header { gap: 8px; padding-left: 12px; padding-right: 12px; }
   header h2 { min-width: 0; font-size: 17px; white-space: nowrap; }
-  header .me { max-width: 56px; }
   button.hbtn { padding: 2px 9px; font-size: 16px; }
 
   /* ===== (5) شريط حالة التركيز + تخطيط الصفحة ===== */
@@ -126,8 +124,8 @@
 
   /* ===== (3) خط وألوان مربع النص ===== */
   .bubble { font-size: var(--tb-fs, 16.5px); font-family: var(--tb-ff, inherit); }
-  .composer input[type="text"] { font-size: var(--tb-fs, 16px); font-family: var(--tb-ff, inherit); }
-  html[data-tb] .bubble.mine, html[data-tb] .composer input[type="text"] { background: var(--tb-bg); color: var(--tb-fg); }
+  .composer textarea.msgbox { font-size: var(--tb-fs, 16px); font-family: var(--tb-ff, inherit); }
+  html[data-tb] .bubble.mine, html[data-tb] .composer textarea.msgbox { background: var(--tb-bg); color: var(--tb-fg); }
   html[data-tb] .bubble.mine .time, .bubble.sc .time { color: inherit; opacity: 1; }
   .sheetbg { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
   .sheet { width: 100%; max-width: 480px; max-height: 92dvh; overflow: auto; background: var(--card); color: var(--text); border-radius: 18px 18px 0 0;
@@ -145,6 +143,8 @@
   .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: #F5B800; outline: 3px solid #F5B800; }
   .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sect { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+  .sect h4 { margin: 0; font-size: 16px; color: var(--title); padding-bottom: 6px; border-bottom: 2px solid #F5B800; }
 
   /* ===== (4) أيقونتا السلة والتبليغ: نظيفتان ومنسجمتان مع الرسالة ===== */
   .bubble .foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
@@ -158,7 +158,7 @@
 
   /* ===== (3) أسود داكن وصريح: سماكة وحدّ خفيف للنص الأسود ===== */
   .bubble.mine, .pvbox { -webkit-text-stroke: var(--tb-stk, .3px #000000); font-weight: var(--tb-fw, 600); }
-  html[data-tb] .composer input[type="text"] { font-weight: var(--tb-fw, 600); -webkit-text-stroke: var(--tb-stk, 0px transparent); }
+  html[data-tb] .composer textarea.msgbox { font-weight: var(--tb-fw, 600); -webkit-text-stroke: var(--tb-stk, 0px transparent); }
 
   /* ===== (2) الساعة: أكبر قليلاً ===== */
   #focusbar { min-height: 58px; }
@@ -253,24 +253,24 @@ function stopMsgs() { rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMs
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
-  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", preview: "معاينة فورية", colors: "ألوان مربع النص", lang: "اللغة",
+  ar: { set_title: "الإعدادات", sec_text: "إعدادات النص", sec_chat: "المحادثة والشاشة", size: "حجم الخط", font: "نوع الخط", preview: "معاينة فورية", colors: "ألوان مربع النص", lang: "اللغة",
     ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "ساعة رقمية / ساعة بعقارب", focus: "وضع التركيز (شاشة كاملة)",
     f_sys: "نحلة افتراضية", f_serif: "نحلة سيريف", f_mono: "نحلة مونو", f_robot: "نحلة روبوتية", f_friendly: "نحلة ودودة",
-    c_by: "نحلة سوداء على أصفر", c_yb: "نحلة صفراء على قرص عسل أسود", c_wb: "نحلة بيضاء على قرص عسل أسود", c_bw: "نحلة سوداء على أبيض", c_gg: "نحلة خضراء على قرص عسل رمادي داكن", c_pv: "بنفسجي متوهج على داكن",
+    c_by: "نحلة سوداء على قرص عسل أصفر", c_yb: "نحلة صفراء على قرص عسل أسود", c_wb: "نحلة بيضاء على قرص عسل أسود", c_bw: "نحلة سوداء على قرص عسل أبيض", c_gg: "نحلة خضراء على قرص عسل رمادي داكن", c_pv: "نحلة بنفسجية متوهجة على قرص عسل داكن عميق",
     tuning: "ضبط اللون", tune_t: "درجة الخط", tune_b: "درجة الخلفية", fine_t: "ضبط دقيق للخط", fine_b: "ضبط دقيق للخلفية", darker: "أغمق", lighter: "أفتح", contrast: "التباين",
     vid_play: "تشغيل الفيديو",
     others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
-  en: { set_title: "Settings", size: "Font size", font: "Font type", preview: "Live preview", colors: "Text box colors", lang: "Language",
+  en: { set_title: "Settings", sec_text: "Text settings", sec_chat: "Chat & screen", size: "Font size", font: "Font type", preview: "Live preview", colors: "Text box colors", lang: "Language",
     ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog clock", focus: "Focus mode (full screen)",
     f_sys: "Default bee", f_serif: "Serif bee", f_mono: "Mono bee", f_robot: "Robotic bee", f_friendly: "Friendly bee",
-    c_by: "Black bee on yellow", c_yb: "Yellow bee on black honeycomb", c_wb: "White bee on black honeycomb", c_bw: "Black bee on white", c_gg: "Green bee on dark gray honeycomb", c_pv: "Glowing violet on deep dark",
+    c_by: "Black bee on yellow honeycomb", c_yb: "Yellow bee on black honeycomb", c_wb: "White bee on black honeycomb", c_bw: "Black bee on white honeycomb", c_gg: "Green bee on dark gray honeycomb", c_pv: "Glowing violet bee on deep dark honeycomb",
     tuning: "Color tuning", tune_t: "Text tone", tune_b: "Background tone", fine_t: "Fine tuning: text", fine_b: "Fine tuning: background", darker: "Darker", lighter: "Lighter", contrast: "Contrast",
     vid_play: "Play video",
     others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
-  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", preview: "Aperçu en direct", colors: "Couleurs de la zone de texte", lang: "Langue",
+  fr: { set_title: "Paramètres", sec_text: "Paramètres du texte", sec_chat: "Discussion et écran", size: "Taille du texte", font: "Type de police", preview: "Aperçu en direct", colors: "Couleurs de la zone de texte", lang: "Langue",
     ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Horloge numérique / analogique", focus: "Mode concentration (plein écran)",
     f_sys: "Abeille par défaut", f_serif: "Abeille Serif", f_mono: "Abeille Mono", f_robot: "Abeille robotique", f_friendly: "Abeille amicale",
-    c_by: "Abeille noire sur jaune", c_yb: "Abeille jaune sur rayon de miel noir", c_wb: "Abeille blanche sur rayon de miel noir", c_bw: "Abeille noire sur blanc", c_gg: "Abeille verte sur rayon de miel gris foncé", c_pv: "Violet lumineux sur fond sombre",
+    c_by: "Abeille noire sur rayon de miel jaune", c_yb: "Abeille jaune sur rayon de miel noir", c_wb: "Abeille blanche sur rayon de miel noir", c_bw: "Abeille noire sur rayon de miel blanc", c_gg: "Abeille verte sur rayon de miel gris foncé", c_pv: "Abeille violette lumineuse sur rayon de miel très sombre",
     tuning: "Réglage des couleurs", tune_t: "Ton du texte", tune_b: "Ton du fond", fine_t: "Réglage fin : texte", fine_b: "Réglage fin : fond", darker: "Plus foncé", lighter: "Plus clair", contrast: "Contraste",
     vid_play: "Lire la vidéo",
     others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
@@ -344,24 +344,23 @@ function hslHex(hh, ss, ll) {
 }
 function tuneFg(hx, v, fv) {
   const [hh, ss, ll] = hexHsl(hx);
-  return hslHex(hh, ss, clamp(ll + (v - 5) * 3 + (fv - 5) * 0.6, 0, 100));
+  return hslHex(hh, ss, clamp(ll + (v - 5) * 6 + (fv - 5) * 2.5, 0, 100));
 }
 function tuneBg(hx, v, fv) {
   const [hh, ss, ll] = hexHsl(hx);
   if (ll < 20) {                       // خلفية داكنة: من الأسود (0) إلى الرمادي (10)
-    const GRAY = 24;
+    const GRAY = 32;
     const L = v <= 5 ? ll * (v / 5) : ll + (v - 5) * (GRAY - ll) / 5;
     const S = v > 5 ? ss * (1 - (v - 5) / 5 * 0.6) : ss;
-    return hslHex(hh, S, clamp(L + (fv - 5) * 0.5, 0, 100));
+    return hslHex(hh, S, clamp(L + (fv - 5) * 1.8, 0, 100));
   }
-  return hslHex(hh, ss, clamp(ll + (v - 5) * (ll >= 90 ? 4 : 2.4), 0, 100));
+  return hslHex(hh, ss, clamp(ll + (v - 5) * 6 + (fv - 5) * 2.5, 0, 100));
 }
 function colorsOf(s) {
   const c = TB_COLORS.find((x) => x.id === s.cs);
   if (!c) return null;
-  const fine = c.id === "gg" || c.id === "pv";
   const n = (x) => (typeof x === "number" ? x : 5);
-  return { id: c.id, bg: tuneBg(c.bg, n(s.tg), fine ? n(s.fb) : 5), fg: tuneFg(c.fg, n(s.tt), fine ? n(s.ft) : 5) };
+  return { id: c.id, bg: tuneBg(c.bg, n(s.tg), n(s.fb)), fg: tuneFg(c.fg, n(s.tt), n(s.ft)) };
 }
 function lumOf(hx) {
   const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
@@ -452,8 +451,6 @@ function openSettings() {
     colBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(TB_COLORS[i].id === d.cs)));
     const col = colorsOf(d);
     tuneBox.style.display = col ? "" : "none";
-    const fine = d.cs === "gg" || d.cs === "pv";
-    for (const k of Object.keys(tunes)) tunes[k].row.style.display = tunes[k].fine && !fine ? "none" : "";
     if (col) {
       const ratio = contrastOf(col.bg, col.fg);
       cr.textContent = t2("contrast") + ": " + ratio.toFixed(1) + " : 1";
@@ -487,18 +484,22 @@ function openSettings() {
 
   bg.append(h("div", { class: "sheet", role: "dialog", "aria-modal": "true" },
     h("h3", {}, t2("set_title")),
-    pv,
-    h("div", { class: "lbl" }, t2("size")),
-    h("div", { class: "rg" }, h("span", { style: "font-size:14px" }, "A"), range, h("span", { style: "font-size:26px" }, "A")),
-    h("div", { class: "lbl" }, t2("font")),
-    h("div", { class: "chips" }, ...fontBtns),
-    h("div", { class: "lbl" }, t2("colors")),
-    h("div", { class: "sws" }, ...colBtns),
-    tuneBox,
-    h("div", { class: "lbl" }, t2("others")),
-    h("div", { class: "chips" }, ...thBtns),
-    h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
-    h("label", { class: "fsw" }, fo, t2("focus")),
+    h("section", { class: "sect" },
+      h("h4", {}, t2("sec_text")),
+      pv,
+      h("div", { class: "lbl" }, t2("size")),
+      h("div", { class: "rg" }, h("span", { style: "font-size:14px" }, "A"), range, h("span", { style: "font-size:26px" }, "A")),
+      h("div", { class: "lbl" }, t2("font")),
+      h("div", { class: "chips" }, ...fontBtns),
+      h("div", { class: "lbl" }, t2("colors")),
+      h("div", { class: "sws" }, ...colBtns),
+      tuneBox),
+    h("section", { class: "sect" },
+      h("h4", {}, t2("sec_chat")),
+      h("div", { class: "lbl" }, t2("others")),
+      h("div", { class: "chips" }, ...thBtns),
+      h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
+      h("label", { class: "fsw" }, fo, t2("focus"))),
     h("div", { class: "row" }, okBtn, cancelBtn, resetBtn)));
   document.body.append(bg);
   refresh();
@@ -880,7 +881,7 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), settingsBtn(), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), settingsBtn(), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
@@ -1080,21 +1081,27 @@ function openChat(c, push = true) {
   try { sessionStorage.setItem("ibf_chat", c.id); } catch (_) {}
 
   const box = h("div", { class: "msgs" });
-  const input = h("input", { type: "text", placeholder: t(64), autocomplete: "off" });
+  const input = h("textarea", { class: "msgbox", rows: "1", dir: "auto", placeholder: t(64), autocomplete: "off", enterkeyhint: "enter" });
   const fileInput = h("input", { type: "file", style: "display:none" });
   const attach = h("button", { class: "attach", "aria-label": t(65) }, "📎");
   const sendBtn = h("button", { class: "primary" }, t(66));
   input.addEventListener("focus", () => { setTimeout(() => { box.scrollTop = box.scrollHeight; input.scrollIntoView({ block: "nearest" }); }, 250); });
 
+  // الحقل يكبر تلقائياً حسب عدد الأسطر (حتى حدّ أقصى ثم يظهر تمرير داخلي)
+  const grow = () => { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight + 2, Math.round(window.innerHeight * 0.3)) + "px"; };
+  input.addEventListener("input", grow);
   const send = async () => {
-    const t = input.value.trim();
-    if (!t) return;
-    input.value = "";
+    const t = input.value.replace(/\s+$/, "").replace(/^\s*\n/, "");
+    if (!t.trim()) return;
+    input.value = ""; grow();
     try { await sendMessage(c, { text: t }); }
-    catch (e) { console.error(e); input.value = t; sendErr(e); }
+    catch (e) { console.error(e); input.value = t; grow(); sendErr(e); }
   };
   sendBtn.addEventListener("click", send);
-  input.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); send(); } });
+  // إبقاء لوحة المفاتيح مفتوحة عند الضغط على زر الإرسال
+  sendBtn.addEventListener("mousedown", (ev) => ev.preventDefault());
+  // زر Enter يُنزل سطراً دائماً. الإرسال بزر الإرسال فقط (أو Ctrl+Enter على الحاسوب)
+  input.addEventListener("keydown", (ev) => { if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); send(); } });
   attach.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", async () => {
     const f = fileInput.files && fileInput.files[0];
