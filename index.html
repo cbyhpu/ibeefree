@@ -91,13 +91,72 @@
   .brand .ch { display: inline-block; color: #fff; animation: ibfwave 2.6s linear infinite; }
   @keyframes ibfwave { 0%, 16%, 100% { color: #fff; } 4%, 10% { color: var(--brand); } }
   /* ===== عبارة الهوية ===== */
-  .hpu { display: inline-block; direction: ltr; unicode-bidi: isolate; min-width: 8ch; text-align: center; white-space: nowrap; font-size: 12px; color: #cdd6ea;
+  .hpu { display: inline-block; direction: ltr; unicode-bidi: isolate; min-width: 8ch; text-align: center; white-space: nowrap; font-size: 14px; color: #cdd6ea;
          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   header .me { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) { .brand .ch { animation: none; } }
+
+  /* ===== (1) نبض ©byHPU™ بعد توقف الحروف العشوائية ===== */
+  .hpu.pulse { animation: hpupulse .6s ease-in-out 3; }
+  @keyframes hpupulse {
+    0%, 100% { color: #cdd6ea; transform: scale(1); text-shadow: none; }
+    50% { color: var(--brand); transform: scale(1.18); text-shadow: 0 0 10px var(--brand); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hpu.pulse { animation: none; } }
+  header { gap: 8px; padding-left: 12px; padding-right: 12px; }
+  header h2 { min-width: 0; font-size: 17px; white-space: nowrap; }
+  header .me { max-width: 56px; }
+  button.hbtn { padding: 2px 9px; font-size: 16px; }
+
+  /* ===== (5) شريط حالة التركيز + تخطيط الصفحة ===== */
+  body { display: flex; flex-direction: column; height: 100dvh; }
+  #root { flex: 1; min-height: 0; height: auto; display: flex; flex-direction: column; }
+  #root > .center { flex: 1; width: 100%; }
+  .screen { flex: 1; min-height: 0; height: auto; padding-top: 0; }
+  #focusbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; direction: ltr;
+    min-height: 30px; padding: calc(4px + env(safe-area-inset-top, 0px)) 14px 4px; background: #06101F; color: #cdd6ea; font-size: 13px; }
+  .fb-clock { background: none; color: inherit; padding: 0 4px; min-height: 24px; display: flex; align-items: center; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; border-radius: 8px; }
+  .fb-bat, .fb-net { unicode-bidi: isolate; white-space: nowrap; }
+  .fb-net.on { color: #6EE7A0; }
+  .fb-net.off { color: #F97066; }
+
+  /* ===== (3) خط وألوان مربع النص ===== */
+  .bubble { font-size: var(--tb-fs, 16.5px); font-family: var(--tb-ff, inherit); }
+  .composer input[type="text"] { font-size: var(--tb-fs, 16px); font-family: var(--tb-ff, inherit); }
+  html[data-tb] .bubble.mine, html[data-tb] .composer input[type="text"] { background: var(--tb-bg); color: var(--tb-fg); }
+  html[data-tb] .bubble.mine .time, .bubble.sc .time { color: inherit; opacity: .8; }
+  .sheetbg { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+  .sheet { width: 100%; max-width: 480px; max-height: 92dvh; overflow: auto; background: var(--card); color: var(--text); border-radius: 18px 18px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 12px; }
+  .sheet h3 { margin: 0; color: var(--title); }
+  .sheet .lbl { font-weight: 700; font-size: 14px; color: var(--muted); }
+  .pvbox { position: sticky; top: 0; z-index: 1; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+    line-height: 1.55; font-weight: 600; background: var(--tb-bg); color: var(--tb-fg); font-size: var(--tb-fs); font-family: var(--tb-ff); }
+  .rg { display: flex; align-items: center; gap: 10px; direction: ltr; }
+  .rg input { flex: 1; }
+  .chips, .sws { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 12px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font-size: 15px; }
+  .sw { padding: 8px 12px; border: 2px solid var(--line); font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .sw .sw-a { font-size: 18px; font-weight: 700; }
+  .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: var(--brand); outline: 3px solid var(--brand); }
+  .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+  .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ===== (4) وضوح أيقونة السلة والأزرار الصفراء ===== */
+  .bubble .del, .bubble.mine .del { background: #0D1C39; color: #FBBE0E; border: 1px solid #FBBE0E; border-radius: 10px; padding: 4px 10px;
+    min-width: 34px; min-height: 30px; font-size: 15px; line-height: 1.2; margin-block-start: 6px; margin-inline-end: 6px; }
+  .bubble button.small, .contact.req .small { background: #0D1C39; color: #FBBE0E; border: 1px solid #FBBE0E; border-radius: 10px; }
+  .bubble button.small { padding: 6px 12px; }
+
+  /* ===== (2) توقيع About ===== */
+  .sign { display: flex; flex-direction: column; gap: 14px; text-align: center; direction: ltr; }
+  .sign-h { font-weight: 700; color: var(--title); unicode-bidi: plaintext; }
+  .sign-1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+  .sign-2 { font-size: 14px; color: var(--muted); }
 </style>
 </head>
 <body>
+<div id="focusbar" dir="ltr"></div>
 <div id="root"></div>
 
 <script type="module">
@@ -152,7 +211,214 @@ function h(tag, attrs = {}, ...kids) {
 }
 function mount(node) { root.replaceChildren(node); }
 function explain(e) { return (e && (e.code || e.message)) || String(e); }
-function stopMsgs() { if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+let rerenderChat = null;
+function stopMsgs() { rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+
+/* ---------- نصوص إضافية (T2) ---------- */
+const T2 = {
+  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", f_sys: "الخط الافتراضي", colors: "ألوان مربع النص", preview: "معاينة فورية",
+    ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "Digital / Analog", focus: "وضع التركيز (شاشة كاملة)",
+    c_by: "أسود على أصفر", c_yb: "أصفر على أسود", c_wb: "أبيض على أسود", c_bw: "أسود على أبيض", c_gg: "أخضر على رمادي داكن", others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
+  en: { set_title: "Settings", size: "Font size", font: "Font type", f_sys: "Default font", colors: "Text box colors", preview: "Live preview",
+    ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog", focus: "Focus mode (full screen)",
+    c_by: "Black on yellow", c_yb: "Yellow on black", c_wb: "White on black", c_bw: "Black on white", c_gg: "Green on dark gray", others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
+  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", f_sys: "Police par défaut", colors: "Couleurs de la zone de texte", preview: "Aperçu en direct",
+    ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Digital / Analog", focus: "Mode concentration (plein écran)",
+    c_by: "Noir sur jaune", c_yb: "Jaune sur noir", c_wb: "Blanc sur noir", c_bw: "Noir sur blanc", c_gg: "Vert sur gris foncé", others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
+};
+const t2 = (k) => T2[LANG][k];
+const PV = {
+  ar: "كل خطوة صغيرة اليوم تصنع إنجازاً كبيراً غداً.",
+  en: "Every small step today builds a big achievement tomorrow.",
+  fr: "Chaque petit pas aujourd'hui construit une grande réussite demain."
+};
+
+/* ---------- (3) إعدادات مربع النص: الحجم والنوع واللون ---------- */
+const SYS_FF = 'system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif';
+const TB_COLORS = [
+  { id: "by", bg: "#FBBE0E", fg: "#000000" },
+  { id: "yb", bg: "#000000", fg: "#FBBE0E" },
+  { id: "wb", bg: "#000000", fg: "#FFFFFF" },
+  { id: "bw", bg: "#FFFFFF", fg: "#000000" },
+  { id: "gg", bg: "#2B2F33", fg: "#6EE7A0" }
+];
+const TB_FONTS = [
+  { id: "sys", name: "", css: "" },
+  { id: "serif", name: "Serif", css: 'Georgia, "Noto Naskh Arabic", "Times New Roman", serif' },
+  { id: "mono", name: "Mono", css: 'ui-monospace, Menlo, Consolas, "Courier New", monospace' },
+  { id: "rounded", name: "Rounded", css: 'ui-rounded, "Trebuchet MS", "Segoe UI", Tahoma, sans-serif' },
+  { id: "casual", name: "Casual", css: '"Comic Sans MS", "Chalkboard SE", cursive' }
+];
+let TB = { fs: 0, ff: "sys", cs: "", th: "own" };
+try { Object.assign(TB, JSON.parse(localStorage.getItem("ibf_tb") || "{}")); } catch (_) {}
+function setTB(el, s, explicit) {
+  const st = el.style;
+  const f = TB_FONTS.find((x) => x.id === s.ff);
+  const c = TB_COLORS.find((x) => x.id === s.cs);
+  const put = (k, v) => { if (v) st.setProperty(k, v); else st.removeProperty(k); };
+  put("--tb-fs", s.fs ? s.fs + "px" : (explicit ? "16.5px" : ""));
+  put("--tb-ff", f && f.css ? f.css : (explicit ? SYS_FF : ""));
+  put("--tb-bg", c ? c.bg : (explicit ? "var(--mine)" : ""));
+  put("--tb-fg", c ? c.fg : (explicit ? "var(--mine-text)" : ""));
+}
+function applyTB() {
+  setTB(document.documentElement, TB, false);
+  document.documentElement.toggleAttribute("data-tb", !!TB_COLORS.find((x) => x.id === TB.cs));
+}
+applyTB();
+
+function focusOn() { try { return localStorage.getItem("ibf_focus") !== "0"; } catch (_) { return true; } }
+function enterFocus() {
+  if (!focusOn() || document.fullscreenElement) return;
+  const el = document.documentElement;
+  if (el.requestFullscreen) { try { el.requestFullscreen({ navigationUI: "hide" }).catch(() => {}); } catch (_) {} }
+}
+function exitFocus() {
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+}
+
+function settingsBtn() {
+  return h("button", { class: "small hbtn", "aria-label": t2("set_title"), style: "color:#fff;border-color:#fff", onclick: openSettings }, "⚙");
+}
+
+function openSettings() {
+  if (document.getElementById("tbsheet")) return;
+  const d = { fs: TB.fs || 0, ff: TB.ff || "sys", cs: TB.cs || "", th: TB.th === "sender" ? "sender" : "own" };
+  const pv = h("div", { class: "pvbox", "aria-live": "polite" },
+    h("div", { lang: "ar", dir: "rtl" }, PV.ar),
+    h("div", { lang: "en", dir: "ltr" }, PV.en),
+    h("div", { lang: "fr", dir: "ltr" }, PV.fr));
+  const range = h("input", { type: "range", min: "16", max: "30", step: "1", value: String(d.fs || 17), "aria-label": t2("size") });
+  const fontBtns = TB_FONTS.map((f) => {
+    const b = h("button", { class: "chip", type: "button" }, f.id === "sys" ? t2("f_sys") : f.name);
+    if (f.css) b.style.fontFamily = f.css;
+    b.addEventListener("click", () => { d.ff = f.id; refresh(); });
+    return b;
+  });
+  const colBtns = TB_COLORS.map((c) => {
+    const b = h("button", { class: "sw", type: "button" }, h("span", { class: "sw-a" }, "Aa"), h("span", {}, t2("c_" + c.id)));
+    b.style.background = c.bg; b.style.color = c.fg;
+    b.addEventListener("click", () => { d.cs = c.id; refresh(); });
+    return b;
+  });
+  const thBtns = [["own", "th_own"], ["sender", "th_sender"]].map(([v, k]) => {
+    const b = h("button", { class: "chip", type: "button" }, t2(k));
+    b.addEventListener("click", () => { d.th = v; refresh(); });
+    b.dataset.v = v;
+    return b;
+  });
+  function refresh() {
+    setTB(pv, d, true);
+    thBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === d.th)));
+    fontBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(TB_FONTS[i].id === d.ff)));
+    colBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(TB_COLORS[i].id === d.cs)));
+  }
+  range.addEventListener("input", () => { d.fs = +range.value; refresh(); });
+
+  const fo = h("input", { type: "checkbox", id: "focussw" });
+  fo.checked = focusOn();
+  fo.addEventListener("change", () => {
+    try { localStorage.setItem("ibf_focus", fo.checked ? "1" : "0"); } catch (_) {}
+    if (fo.checked) enterFocus(); else exitFocus();
+  });
+
+  const bg = h("div", { class: "sheetbg", id: "tbsheet" });
+  const close = () => bg.remove();
+  const okBtn = h("button", { class: "primary", type: "button" }, t2("ok"));
+  okBtn.addEventListener("click", () => {
+    TB = { fs: d.fs, ff: d.ff, cs: d.cs, th: d.th };
+    try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {}
+    applyTB();
+    if (rerenderChat) rerenderChat();
+    close();
+  });
+  const cancelBtn = h("button", { class: "small", type: "button", style: "color:var(--text);border-color:var(--muted)" }, t2("cancel"));
+  cancelBtn.addEventListener("click", close);
+  const resetBtn = h("button", { class: "small", type: "button", style: "color:var(--text);border-color:var(--muted)" }, t2("reset"));
+  resetBtn.addEventListener("click", () => { d.fs = 0; d.ff = "sys"; d.cs = ""; d.th = "own"; range.value = "17"; refresh(); });
+  bg.addEventListener("click", (ev) => { if (ev.target === bg) close(); });
+
+  bg.append(h("div", { class: "sheet", role: "dialog", "aria-modal": "true" },
+    h("h3", {}, t2("set_title")),
+    pv,
+    h("div", { class: "lbl" }, t2("size")),
+    h("div", { class: "rg" }, h("span", { style: "font-size:14px" }, "A"), range, h("span", { style: "font-size:26px" }, "A")),
+    h("div", { class: "lbl" }, t2("font")),
+    h("div", { class: "chips" }, ...fontBtns),
+    h("div", { class: "lbl" }, t2("colors")),
+    h("div", { class: "sws" }, ...colBtns),
+    h("div", { class: "lbl" }, t2("others")),
+    h("div", { class: "chips" }, ...thBtns),
+    h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
+    h("label", { class: "fsw" }, fo, t2("focus")),
+    h("div", { class: "row" }, okBtn, cancelBtn, resetBtn)));
+  document.body.append(bg);
+  refresh();
+}
+
+/* ---------- (5) شريط حالة التركيز: الساعة + البطارية + الاتصال ---------- */
+function initFocusBar() {
+  const bar = document.getElementById("focusbar");
+  if (!bar) return;
+  const clk = h("button", { class: "fb-clock", "aria-label": t2("clock_toggle") });
+  const bat = h("span", { class: "fb-bat" }, "🔋 --");
+  const net = h("span", { class: "fb-net" });
+  bar.replaceChildren(clk, bat, net);
+
+  let analog = false;
+  try { analog = localStorage.getItem("ibf_clock") === "a"; } catch (_) {}
+  const pad = (n) => String(n).padStart(2, "0");
+  function drawClock() {
+    const d = new Date();
+    if (!analog) { clk.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()); return; }
+    const s = d.getSeconds() * 6, m = d.getMinutes() * 6 + d.getSeconds() / 10, hr = (d.getHours() % 12) * 30 + d.getMinutes() / 2;
+    clk.innerHTML = '<svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">' +
+      '<circle r="11" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+      '<line y2="-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" transform="rotate(' + hr + ')"/>' +
+      '<line y2="-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" transform="rotate(' + m + ')"/>' +
+      '<line y2="-9.5" stroke="#FBBE0E" stroke-width="1" stroke-linecap="round" transform="rotate(' + s + ')"/></svg>';
+  }
+  clk.addEventListener("click", () => {
+    analog = !analog;
+    try { localStorage.setItem("ibf_clock", analog ? "a" : "d"); } catch (_) {}
+    drawClock();
+  });
+  drawClock();
+  setInterval(() => { if (!document.hidden) drawClock(); }, 1000);
+
+  if (navigator.getBattery) {
+    navigator.getBattery().then((b) => {
+      const u = () => { bat.textContent = (b.charging ? "⚡" : "🔋") + " " + Math.round(b.level * 100) + "%"; };
+      u();
+      b.addEventListener("levelchange", u);
+      b.addEventListener("chargingchange", u);
+    }).catch(() => {});
+  }
+
+  const un = () => {
+    const on = navigator.onLine;
+    net.textContent = "● " + (on ? t2("online") : t2("offline"));
+    net.className = "fb-net " + (on ? "on" : "off");
+  };
+  window.addEventListener("online", un);
+  window.addEventListener("offline", un);
+  un();
+
+  // وضع التركيز: شاشة كاملة تخفي شريط النظام، تُطلب مرة واحدة عند أول لمسة
+  document.addEventListener("click", enterFocus, { once: true });
+}
+
+/* ---------- (2) توقيع About بالأحرف الثلاث ---------- */
+function signBlock() {
+  const wrap = h("div", { class: "sign" });
+  for (const [lng, title] of [["en", "About"], ["fr", "À propos"], ["ar", "حول"]]) {
+    wrap.append(h("div", { class: "sign-b", lang: lng },
+      h("div", { class: "sign-h" }, title),
+      h("div", { class: "sign-1" }, "©byHPU™"),
+      h("div", { class: "sign-2" }, "created by HPU team")));
+  }
+  return wrap;
+}
 
 /* ---------- اسم التطبيق: حروف تتلوّن بالتتابع ---------- */
 function brandNode() {
@@ -180,13 +446,17 @@ function scrambleLoop(el, finalText) {
   function tick() {
     if (!el.isConnected) return;                       // الشاشة تغيّرت: أوقف الحلقة
     if (document.hidden) { setTimeout(tick, 1000); return; }
+    if (frame === 0) el.classList.remove("pulse");
     let out = "", done = true;
     for (let i = 0; i < n; i++) {
       if (frame >= 10 + i * 3) out += chars[i];
       else { out += rnd(); done = false; }
     }
     el.textContent = out;
-    if (done) { frame = 0; setTimeout(tick, 2200); }   // يثبت على النص ثم يعيد الدورة
+    if (done) {                                        // استقر النص: نبض أصفر 3 مرات ثم تعود الدورة
+      el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
+      frame = 0; setTimeout(tick, 2600);
+    }
     else { frame++; setTimeout(tick, 45); }
   }
   tick();
@@ -252,7 +522,7 @@ function showStart() {
   nb.addEventListener("click", showNewAccount);
   const rb = h("button", { class: "small" }, t(2));
   rb.addEventListener("click", showRestore);
-  mount(h("div", { class: "center" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(78%,320px);align-self:center;border-radius:22px" }), nb, rb));
+  mount(h("div", { class: "center" }, h("h1", { style: "text-align:center" }, APP_NAME), nb, rb));
 }
 function showNewAccount() {
   pendingPhrase = makePhrase();
@@ -334,7 +604,7 @@ function showWelcome() {
     try { localStorage.setItem("ibf_ok", "1"); } catch (_) {}
     showStart();
   });
-  mount(h("div", { class: "center" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(78%,320px);align-self:center;border-radius:22px" }), ...ABOUT.slice(0, 3).map((x) => h("p", {}, x)), langPicker(), btn));
+  mount(h("div", { class: "center" }, h("h1", { style: "text-align:center" }, APP_NAME), ...ABOUT.slice(0, 3).map((x) => h("p", {}, x)), langPicker(), btn));
 }
 async function deleteAccount() {
   if (!confirm(t(24))) return;
@@ -366,7 +636,7 @@ function showAbout() {
   back.addEventListener("click", showList);
   mount(h("div", { class: "screen" },
     h("header", {}, back, h("h2", {}, t(29))),
-    h("div", { class: "center", style: "flex:1;overflow:auto" }, h("img", { src: "logo.png", alt: "I Bee Free by HPU", style: "width:min(60%,240px);align-self:center;border-radius:18px" }), ...ABOUT.map((x) => h("p", {}, x)), langPicker(), h("label", {}, ds, t(30)), del)));
+    h("div", { class: "center", style: "flex:1;overflow:auto" }, ...ABOUT.map((x) => h("p", {}, x)), signBlock(), langPicker(), h("label", {}, ds, t(30)), del)));
 }
 
 /* ---------- شاشة قائمة الأصدقاء ---------- */
@@ -457,7 +727,7 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), hpuNode(), settingsBtn(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
@@ -533,6 +803,8 @@ function openImage(src) {
 function renderMsg(m, c) {
   const mine = m.from === me.uid;
   const bubble = h("div", { class: "bubble " + (mine ? "mine" : "theirs") });
+  const sc = !mine && TB.th === "sender" ? TB_COLORS.find((x) => x.id === m.cs) : null;
+  if (sc) { bubble.classList.add("sc"); bubble.style.background = sc.bg; bubble.style.color = sc.fg; }
   if (m.deleted) {
     bubble.append(h("div", { style: "font-style:italic;opacity:.7" }, t(52)));
     return bubble;
@@ -587,9 +859,19 @@ function sendErr(e) {
     : t(63) + explain(e));
 }
 
+let noCs = false;
+async function addMsgDoc(c, payload) {
+  const col = collection(db, "chats", c.chatId, "messages");
+  const base = { from: me.uid, ...payload, ts: serverTimestamp() };
+  if (TB.cs && !noCs) {
+    try { return await addDoc(col, { ...base, cs: TB.cs }); }
+    catch (e) { if (!(e && e.code === "permission-denied")) throw e; noCs = true; }
+    try { return await addDoc(col, base); } catch (e) { noCs = false; throw e; }
+  }
+  return addDoc(col, base);
+}
 async function sendMessage(c, payload, media) {
-  const ref = await addDoc(collection(db, "chats", c.chatId, "messages"),
-    { from: me.uid, ...payload, ts: serverTimestamp() });
+  const ref = await addMsgDoc(c, payload);
   if (media) await setDoc(doc(db, "chats", c.chatId, "media", ref.id), { from: me.uid, data: media });
   await Promise.allSettled([
     setDoc(doc(db, "users", me.uid, "contacts", c.id), { lastTs: serverTimestamp() }, { merge: true }),
@@ -638,7 +920,7 @@ function openChat(c, push = true) {
   back.addEventListener("click", () => history.back());
 
   mount(h("div", { class: "screen" },
-    h("header", {}, back, h("h2", {}, c.name || t(32)),
+    h("header", {}, back, h("h2", {}, c.name || t(32)), settingsBtn(),
       h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: async () => {
         if (!confirm(t(68) + (c.name || t(69)) + t(32))) return;
         try { await updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status: "blocked" }); history.back(); }
@@ -651,7 +933,9 @@ function openChat(c, push = true) {
   unsubMsgs = onSnapshot(q,
     (snap) => {
       const items = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) })).reverse();
-      box.replaceChildren(...items.map((m) => renderMsg(m, c)));
+      const draw = () => box.replaceChildren(...items.map((m) => renderMsg(m, c)));
+      draw();
+      rerenderChat = () => { const st = box.scrollTop; draw(); box.scrollTop = st; };
       box.scrollTop = box.scrollHeight;
     },
     (err) => {
@@ -664,6 +948,7 @@ window.addEventListener("popstate", () => { if (me) showList(); });
 
 /* ---------- البداية ---------- */
 function start() {
+  initFocusBar();
   if (Object.values(firebaseConfig).some((v) => String(v).startsWith("PASTE"))) {
     showFatal(t(71));
     return;
