@@ -27,3 +27,29 @@ self.addEventListener("fetch", (e) => {
       .catch(() => caches.match(r))
   );
 });
+
+/* ===== جاهزية الدفع في الخلفية (صامت تماماً: لا صوت ولا نغمة) =====
+   يعمل عندما يرسل الخادم لاحقاً رسالة Push بصيغة JSON: { title, body, tag, chatId }
+   للخصوصية: يُفضَّل ألا يحمل الخادم نص الرسالة، فيظهر العنوان فقط. */
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) {}
+  e.waitUntil(self.registration.showNotification(d.title || "I Bee Free", {
+    body: d.body || "",
+    tag: d.tag || "ibf",
+    icon: "icon-192.png",
+    badge: "icon-192.png",
+    silent: true,
+    data: { chatId: d.chatId || null }
+  }));
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ("focus" in c) return c.focus(); }
+      return self.clients.openWindow("./");
+    })
+  );
+});
