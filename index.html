@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#0D1C39">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -97,10 +97,13 @@
   @media (prefers-reduced-motion: reduce) { .brand .ch { animation: none; } }
 
   /* ===== (1) نبض ©byHPU™ بعد توقف الحروف العشوائية ===== */
-  .hpu.pulse { animation: hpupulse .6s ease-in-out 3; }
-  @keyframes hpupulse {
-    0%, 100% { color: #cdd6ea; transform: scale(1); text-shadow: none; }
-    50% { color: var(--brand); transform: scale(1.18); text-shadow: 0 0 10px var(--brand); }
+  .hpu.pulse { animation: hpubeat 1.2s ease-in-out 3; }
+  @keyframes hpubeat {
+    0%   { color: #cdd6ea; transform: scale(1); }
+    10%  { color: var(--brand); transform: scale(1.16); }
+    20%  { color: #cdd6ea; transform: scale(1.02); }
+    30%  { color: var(--brand); transform: scale(1.10); }
+    42%, 100% { color: #cdd6ea; transform: scale(1); }
   }
   @media (prefers-reduced-motion: reduce) { .hpu.pulse { animation: none; } }
   header { gap: 8px; padding-left: 12px; padding-right: 12px; }
@@ -109,7 +112,8 @@
   button.hbtn { padding: 2px 9px; font-size: 16px; }
 
   /* ===== (5) شريط حالة التركيز + تخطيط الصفحة ===== */
-  body { display: flex; flex-direction: column; height: 100dvh; }
+  body { display: flex; flex-direction: column; height: var(--vvh, 100dvh); }
+  html.kb #focusbar { display: none; }
   #root { flex: 1; min-height: 0; height: auto; display: flex; flex-direction: column; }
   #root > .center { flex: 1; width: 100%; }
   .screen { flex: 1; min-height: 0; height: auto; padding-top: 0; }
@@ -138,7 +142,7 @@
   .chip { padding: 8px 12px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font-size: 15px; }
   .sw { padding: 8px 12px; border: 2px solid var(--line); font-size: 14px; display: flex; align-items: center; gap: 8px; }
   .sw .sw-a { font-size: 18px; font-weight: 700; }
-  .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: var(--brand); outline: 3px solid var(--brand); }
+  .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: #F5B800; outline: 3px solid #F5B800; }
   .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -157,9 +161,23 @@
   html[data-tb] .composer input[type="text"] { font-weight: var(--tb-fw, 600); -webkit-text-stroke: var(--tb-stk, 0px transparent); }
 
   /* ===== (2) الساعة: أكبر قليلاً ===== */
-  #focusbar { min-height: 40px; }
-  .fb-clock { min-height: 34px; }
-  .fb-clock svg { display: block; }
+  #focusbar { min-height: 58px; }
+  .fb-clock { --clk: 50px; min-height: 50px; }
+  .fb-clock svg { display: block; width: var(--clk); height: var(--clk); filter: drop-shadow(0 0 calc(var(--clk) * .1) rgba(255, 26, 26, .6)); }
+  .fb-clock .dh, .fb-clock .dc, .fb-clock .dm { font-size: 24px; line-height: 1; font-weight: 800; -webkit-text-stroke: .6px #FF1A1A; paint-order: stroke fill; text-shadow: 0 0 2.4px rgba(255, 26, 26, .6); }
+  .fb-clock .dh { color: #FBBE0E; }
+  .fb-clock .dc, .fb-clock .dm { color: #FFFFFF; }
+
+  /* ===== الفيديو داخل الفقاعة ===== */
+  .vwrap { margin-bottom: 4px; }
+  .vid { display: block; width: 100%; max-width: 270px; min-height: 120px; max-height: 320px; border-radius: 10px; background: #000; }
+  .vplay { display: block; }
+
+  /* ===== شريط الضبط ===== */
+  .tune { display: flex; flex-direction: column; gap: 4px; }
+  .tl { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .tnum { min-width: 34px; text-align: center; background: #F5B800; color: #000; border-radius: 999px; padding: 2px 8px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .cr { font-size: 13px; font-weight: 700; }
 
   /* ===== عبارة الهوية: تبقى في أقصى الشريط بجانب الأزرار ===== */
   header .hpu { flex: none; }
@@ -209,6 +227,9 @@ let unsubContacts = null;
 let unsubMsgs = null;
 let auth = null;
 let db = null;
+// المحادثة المفتوحة قبل التحديث (Refresh): نقرؤها مرة واحدة عند التحميل
+let RESUME = null;
+try { RESUME = sessionStorage.getItem("ibf_chat"); } catch (_) {}
 
 /* ---------- أدوات صغيرة ---------- */
 function h(tag, attrs = {}, ...kids) {
@@ -232,15 +253,27 @@ function stopMsgs() { rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMs
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
-  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", f_sys: "الخط الافتراضي", f_serif: "سيريف", f_mono: "مونو", f_rounded: "مدوّر", f_casual: "عفوي", lang: "اللغة", colors: "ألوان مربع النص", preview: "معاينة فورية",
+  ar: { set_title: "الإعدادات", size: "حجم الخط", font: "نوع الخط", preview: "معاينة فورية", colors: "ألوان مربع النص", lang: "اللغة",
     ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "ساعة رقمية / ساعة بعقارب", focus: "وضع التركيز (شاشة كاملة)",
-    c_by: "أسود على أصفر", c_yb: "أصفر على أسود", c_wb: "أبيض على أسود", c_bw: "أسود على أبيض", c_gg: "أخضر على رمادي داكن", c_pv: "بنفسجي متوهج على داكن", others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
-  en: { set_title: "Settings", size: "Font size", font: "Font type", f_sys: "Default font", f_serif: "Serif", f_mono: "Mono", f_rounded: "Rounded", f_casual: "Casual", lang: "Language", colors: "Text box colors", preview: "Live preview",
+    f_sys: "نحلة افتراضية", f_serif: "نحلة سيريف", f_mono: "نحلة مونو", f_robot: "نحلة روبوتية", f_friendly: "نحلة ودودة",
+    c_by: "نحلة سوداء على أصفر", c_yb: "نحلة صفراء على قرص عسل أسود", c_wb: "نحلة بيضاء على قرص عسل أسود", c_bw: "نحلة سوداء على أبيض", c_gg: "نحلة خضراء على قرص عسل رمادي داكن", c_pv: "بنفسجي متوهج على داكن",
+    tuning: "ضبط اللون", tune_t: "درجة الخط", tune_b: "درجة الخلفية", fine_t: "ضبط دقيق للخط", fine_b: "ضبط دقيق للخلفية", darker: "أغمق", lighter: "أفتح", contrast: "التباين",
+    vid_play: "تشغيل الفيديو",
+    others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
+  en: { set_title: "Settings", size: "Font size", font: "Font type", preview: "Live preview", colors: "Text box colors", lang: "Language",
     ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog clock", focus: "Focus mode (full screen)",
-    c_by: "Black on yellow", c_yb: "Yellow on black", c_wb: "White on black", c_bw: "Black on white", c_gg: "Green on dark gray", c_pv: "Glowing violet on deep dark", others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
-  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", f_sys: "Police par défaut", f_serif: "Serif", f_mono: "Mono", f_rounded: "Arrondie", f_casual: "Décontractée", lang: "Langue", colors: "Couleurs de la zone de texte", preview: "Aperçu en direct",
+    f_sys: "Default bee", f_serif: "Serif bee", f_mono: "Mono bee", f_robot: "Robotic bee", f_friendly: "Friendly bee",
+    c_by: "Black bee on yellow", c_yb: "Yellow bee on black honeycomb", c_wb: "White bee on black honeycomb", c_bw: "Black bee on white", c_gg: "Green bee on dark gray honeycomb", c_pv: "Glowing violet on deep dark",
+    tuning: "Color tuning", tune_t: "Text tone", tune_b: "Background tone", fine_t: "Fine tuning: text", fine_b: "Fine tuning: background", darker: "Darker", lighter: "Lighter", contrast: "Contrast",
+    vid_play: "Play video",
+    others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
+  fr: { set_title: "Paramètres", size: "Taille du texte", font: "Type de police", preview: "Aperçu en direct", colors: "Couleurs de la zone de texte", lang: "Langue",
     ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Horloge numérique / analogique", focus: "Mode concentration (plein écran)",
-    c_by: "Noir sur jaune", c_yb: "Jaune sur noir", c_wb: "Blanc sur noir", c_bw: "Noir sur blanc", c_gg: "Vert sur gris foncé", c_pv: "Violet lumineux sur fond sombre", others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
+    f_sys: "Abeille par défaut", f_serif: "Abeille Serif", f_mono: "Abeille Mono", f_robot: "Abeille robotique", f_friendly: "Abeille amicale",
+    c_by: "Abeille noire sur jaune", c_yb: "Abeille jaune sur rayon de miel noir", c_wb: "Abeille blanche sur rayon de miel noir", c_bw: "Abeille noire sur blanc", c_gg: "Abeille verte sur rayon de miel gris foncé", c_pv: "Violet lumineux sur fond sombre",
+    tuning: "Réglage des couleurs", tune_t: "Ton du texte", tune_b: "Ton du fond", fine_t: "Réglage fin : texte", fine_b: "Réglage fin : fond", darker: "Plus foncé", lighter: "Plus clair", contrast: "Contraste",
+    vid_play: "Lire la vidéo",
+    others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
 };
 const t2 = (k) => T2[LANG][k];
 const PV = {
@@ -262,30 +295,95 @@ const TB_COLORS = [
   { id: "wb", bg: "#000000", fg: "#FFFFFF" },
   { id: "bw", bg: "#FFFFFF", fg: "#000000" },
   { id: "gg", bg: "#101214", fg: "#6EE7A0" },
-  { id: "pv", bg: "#12072A", fg: "#C3A0FF" }
+  { id: "pv", bg: "#140624", fg: "#C06BFF" }
 ];
 const TB_FONTS = [
   { id: "sys", name: "", css: "" },
   { id: "serif", name: "Serif", css: 'Georgia, "Noto Naskh Arabic", "Times New Roman", serif' },
   { id: "mono", name: "Mono", css: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", "Noto Sans Mono", "DejaVu Sans Mono", monospace' },
-  { id: "rounded", name: "Rounded", css: 'ui-rounded, "Trebuchet MS", "Segoe UI", Tahoma, sans-serif' },
-  { id: "casual", name: "Casual", css: '"Comic Sans MS", "Chalkboard SE", cursive' }
+  { id: "robot", name: "Robotic", css: '"Orbitron", "Noto Kufi Arabic", "Share Tech Mono", "Roboto Mono", "DejaVu Sans Mono", monospace' },
+  { id: "friendly", name: "Friendly", css: '"Baloo Bhaijaan 2", "Trebuchet MS", "Segoe UI", Tahoma, sans-serif' }
 ];
-let TB = { fs: 0, ff: "sys", cs: "", th: "own" };
+// الخطان الروبوتي والودود يُحمَّلان من Google Fonts عند اختيارهما فقط
+const FONT_CSS = {
+  robot: "family=Orbitron:wght@500;700&family=Noto+Kufi+Arabic:wght@500;700",
+  friendly: "family=Baloo+Bhaijaan+2:wght@500;700"
+};
+function ensureFont(id) {
+  if (!FONT_CSS[id] || document.getElementById("gf-" + id)) return;
+  const l = document.createElement("link");
+  l.id = "gf-" + id; l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css2?" + FONT_CSS[id] + "&display=swap";
+  document.head.append(l);
+}
+let TB = { fs: 0, ff: "sys", cs: "", th: "own", tt: 5, tg: 5, ft: 5, fb: 5 };
 try { Object.assign(TB, JSON.parse(localStorage.getItem("ibf_tb") || "{}")); } catch (_) {}
+if (TB.ff === "rounded") TB.ff = "robot";
+if (TB.ff === "casual") TB.ff = "friendly";
+for (const k of ["tt", "tg", "ft", "fb"]) if (typeof TB[k] !== "number") TB[k] = 5;
+/* ---------- حساب اللون: ضبط عام (0..10، والوسط 5 = اللون الأصلي) + ضبط دقيق ---------- */
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+function hexRgb(hx) { const h2 = hx.replace("#", ""); return [0, 2, 4].map((i) => parseInt(h2.slice(i, i + 2), 16)); }
+function rgbHex(r, g, b) { return "#" + [r, g, b].map((v) => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join(""); }
+function hexHsl(hx) {
+  const [r, g, b] = hexRgb(hx).map((v) => v / 255);
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, dd = mx - mn;
+  let hh = 0, ss = 0;
+  if (dd) {
+    ss = l > 0.5 ? dd / (2 - mx - mn) : dd / (mx + mn);
+    if (mx === r) hh = (g - b) / dd + (g < b ? 6 : 0); else if (mx === g) hh = (b - r) / dd + 2; else hh = (r - g) / dd + 4;
+    hh *= 60;
+  }
+  return [hh, ss * 100, l * 100];
+}
+function hslHex(hh, ss, ll) {
+  ss /= 100; ll /= 100;
+  const k = (n) => (n + hh / 30) % 12, a = ss * Math.min(ll, 1 - ll);
+  const f = (n) => ll - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return rgbHex(f(0) * 255, f(8) * 255, f(4) * 255);
+}
+function tuneFg(hx, v, fv) {
+  const [hh, ss, ll] = hexHsl(hx);
+  return hslHex(hh, ss, clamp(ll + (v - 5) * 3 + (fv - 5) * 0.6, 0, 100));
+}
+function tuneBg(hx, v, fv) {
+  const [hh, ss, ll] = hexHsl(hx);
+  if (ll < 20) {                       // خلفية داكنة: من الأسود (0) إلى الرمادي (10)
+    const GRAY = 24;
+    const L = v <= 5 ? ll * (v / 5) : ll + (v - 5) * (GRAY - ll) / 5;
+    const S = v > 5 ? ss * (1 - (v - 5) / 5 * 0.6) : ss;
+    return hslHex(hh, S, clamp(L + (fv - 5) * 0.5, 0, 100));
+  }
+  return hslHex(hh, ss, clamp(ll + (v - 5) * (ll >= 90 ? 4 : 2.4), 0, 100));
+}
+function colorsOf(s) {
+  const c = TB_COLORS.find((x) => x.id === s.cs);
+  if (!c) return null;
+  const fine = c.id === "gg" || c.id === "pv";
+  const n = (x) => (typeof x === "number" ? x : 5);
+  return { id: c.id, bg: tuneBg(c.bg, n(s.tg), fine ? n(s.fb) : 5), fg: tuneFg(c.fg, n(s.tt), fine ? n(s.ft) : 5) };
+}
+function lumOf(hx) {
+  const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const [r, g, b] = hexRgb(hx);
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+function contrastOf(a, b) { const x = lumOf(a), y = lumOf(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+
 function setTB(el, s, explicit) {
   const st = el.style;
   const f = TB_FONTS.find((x) => x.id === s.ff);
-  const c = TB_COLORS.find((x) => x.id === s.cs);
+  const c = colorsOf(s);
   const put = (k, v) => { if (v) st.setProperty(k, v); else st.removeProperty(k); };
   put("--tb-fs", s.fs ? s.fs + "px" : (explicit ? "16.5px" : ""));
   put("--tb-ff", f && f.css ? f.css : (explicit ? SYS_FF : ""));
   put("--tb-bg", c ? c.bg : (explicit ? "var(--mine)" : ""));
   put("--tb-fg", c ? c.fg : (explicit ? "var(--mine-text)" : ""));
-  put("--tb-stk", c ? (c.fg === "#000000" ? ".3px #000000" : "0px transparent") : (explicit ? ".3px #000000" : ""));
+  put("--tb-stk", c ? (hexHsl(c.fg)[2] < 18 ? ".3px " + c.fg : "0px transparent") : (explicit ? ".3px #000000" : ""));
   put("--tb-fw", s.ff === "mono" ? "700" : "");
 }
 function applyTB() {
+  ensureFont(TB.ff);
   setTB(document.documentElement, TB, false);
   document.documentElement.toggleAttribute("data-tb", !!TB_COLORS.find((x) => x.id === TB.cs));
 }
@@ -307,19 +405,38 @@ function settingsBtn() {
 
 function openSettings() {
   if (document.getElementById("tbsheet")) return;
-  const d = { fs: TB.fs || 0, ff: TB.ff || "sys", cs: TB.cs || "", th: TB.th === "sender" ? "sender" : "own" };
+  const d = { fs: TB.fs || 0, ff: TB.ff || "sys", cs: TB.cs || "", th: TB.th === "sender" ? "sender" : "own", tt: TB.tt, tg: TB.tg, ft: TB.ft, fb: TB.fb };
   const pv = h("div", { class: "pvbox", "aria-live": "polite" }, ...PV[LANG].map((x) => h("div", {}, x)));
   const range = h("input", { type: "range", min: "16", max: "30", step: "1", value: String(d.fs || 17), "aria-label": t2("size") });
   const fontBtns = TB_FONTS.map((f) => {
     const b = h("button", { class: "chip", type: "button" }, t2("f_" + f.id));
     if (f.css) b.style.fontFamily = f.css;
-    b.addEventListener("click", () => { d.ff = f.id; refresh(); });
+    b.addEventListener("click", () => { d.ff = f.id; ensureFont(f.id); refresh(); });
     return b;
   });
+
+  // شرائط الضبط: 0..10 والرقم الظاهر يوضح القيمة (5 = اللون الأصلي)
+  const tunes = {};
+  const mkTune = (key, labelKey, fine) => {
+    const num = h("b", { class: "tnum" }, String(d[key]));
+    const r = h("input", { type: "range", min: "0", max: "10", step: "1", value: String(d[key]), "aria-label": t2(labelKey) });
+    r.addEventListener("input", () => { d[key] = +r.value; num.textContent = r.value; refresh(); });
+    const row = h("div", { class: "tune" }, h("div", { class: "lbl" }, t2(labelKey)),
+      h("div", { class: "rg" }, h("span", { class: "tl" }, t2("darker")), r, h("span", { class: "tl" }, t2("lighter")), num));
+    tunes[key] = { r, num, row, fine };
+    return row;
+  };
+  const syncTunes = () => { for (const k of Object.keys(tunes)) { tunes[k].r.value = String(d[k]); tunes[k].num.textContent = String(d[k]); } };
+  const cr = h("div", { class: "cr" });
+  const tuneBox = h("div", { class: "tune" },
+    h("div", { class: "lbl" }, t2("tuning")),
+    mkTune("tt", "tune_t", false), mkTune("tg", "tune_b", false),
+    mkTune("ft", "fine_t", true), mkTune("fb", "fine_b", true), cr);
+
   const colBtns = TB_COLORS.map((c) => {
     const b = h("button", { class: "sw", type: "button" }, h("span", { class: "sw-a" }, "Aa"), h("span", {}, t2("c_" + c.id)));
     b.style.background = c.bg; b.style.color = c.fg;
-    b.addEventListener("click", () => { d.cs = c.id; refresh(); });
+    b.addEventListener("click", () => { d.cs = c.id; d.tt = d.tg = d.ft = d.fb = 5; syncTunes(); refresh(); });
     return b;
   });
   const thBtns = [["own", "th_own"], ["sender", "th_sender"]].map(([v, k]) => {
@@ -333,6 +450,15 @@ function openSettings() {
     thBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === d.th)));
     fontBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(TB_FONTS[i].id === d.ff)));
     colBtns.forEach((b, i) => b.setAttribute("aria-pressed", String(TB_COLORS[i].id === d.cs)));
+    const col = colorsOf(d);
+    tuneBox.style.display = col ? "" : "none";
+    const fine = d.cs === "gg" || d.cs === "pv";
+    for (const k of Object.keys(tunes)) tunes[k].row.style.display = tunes[k].fine && !fine ? "none" : "";
+    if (col) {
+      const ratio = contrastOf(col.bg, col.fg);
+      cr.textContent = t2("contrast") + ": " + ratio.toFixed(1) + " : 1";
+      cr.style.color = ratio >= 4.5 ? "#1a9a50" : "#c0392b";
+    }
   }
   range.addEventListener("input", () => { d.fs = +range.value; refresh(); });
 
@@ -347,7 +473,7 @@ function openSettings() {
   const close = () => bg.remove();
   const okBtn = h("button", { class: "primary", type: "button" }, t2("ok"));
   okBtn.addEventListener("click", () => {
-    TB = { fs: d.fs, ff: d.ff, cs: d.cs, th: d.th };
+    TB = { fs: d.fs, ff: d.ff, cs: d.cs, th: d.th, tt: d.tt, tg: d.tg, ft: d.ft, fb: d.fb };
     try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {}
     applyTB();
     if (rerenderChat) rerenderChat();
@@ -356,7 +482,7 @@ function openSettings() {
   const cancelBtn = h("button", { class: "small", type: "button", style: "color:var(--text);border-color:var(--muted)" }, t2("cancel"));
   cancelBtn.addEventListener("click", close);
   const resetBtn = h("button", { class: "small", type: "button", style: "color:var(--text);border-color:var(--muted)" }, t2("reset"));
-  resetBtn.addEventListener("click", () => { d.fs = 0; d.ff = "sys"; d.cs = ""; d.th = "own"; range.value = "17"; refresh(); });
+  resetBtn.addEventListener("click", () => { d.fs = 0; d.ff = "sys"; d.cs = ""; d.th = "own"; d.tt = d.tg = d.ft = d.fb = 5; range.value = "17"; syncTunes(); refresh(); });
   bg.addEventListener("click", (ev) => { if (ev.target === bg) close(); });
 
   bg.append(h("div", { class: "sheet", role: "dialog", "aria-modal": "true" },
@@ -368,6 +494,7 @@ function openSettings() {
     h("div", { class: "chips" }, ...fontBtns),
     h("div", { class: "lbl" }, t2("colors")),
     h("div", { class: "sws" }, ...colBtns),
+    tuneBox,
     h("div", { class: "lbl" }, t2("others")),
     h("div", { class: "chips" }, ...thBtns),
     h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
@@ -391,16 +518,20 @@ function initFocusBar() {
   const pad = (n) => String(n).padStart(2, "0");
   function drawClock() {
     const d = new Date();
-    if (!analog) { clk.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()); return; }
+    if (!analog) {
+      clk.innerHTML = '<span class="dh">' + pad(d.getHours()) + '</span><span class="dc">:</span><span class="dm">' + pad(d.getMinutes()) + '</span>';
+      return;
+    }
     const s = d.getSeconds() * 6, m = d.getMinutes() * 6 + d.getSeconds() / 10, hr = (d.getHours() % 12) * 30 + d.getMinutes() / 2;
+    const RED = "#FF1A1A";
     const hand = (len, w, col, rot) => '<line y2="' + (-len) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" transform="rotate(' + rot + ')"/>';
     const HANDS = [[5.4, 2.4, "#FFFFFF", hr], [7.8, 1.9, "#FFFFFF", m], [8.6, 1.1, "#FBBE0E", s]];
-    clk.innerHTML = '<svg viewBox="-13 -13 26 26" width="32" height="32" aria-hidden="true">' +
-      '<circle r="11" fill="none" stroke="#000000" stroke-width="3.6"/>' +
-      '<circle r="10.6" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>' +
-      HANDS.map((x) => hand(x[0], x[1] + 2.2, "#000000", x[3])).join("") +
+    clk.innerHTML = '<svg viewBox="-13 -13 26 26" aria-hidden="true">' +
+      '<circle r="11.4" fill="none" stroke="' + RED + '" stroke-width="3"/>' +
+      '<circle r="10.9" fill="none" stroke="#FFFFFF" stroke-width="1.4"/>' +
+      HANDS.map((x) => hand(x[0], x[1] + 1.2, RED, x[3])).join("") +
       HANDS.map((x) => hand(x[0], x[1], x[2], x[3])).join("") +
-      '<circle r="2.1" fill="#000000"/><circle r="1.2" fill="#FBBE0E"/></svg>';
+      '<circle r="2" fill="' + RED + '"/><circle r="1.1" fill="#FBBE0E"/></svg>';
   }
   clk.addEventListener("click", () => {
     analog = !analog;
@@ -476,7 +607,7 @@ function scrambleLoop(el, finalText) {
     el.textContent = out;
     if (done) {                                        // استقر النص: نبض أصفر 3 مرات ثم تعود الدورة
       el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
-      frame = 0; setTimeout(tick, 2600);
+      frame = 0; setTimeout(tick, 4200);
     }
     else { frame++; setTimeout(tick, 45); }
   }
@@ -724,6 +855,7 @@ async function addFriend(rawCode) {
 
 function showList() {
   stopMsgs();
+  try { sessionStorage.removeItem("ibf_chat"); } catch (_) {}
   listEl = h("div", { class: "list" });
   const copyBtn = h("button", { class: "small" }, t(41));
   copyBtn.addEventListener("click", async () => {
@@ -748,7 +880,7 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), hpuNode(), settingsBtn(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), h("span", { class: "me" }, me.name), settingsBtn(), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
@@ -760,6 +892,11 @@ function showList() {
       (snap) => {
         contacts = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
         renderContacts();
+        if (RESUME) {
+          const rc = contacts.find((x) => x.id === RESUME && x.status === "accepted");
+          RESUME = null;
+          if (rc) openChat(rc, false);
+        }
       },
       (err) => console.error(err));
   }
@@ -820,6 +957,39 @@ function openImage(src) {
   document.body.append(ov);
 }
 
+/* ---------- الفيديو: مشغّل داخل الفقاعة ---------- */
+const VIDEO_RE = /\.(mp4|m4v|mov|webm|3gp|3gpp|mkv|ogv)$/i;
+const blobCache = new Map();
+async function videoUrl(m, c) {
+  if (blobCache.has(m.id)) return blobCache.get(m.id);
+  const data = await fullRetry(m, c);
+  if (!data) return null;
+  const blob = await (await fetch(data)).blob();
+  const u = URL.createObjectURL(blob);
+  blobCache.set(m.id, u);
+  return u;
+}
+function videoNode(m, c, fallbackBtn) {
+  const wrap = h("div", { class: "vwrap" });
+  const vid = h("video", { class: "vid", controls: "", playsinline: "", preload: "metadata" });
+  const fail = () => wrap.replaceChildren(fallbackBtn);
+  const load = async (autoplay) => {
+    try {
+      const u = await videoUrl(m, c);
+      if (!u) return fail();
+      vid.addEventListener("error", fail, { once: true });
+      vid.src = u;
+      if (autoplay) vid.play().catch(() => {});
+    } catch (_) { fail(); }
+  };
+  if (dataSaver()) {   // وضع توفير البيانات: زر تشغيل بدل التحميل التلقائي
+    const go = h("button", { class: "small vplay", type: "button" }, "▶ " + t2("vid_play") + " (" + Math.round((m.fileSize || 0) / 1024) + t(54));
+    go.addEventListener("click", () => { wrap.replaceChildren(vid); load(true); });
+    wrap.append(go);
+  } else { wrap.append(vid); load(false); }
+  return wrap;
+}
+
 /* ---------- شاشة المحادثة ---------- */
 function renderMsg(m, c) {
   const mine = m.from === me.uid;
@@ -845,7 +1015,7 @@ function renderMsg(m, c) {
       const a = h("a", { href: d, download: m.fileName || "file" });
       document.body.append(a); a.click(); a.remove();
     });
-    bubble.append(fb);
+    bubble.append(VIDEO_RE.test(m.fileName || "") && m.id ? videoNode(m, c, fb) : fb);
   }
   if (typeof m.text === "string" && m.text) bubble.append(h("div", {}, m.text));
   const foot = h("div", { class: "foot" });
@@ -907,12 +1077,14 @@ async function sendMessage(c, payload, media) {
 function openChat(c, push = true) {
   stopMsgs();
   if (push) history.pushState({ chat: c.id }, "");
+  try { sessionStorage.setItem("ibf_chat", c.id); } catch (_) {}
 
   const box = h("div", { class: "msgs" });
   const input = h("input", { type: "text", placeholder: t(64), autocomplete: "off" });
   const fileInput = h("input", { type: "file", style: "display:none" });
   const attach = h("button", { class: "attach", "aria-label": t(65) }, "📎");
   const sendBtn = h("button", { class: "primary" }, t(66));
+  input.addEventListener("focus", () => { setTimeout(() => { box.scrollTop = box.scrollHeight; input.scrollIntoView({ block: "nearest" }); }, 250); });
 
   const send = async () => {
     const t = input.value.trim();
@@ -973,6 +1145,21 @@ window.addEventListener("popstate", () => { if (me) showList(); });
 
 /* ---------- البداية ---------- */
 function start() {
+  if (window.visualViewport) {          // الكيبورد: ارتفاع الصفحة = المساحة المرئية فعلاً
+    const vv = window.visualViewport;
+    let maxH = vv.height;
+    const fit = () => {
+      maxH = Math.max(maxH, vv.height);
+      document.documentElement.style.setProperty("--vvh", Math.round(vv.height) + "px");
+      document.documentElement.classList.toggle("kb", vv.height < maxH * 0.8);
+      if (window.scrollY) window.scrollTo(0, 0);
+      const box = document.querySelector(".msgs");
+      if (box && document.activeElement && document.activeElement.tagName === "INPUT") box.scrollTop = box.scrollHeight;
+    };
+    vv.addEventListener("resize", fit);
+    vv.addEventListener("scroll", fit);
+    fit();
+  }
   initFocusBar();
   if (Object.values(firebaseConfig).some((v) => String(v).startsWith("PASTE"))) {
     showFatal(t(71));
