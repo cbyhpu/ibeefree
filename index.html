@@ -148,7 +148,9 @@
   .hexo { padding: 2px; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
   .hexi { background: var(--card); color: var(--text); padding: 12px 28px; min-height: 52px; display: flex; align-items: center; gap: 12px; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
   .hexi .grow { flex: 1; font-weight: 700; font-size: 15px; }
-  .hexi .emb { width: 34px; height: 38px; flex: none; display: grid; place-items: center; font-size: 20px; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .emb, .hext .ic { position: relative; isolation: isolate; width: 38px; height: 42px; flex: none; display: grid; place-items: center; font-size: 20px; line-height: 1; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .emb::before, .hext .ic::before { content: ""; position: absolute; inset: 2px; z-index: -1; background: #081630; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .hext .ic { width: 46px; height: 50px; font-size: 24px; }
   .hsw { width: 54px; height: 30px; padding: 3px; border: 0; border-radius: 15px; background: #8a8f9c; display: flex; align-items: center; justify-content: flex-start; flex: none; transition: background .2s; }
   .hsw i { display: block; width: 24px; height: 24px; background: #fff; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); transition: transform .2s; }
   .hsw.on { background: linear-gradient(90deg,#FFD100,#F5B700); }
@@ -172,7 +174,9 @@
   .seg button[aria-pressed="true"] { background: linear-gradient(#FFD100,#F5B700); color: #000; border-color: #F5B700; }
   .ns-note { margin: 0; font-size: 12.5px; color: var(--muted); }
   .ns-dim { opacity: .45; pointer-events: none; }
-  .hexbtn { padding: 14px 30px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border-radius: 0; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hback { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 8px 24px; font-size: 15px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border: 0; border-radius: 0; clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); }
+  header button.back { clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); background: rgba(255,255,255,.18); padding: 4px 20px; }
+  .hexbtn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 28px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border-radius: 0; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
   .hbanner { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(92vw,420px); z-index: 50; padding: 2px; cursor: pointer; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); animation: hbin .35s ease-out; }
   .hbanner .hb-in { background: #0D1C39; color: #fff; padding: 12px 28px; display: flex; align-items: center; gap: 10px; clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); }
   .hbanner .hb-ic { font-size: 22px; }
@@ -200,8 +204,8 @@
   /* ===== (2) الساعة: أكبر قليلاً ===== */
   #focusbar { min-height: 58px; }
   .fb-clock { --clk: 50px; min-height: 50px; }
-  .fb-clock svg { display: block; width: var(--clk); height: var(--clk); filter: drop-shadow(0 0 calc(var(--clk) * .1) rgba(255, 26, 26, .6)); }
-  .fb-clock .dh, .fb-clock .dc, .fb-clock .dm { font-size: 24px; line-height: 1; font-weight: 800; -webkit-text-stroke: .6px #FF1A1A; paint-order: stroke fill; text-shadow: 0 0 2.4px rgba(255, 26, 26, .6); }
+  .fb-clock svg { display: block; width: var(--clk); height: var(--clk); filter: drop-shadow(0 0 calc(var(--clk) * .1) rgba(255, 26, 26, .4)); }
+  .fb-clock .dh, .fb-clock .dc, .fb-clock .dm { font-size: 24px; line-height: 1; font-weight: 800; -webkit-text-stroke: .3px #FF1A1A; paint-order: stroke fill; text-shadow: 0 0 2.4px rgba(255, 26, 26, .6); }
   .fb-clock .dh { color: #FBBE0E; }
   .fb-clock .dc, .fb-clock .dm { color: #FFFFFF; }
 
@@ -464,17 +468,17 @@ const NSTR = {
     types: "أنواع الإشعارات", lock: "شاشة القفل", badge: "الشارة", popup: "نافذة منبثقة", on: "مسموح", off: "محظور",
     lockc: "إشعارات شاشة القفل", show: "إظهار المحتوى", hide: "إخفاء المحتوى", note: "عند الإخفاء تظهر عبارة «رسالة جديدة» فقط دون اسم المرسل ودون نص الرسالة.",
     cats: "فئات الإشعارات", cat_dm: "الرسائل المباشرة", cat_req: "طلبات الصداقة", cat_hive: "تنبيهات الخلية والمجموعات (قريباً)",
-    newmsg: "رسالة جديدة", newreq: "طلب صداقة جديد", denied: "المتصفح يمنع الإشعارات، لذلك تعمل التنبيهات داخل التطبيق فقط.", done: "تم", dur: "مدة اختفاء اللافتة", dur_note: "0 = بلا لافتة (فوري). من 1 إلى 10 = عدد الثواني قبل أن تختفي.", sec: "ث" },
+    newmsg: "رسالة جديدة", newreq: "طلب صداقة جديد", denied: "المتصفح يمنع الإشعارات، لذلك تعمل التنبيهات داخل التطبيق فقط.", done: "تم", back: "رجوع", dur: "مدة اختفاء اللافتة", dur_note: "0 = بلا لافتة (فوري). من 1 إلى 10 = عدد الثواني قبل أن تختفي.", sec: "ث" },
   en: { title: "Notifications", open: "Notification settings", master: "Allow notifications", alerts: "Alerts", sound: "Sound & vibration", silent: "Silent",
     types: "Notification types", lock: "Lock screen", badge: "Badge", popup: "Pop-up", on: "Allowed", off: "Blocked",
     lockc: "Lock screen notifications", show: "Show content", hide: "Hide content", note: "When hidden, only “New message” is shown, without the sender's name or the text.",
     cats: "Notification categories", cat_dm: "Direct messages", cat_req: "Friend requests", cat_hive: "Hive & group alerts (soon)",
-    newmsg: "New message", newreq: "New friend request", denied: "The browser blocks notifications, so alerts work inside the app only.", done: "Done", dur: "Banner auto-dismiss", dur_note: "0 = no banner (instant). 1–10 = seconds before it hides.", sec: "s" },
+    newmsg: "New message", newreq: "New friend request", denied: "The browser blocks notifications, so alerts work inside the app only.", done: "Done", back: "Back", dur: "Banner auto-dismiss", dur_note: "0 = no banner (instant). 1–10 = seconds before it hides.", sec: "s" },
   fr: { title: "Notifications", open: "Paramètres des notifications", master: "Autoriser les notifications", alerts: "Alertes", sound: "Son et vibration", silent: "Silencieux",
     types: "Types de notifications", lock: "Écran verrouillé", badge: "Badge", popup: "Pop-up", on: "Autorisé", off: "Bloqué",
     lockc: "Notifications de l'écran verrouillé", show: "Afficher le contenu", hide: "Masquer le contenu", note: "Masqué : seul « Nouveau message » s'affiche, sans le nom ni le texte.",
     cats: "Catégories de notifications", cat_dm: "Messages directs", cat_req: "Demandes d'amis", cat_hive: "Alertes ruche et groupes (bientôt)",
-    newmsg: "Nouveau message", newreq: "Nouvelle demande d'ami", denied: "Le navigateur bloque les notifications : les alertes fonctionnent dans l'application seulement.", done: "OK", dur: "Disparition auto de la bannière", dur_note: "0 = pas de bannière (instantané). 1–10 = secondes avant de disparaître.", sec: "s" }
+    newmsg: "Nouveau message", newreq: "Nouvelle demande d'ami", denied: "Le navigateur bloque les notifications : les alertes fonctionnent dans l'application seulement.", done: "OK", back: "Retour", dur: "Disparition auto de la bannière", dur_note: "0 = pas de bannière (instantané). 1–10 = secondes avant de disparaître.", sec: "s" }
 };
 const nt = (k) => (NSTR[LANG] || NSTR.en)[k];
 
@@ -676,6 +680,7 @@ function openNotifSettings() {
       }));
     const denied = "Notification" in window && Notification.permission === "denied";
     sheet.replaceChildren(
+      hback(close),
       h("h3", {}, nt("title")),
       bar(h("span", { class: "emb" }, "🐝"), h("span", { class: "grow" }, nt("master")),
         sw(NS.on, () => { nsSet((s) => { s.on = !s.on; }, "state:master"); if (NS.on) askPerm(); render(); }, nt("master"))),
@@ -708,6 +713,12 @@ function openNotifSettings() {
   };
   render();
   document.body.append(bg);
+}
+
+function hback(fn) {
+  const b = h("button", { type: "button", class: "hback", "aria-label": nt("back") }, (LANG === "ar" ? "→ " : "← ") + nt("back"));
+  b.addEventListener("click", (ev) => { ev.stopPropagation(); fn(); });
+  return b;
 }
 
 function settingsBtn() {
@@ -795,6 +806,7 @@ function openSettings() {
   bg.addEventListener("click", (ev) => { if (ev.target === bg) close(); });
 
   bg.append(h("div", { class: "sheet", role: "dialog", "aria-modal": "true" },
+    hback(close),
     h("h3", {}, t2("set_title")),
     h("section", { class: "sect" },
       h("h4", {}, t2("sec_text")),
@@ -814,7 +826,7 @@ function openSettings() {
       h("label", { class: "fsw" }, fo, t2("focus"))),
     h("section", { class: "sect" },
       h("h4", {}, nt("title")),
-      h("button", { class: "hexbtn", type: "button", onclick: openNotifSettings }, "🐝 " + nt("open"))),
+      h("button", { class: "hexbtn", type: "button", onclick: openNotifSettings }, h("span", { class: "emb" }, "🐝"), nt("open"))),
     h("div", { class: "row" }, okBtn, cancelBtn, resetBtn)));
   document.body.append(bg);
   refresh();
@@ -843,11 +855,11 @@ function initFocusBar() {
     const hand = (len, w, col, rot) => '<line y2="' + (-len) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" transform="rotate(' + rot + ')"/>';
     const HANDS = [[5.4, 2.4, "#FFFFFF", hr], [7.8, 1.9, "#FFFFFF", m], [8.6, 1.1, "#FBBE0E", s]];
     clk.innerHTML = '<svg viewBox="-13 -13 26 26" aria-hidden="true">' +
-      '<circle r="11.4" fill="none" stroke="' + RED + '" stroke-width="3"/>' +
-      '<circle r="10.9" fill="none" stroke="#FFFFFF" stroke-width="1.4"/>' +
-      HANDS.map((x) => hand(x[0], x[1] + 1.2, RED, x[3])).join("") +
+      '<circle r="12.1" fill="none" stroke="' + RED + '" stroke-width="0.8"/>' +
+      '<circle r="11" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>' +
+      HANDS.map((x) => hand(x[0], x[1] + 0.5, RED, x[3])).join("") +
       HANDS.map((x) => hand(x[0], x[1], x[2], x[3])).join("") +
-      '<circle r="2" fill="' + RED + '"/><circle r="1.1" fill="#FBBE0E"/></svg>';
+      '<circle r="1.7" fill="' + RED + '"/><circle r="1.1" fill="#FBBE0E"/></svg>';
   }
   clk.addEventListener("click", () => {
     analog = !analog;
@@ -1001,7 +1013,7 @@ function showNewAccount() {
   mount(h("div", { class: "center" }, h("h1", {}, t(4)),
     h("p", {}, t(5)),
     h("div", { class: "phrase" }, pendingPhrase),
-    h("label", {}, chk, t(6)), go));
+    h("label", {}, chk, t(6)), go, hback(showStart)));
 }
 function showRestore() {
   const input = h("input", { type: "text", placeholder: t(7), autocomplete: "off", style: "direction:ltr" });
@@ -1014,8 +1026,7 @@ function showRestore() {
     try { const c = await deriveCreds(input.value); await signInWithEmailAndPassword(auth, c.email, c.password); }
     catch (e) { msg.textContent = t(11); btn.disabled = false; }
   });
-  const back = h("button", { class: "small" }, t(12));
-  back.addEventListener("click", showStart);
+  const back = hback(showStart);
   mount(h("div", { class: "center" }, h("h1", {}, APP_NAME), input, btn, back, msg));
 }
 
@@ -1270,7 +1281,9 @@ async function fullRetry(m, c) {
 function openImage(src) {
   const save = h("a", { href: src, download: "ibeefree.jpg", style: "position:fixed;top:12px;inset-inline-end:12px;color:#fff;background:#0008;padding:8px 12px;border-radius:10px;text-decoration:none" }, t(50));
   save.addEventListener("click", (e) => e.stopPropagation());
-  const ov = h("div", { class: "overlay" }, h("img", { src, alt: t(51) }), save);
+  const bk = hback(() => ov.remove());
+  bk.style.cssText = "position:fixed;top:12px;inset-inline-start:12px";
+  const ov = h("div", { class: "overlay" }, h("img", { src, alt: t(51) }), save, bk);
   ov.addEventListener("click", () => ov.remove());
   document.body.append(ov);
 }
