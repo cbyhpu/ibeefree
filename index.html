@@ -144,6 +144,43 @@
   .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
   .sect { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+  /* ===== نظام إشعارات النحل وقرص العسل ===== */
+  .hexo { padding: 2px; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hexi { background: var(--card); color: var(--text); padding: 12px 28px; min-height: 52px; display: flex; align-items: center; gap: 12px; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hexi .grow { flex: 1; font-weight: 700; font-size: 15px; }
+  .hexi .emb { width: 34px; height: 38px; flex: none; display: grid; place-items: center; font-size: 20px; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .hsw { width: 54px; height: 30px; padding: 3px; border: 0; border-radius: 15px; background: #8a8f9c; display: flex; align-items: center; justify-content: flex-start; flex: none; transition: background .2s; }
+  .hsw i { display: block; width: 24px; height: 24px; background: #fff; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); transition: transform .2s; }
+  .hsw.on { background: linear-gradient(90deg,#FFD100,#F5B700); }
+  .hsw.on i { transform: translateX(24px); }
+  html[dir="rtl"] .hsw.on i { transform: translateX(-24px); }
+  .hsw:disabled { opacity: .4; }
+  .hgrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 12%; }
+  .hgrid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding-bottom: 22px; }
+  .hgrid3 > :nth-child(2) { transform: translateY(22px); }
+  .hext { padding: 2px; border: 0; background: var(--line); aspect-ratio: .9 / 1; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .hext.on { background: linear-gradient(135deg,#FFD100,#F5B700); }
+  .hext .hin { width: 100%; height: 100%; background: var(--card); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 14px 10px; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.2; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .hext.sel .hin { background: linear-gradient(135deg,#FFD100,#F5B700); color: #000; }
+  .hext .ic { font-size: 24px; }
+  .hext small { font-size: 11px; font-weight: 600; opacity: .85; }
+  .minibn { width: 44px; height: 14px; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%,0 50%); }
+  .hbadge { min-width: 26px; height: 28px; padding: 0 5px; margin-inline-start: 8px; background: linear-gradient(#FFD100,#F5B700); color: #000; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .hbadge.mini { min-width: 20px; height: 22px; font-size: 11px; margin: 0; }
+  .seg { display: flex; gap: 6px; flex: 1; }
+  .seg button { flex: 1; padding: 8px 6px; font-size: 13px; font-weight: 700; background: transparent; color: var(--text); border: 2px solid var(--line); border-radius: 10px; }
+  .seg button[aria-pressed="true"] { background: linear-gradient(#FFD100,#F5B700); color: #000; border-color: #F5B700; }
+  .ns-note { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .ns-dim { opacity: .45; pointer-events: none; }
+  .hexbtn { padding: 14px 30px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border-radius: 0; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hbanner { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(92vw,420px); z-index: 50; padding: 2px; cursor: pointer; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); animation: hbin .35s ease-out; }
+  .hbanner .hb-in { background: #0D1C39; color: #fff; padding: 12px 28px; display: flex; align-items: center; gap: 10px; clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); }
+  .hbanner .hb-ic { font-size: 22px; }
+  .hbanner .hb-tx { display: flex; flex-direction: column; min-width: 0; }
+  .hbanner .hb-tx b { color: #FFD100; }
+  .hbanner .hb-tx span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @keyframes hbin { from { transform: translate(-50%,-130%); } to { transform: translate(-50%,0); } }
+  @media (prefers-reduced-motion: reduce) { .hbanner { animation: none; } .hsw, .hsw i { transition: none; } }
   .sect h4 { margin: 0; font-size: 16px; color: var(--title); padding-bottom: 6px; border-bottom: 2px solid #F5B800; }
 
   /* ===== (4) أيقونتا السلة والتبليغ: نظيفتان ومنسجمتان مع الرسالة ===== */
@@ -187,6 +224,29 @@
   .sign-1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; color: var(--text); }
   .sign-2 { font-size: 14px; color: var(--muted); }
   .sign-3 { font-size: 14px; color: var(--muted); direction: rtl; }
+  /* ===== قاعدة التصميم السداسي الدائمة: كل عنصر جديد يُبنى سداسياً افتراضياً ===== */
+  :root { --hx: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); --hx6: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); --hxc: polygon(20px 0,calc(100% - 20px) 0,100% 20px,100% calc(100% - 20px),calc(100% - 20px) 100%,20px 100%,0 calc(100% - 20px),0 20px); }
+  button.primary, button.danger { clip-path: var(--hx); border-radius: 0; padding-inline: 28px; }
+  button.small, button.chip, .chip, .sw, button.hbtn { clip-path: var(--hx); border-radius: 0; border: 0; padding-inline: 18px; }
+  button.small { background: color-mix(in srgb, var(--title) 14%, transparent); }
+  header button.small { background: rgba(255,255,255,.18); }
+  .chip { background: var(--line); }
+  .chip[aria-pressed="true"] { background: linear-gradient(#FFD100,#F5B700); color: #000; outline: 0; }
+  .sw[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 4px #F5B800; }
+  .composer button.attach { clip-path: var(--hx6); background: color-mix(in srgb, var(--title) 14%, transparent); }
+  input[type="text"], textarea.msgbox, select { clip-path: var(--hx); border-color: transparent; border-radius: 0; padding-inline: 22px; }
+  input[type="text"]:focus, textarea.msgbox:focus, select:focus { outline: 0; box-shadow: inset 0 -3px 0 #F5B700; }
+  .codebox, .contact { margin: 4px 10px; border: 0; clip-path: var(--hx); padding-inline: 28px; }
+  .codebox { margin-top: 6px; }
+  .avatar { border-radius: 0; clip-path: var(--hx6); }
+  .bubble { clip-path: var(--hx); border: 0; border-radius: 0; padding: 8px 18px; }
+  .sect, .pvbox { clip-path: var(--hxc); border: 0; border-radius: 0; background: color-mix(in srgb, var(--line) 40%, transparent); }
+  .sheet { clip-path: polygon(24px 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%,0 24px); border-radius: 0; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; height: 34px; }
+  input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: var(--line); clip-path: var(--hx); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 32px; margin-top: -12px; border: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
+  input[type="range"]::-moz-range-track { height: 8px; background: var(--line); clip-path: var(--hx); }
+  input[type="range"]::-moz-range-thumb { width: 28px; height: 32px; border: 0; border-radius: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
 </style>
 </head>
 <body>
@@ -249,7 +309,7 @@ function h(tag, attrs = {}, ...kids) {
 function mount(node) { root.replaceChildren(node); }
 function explain(e) { return (e && (e.code || e.message)) || String(e); }
 let rerenderChat = null;
-function stopMsgs() { rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+function stopMsgs() { curChat = null; rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
@@ -398,6 +458,258 @@ function exitFocus() {
   if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
 }
 
+/* ---------- نظام إشعارات النحل وقرص العسل ---------- */
+const NSTR = {
+  ar: { title: "الإشعارات", open: "إعدادات الإشعارات", master: "السماح بالإشعارات", alerts: "التنبيهات", sound: "صوت واهتزاز", silent: "صامت",
+    types: "أنواع الإشعارات", lock: "شاشة القفل", badge: "الشارة", popup: "نافذة منبثقة", on: "مسموح", off: "محظور",
+    lockc: "إشعارات شاشة القفل", show: "إظهار المحتوى", hide: "إخفاء المحتوى", note: "عند الإخفاء تظهر عبارة «رسالة جديدة» فقط دون اسم المرسل ودون نص الرسالة.",
+    cats: "فئات الإشعارات", cat_dm: "الرسائل المباشرة", cat_req: "طلبات الصداقة", cat_hive: "تنبيهات الخلية والمجموعات (قريباً)",
+    newmsg: "رسالة جديدة", newreq: "طلب صداقة جديد", denied: "المتصفح يمنع الإشعارات، لذلك تعمل التنبيهات داخل التطبيق فقط.", done: "تم", dur: "مدة اختفاء اللافتة", dur_note: "0 = بلا لافتة (فوري). من 1 إلى 10 = عدد الثواني قبل أن تختفي.", sec: "ث" },
+  en: { title: "Notifications", open: "Notification settings", master: "Allow notifications", alerts: "Alerts", sound: "Sound & vibration", silent: "Silent",
+    types: "Notification types", lock: "Lock screen", badge: "Badge", popup: "Pop-up", on: "Allowed", off: "Blocked",
+    lockc: "Lock screen notifications", show: "Show content", hide: "Hide content", note: "When hidden, only “New message” is shown, without the sender's name or the text.",
+    cats: "Notification categories", cat_dm: "Direct messages", cat_req: "Friend requests", cat_hive: "Hive & group alerts (soon)",
+    newmsg: "New message", newreq: "New friend request", denied: "The browser blocks notifications, so alerts work inside the app only.", done: "Done", dur: "Banner auto-dismiss", dur_note: "0 = no banner (instant). 1–10 = seconds before it hides.", sec: "s" },
+  fr: { title: "Notifications", open: "Paramètres des notifications", master: "Autoriser les notifications", alerts: "Alertes", sound: "Son et vibration", silent: "Silencieux",
+    types: "Types de notifications", lock: "Écran verrouillé", badge: "Badge", popup: "Pop-up", on: "Autorisé", off: "Bloqué",
+    lockc: "Notifications de l'écran verrouillé", show: "Afficher le contenu", hide: "Masquer le contenu", note: "Masqué : seul « Nouveau message » s'affiche, sans le nom ni le texte.",
+    cats: "Catégories de notifications", cat_dm: "Messages directs", cat_req: "Demandes d'amis", cat_hive: "Alertes ruche et groupes (bientôt)",
+    newmsg: "Nouveau message", newreq: "Nouvelle demande d'ami", denied: "Le navigateur bloque les notifications : les alertes fonctionnent dans l'application seulement.", done: "OK", dur: "Disparition auto de la bannière", dur_note: "0 = pas de bannière (instantané). 1–10 = secondes avant de disparaître.", sec: "s" }
+};
+const nt = (k) => (NSTR[LANG] || NSTR.en)[k];
+
+// فئات الإشعارات: لإضافة فئة جديدة أضف سطراً هنا + نصّ "cat_<id>" في NSTR بكل لغة
+const NS_CATS = [
+  { id: "dm", ic: "💬" },
+  { id: "req", ic: "🤝" },
+  { id: "hive", ic: "🐝", soon: true }
+];
+
+function loadNS() {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem("ibf_notif") || "{}") || {}; } catch (_) {}
+  return { on: o.on !== false, mode: o.mode === "sound" ? "sound" : "silent",
+    types: Object.assign({ lock: true, badge: true, popup: true }, o.types),
+    lockContent: o.lockContent === "hide" ? "hide" : "show", cats: o.cats || {},
+    dismiss: (o.dismiss === undefined || o.dismiss === null || isNaN(+o.dismiss)) ? 5 : Math.min(10, Math.max(0, Math.round(+o.dismiss))) };
+}
+let NS = loadNS();
+const saveNS = () => { try { localStorage.setItem("ibf_notif", JSON.stringify(NS)); } catch (_) {} };
+const catOn = (id) => NS.cats[id] !== false;
+
+/* ===== فتحات الصوت (فارغة عمداً: لا نغمات ولا مؤثرات افتراضية) =====
+   للربط لاحقاً:  registerNotificationSound("category:dm", (info) => { ... });
+   المفاتيح: category:<id> | type:<lock|badge|popup> | mode:<sound|silent> | state:<...> | default */
+const NS_SOUNDS = {};
+function registerNotificationSound(key, fn) { NS_SOUNDS[key] = fn; }
+function playNotificationSound(key, info) {
+  info = info || {};
+  if (NS.mode !== "sound" && !info.always) return;     // في الوضع الصامت لا يُستدعى أي صوت
+  const fn = NS_SOUNDS[key] || NS_SOUNDS.default;
+  if (typeof fn === "function") { try { fn(info); } catch (_) {} }
+}
+function nsSet(mut, hook) {
+  mut(NS); saveNS();
+  playNotificationSound(hook, { always: hook.startsWith("mode:") });
+  refreshAppBadge(); renderContacts();
+}
+
+/* ===== غير المقروء + الشارة السداسية ===== */
+let UNREAD = {};
+try { UNREAD = JSON.parse(localStorage.getItem("ibf_unread") || "{}") || {}; } catch (_) {}
+const BASE_TITLE = document.title;
+const unreadTotal = () => Object.values(UNREAD).reduce((a, b) => a + (+b || 0), 0);
+function refreshAppBadge() {
+  const n = NS.on && NS.types.badge ? unreadTotal() : 0;
+  document.title = (n ? "(" + n + ") " : "") + BASE_TITLE;
+  try { if (n) navigator.setAppBadge && navigator.setAppBadge(n); else navigator.clearAppBadge && navigator.clearAppBadge(); } catch (_) {}
+}
+function saveUnread() { try { localStorage.setItem("ibf_unread", JSON.stringify(UNREAD)); } catch (_) {} refreshAppBadge(); }
+function clearUnread(key) { if (!UNREAD[key]) return; delete UNREAD[key]; saveUnread(); renderContacts(); }
+function hexBadge(n) { return NS.on && NS.types.badge && +n > 0 ? h("span", { class: "hbadge", "aria-label": String(n) }, +n > 99 ? "99+" : String(n)) : null; }
+
+/* ===== لافتة قرص العسل العلوية + إشعار المتصفح الصامت ===== */
+let bannerTimer = null;
+function showBanner(title, body, onTap) {
+  const old = document.getElementById("ibfbanner"); if (old) old.remove();
+  const el = h("div", { id: "ibfbanner", class: "hbanner", role: "status", "aria-live": "polite" },
+    h("div", { class: "hb-in" }, h("span", { class: "hb-ic" }, "🐝"), h("div", { class: "hb-tx" }, h("b", {}, title), h("span", {}, body || ""))));
+  el.addEventListener("click", () => { el.remove(); if (onTap) onTap(); });
+  document.body.append(el);
+  clearTimeout(bannerTimer); bannerTimer = setTimeout(() => { el.remove(); playNotificationSound("state:banner-dismiss", {}); }, NS.dismiss * 1000);
+}
+function sysNotify(title, body, tag) {
+  try {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    const opts = { body, tag, silent: true };
+    try { new Notification(title, opts); }
+    catch (_) { navigator.serviceWorker && navigator.serviceWorker.getRegistration().then((r) => r && r.showNotification(title, opts)); }
+  } catch (_) {}
+}
+function askPerm() {
+  try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission().then(() => initPushSubscription()).catch(() => {}); } catch (_) {}
+}
+
+const nsSnip = (m) => {
+  if (!m) return "";
+  if (typeof m.text === "string" && m.text) return m.text.replace(/\s+/g, " ").trim().slice(0, 90);
+  if (m.hasImage || m.thumb || m.image) return "📷";
+  if (m.hasFile) return "📄 " + (m.fileName || "");
+  return "";
+};
+function notifyEvent(cat, c, m) {
+  if (!NS.on || !catOn(cat)) return;
+  const isReq = cat === "req";
+  const title = isReq ? nt("newreq") : nt("newmsg");
+  const key = isReq ? "r:" + c.id : c.id;
+  UNREAD[key] = isReq ? 1 : (+UNREAD[key] || 0) + 1;
+  saveUnread(); renderContacts();
+  // المحتوى الحقيقي يظهر فقط عند "إظهار المحتوى"، ويُخفى كلياً عند "إخفاء المحتوى"
+  const body = NS.lockContent === "show" ? (isReq ? (c.name || "") : ((c.name ? c.name + ": " : "") + nsSnip(m))) : "";
+  playNotificationSound("category:" + cat, { contact: c });
+  if (NS.types.popup && !document.hidden && NS.dismiss > 0) {
+    playNotificationSound("type:popup", { category: cat });
+    showBanner(title, body, isReq ? null : () => openChat(c));
+  }
+  if (NS.types.badge) playNotificationSound("type:badge", { category: cat });
+  if (NS.types.lock && document.hidden) {
+    playNotificationSound("type:lock", { category: cat });
+    sysNotify(title, body, "ibf-" + key);
+  }
+}
+
+/* طلبات الصداقة: تُكشف من قائمة جهات الاتصال (لا تنبيه في أول تحميل) */
+let nsReady = false, curChat = null;
+function nsDetect(snap) {
+  snap.docChanges().forEach((ch) => {
+    if (!nsReady || ch.doc.metadata.hasPendingWrites) return;
+    const data = ch.doc.data({ serverTimestamps: "estimate" });
+    if (ch.type === "added" && data.status === "pending") notifyEvent("req", { id: ch.doc.id, ...data });
+  });
+  nsReady = true;
+}
+
+/* الرسائل: مستمع لآخر رسالة في كل محادثة مقبولة. الملكية بمعرّف المرسل (from) ومعرّف الرسالة، بلا أي مؤقت */
+const nsMsgSubs = {}, nsSeenMsg = new Set();
+function nsSyncMsgListeners() {
+  const want = new Map(contacts.filter((c) => c.status === "accepted" && c.chatId).map((c) => [c.chatId, c]));
+  for (const cid of Object.keys(nsMsgSubs)) {
+    if (!want.has(cid)) { nsMsgSubs[cid].unsub(); delete nsMsgSubs[cid]; } else nsMsgSubs[cid].c = want.get(cid);
+  }
+  for (const [cid, c] of want) {
+    if (nsMsgSubs[cid]) continue;
+    const o = { c, ready: false, unsub: null };
+    o.unsub = onSnapshot(query(collection(db, "chats", cid, "messages"), orderBy("ts", "desc"), limit(1)),
+      (snap) => {
+        snap.docChanges().forEach((ch) => {
+          if (ch.type !== "added" || nsSeenMsg.has(ch.doc.id)) return;
+          nsSeenMsg.add(ch.doc.id);
+          if (!o.ready || ch.doc.metadata.hasPendingWrites) return;
+          const m = ch.doc.data({ serverTimestamps: "estimate" });
+          if (!m || m.from === me.uid || m.deleted) return;      // رسالتي أنا: لا تنبيه
+          if (curChat === o.c.id && !document.hidden) return;    // المحادثة مفتوحة أمامك
+          notifyEvent("dm", o.c, m);
+        });
+        o.ready = true;
+      }, (e) => console.error(e));
+    nsMsgSubs[cid] = o;
+  }
+}
+
+/* ===== جاهزية الدفع في الخلفية (PWA + Service Worker): هيكل فقط، لا يعمل قبل ملء الإعداد ===== */
+const PUSH_CONFIG = {
+  vapidPublicKey: "",          // مفتاح VAPID العام (يُملأ لاحقاً)
+  saveSubscription: null       // async (subJSON) => {...}  لحفظ الاشتراك عند الخادم لاحقاً
+};
+const b64ToU8 = (b) => { const p = "=".repeat((4 - (b.length % 4)) % 4), r = atob((b + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, (ch) => ch.charCodeAt(0)); };
+async function initPushSubscription() {
+  const st = { supported: false, subscribed: false };
+  try {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return st;
+    st.supported = true;
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub && PUSH_CONFIG.vapidPublicKey && "Notification" in window && Notification.permission === "granted") {
+      sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(PUSH_CONFIG.vapidPublicKey) });
+    }
+    if (sub) {
+      st.subscribed = true;
+      if (typeof PUSH_CONFIG.saveSubscription === "function") await PUSH_CONFIG.saveSubscription(sub.toJSON());
+      playNotificationSound("state:push-subscribed", {});
+    }
+  } catch (e) { console.warn("push", e); }
+  return st;
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && curChat) clearUnread(curChat); });
+refreshAppBadge();
+
+/* ===== واجهة إعدادات الإشعارات السداسية ===== */
+function openNotifSettings() {
+  if (document.getElementById("nsheet")) return;
+  const bg = h("div", { class: "sheetbg", id: "nsheet" });
+  const sheet = h("div", { class: "sheet", role: "dialog", "aria-modal": "true" });
+  bg.append(sheet);
+  const close = () => bg.remove();
+  bg.addEventListener("click", (ev) => { if (ev.target === bg) close(); });
+  const sw = (on, fn, label, dis) => {
+    const b = h("button", { type: "button", class: "hsw" + (on ? " on" : ""), role: "switch", "aria-checked": String(!!on), "aria-label": label }, h("i", {}));
+    if (dis) b.disabled = true;
+    b.addEventListener("click", fn); return b;
+  };
+  const bar = (...kids) => h("div", { class: "hexo" }, h("div", { class: "hexi" }, ...kids));
+  const tile = (cls, onclick, ...kids) => { const b = h("button", { type: "button", class: "hext " + cls }, h("div", { class: "hin" }, ...kids)); b.addEventListener("click", onclick); return b; };
+
+  const render = () => {
+    const modeTile = (m, ic) => tile(NS.mode === m ? "sel on" : "", () => { nsSet((s) => { s.mode = m; }, "mode:" + m); render(); },
+      h("span", { class: "ic" }, ic), nt(m));
+    const typeTile = (id, ic, extra) => {
+      const on = NS.types[id];
+      return tile(on ? "on" : "", () => { nsSet((s) => { s.types[id] = !s.types[id]; }, "state:type:" + id); if (id === "lock" && NS.types.lock) askPerm(); render(); },
+        extra || h("span", { class: "ic" }, ic), nt(id), h("small", {}, on ? nt("on") : nt("off")));
+    };
+    const lockOk = NS.on && NS.types.lock;
+    const seg = h("div", { class: "seg" },
+      ...["show", "hide"].map((v) => {
+        const b = h("button", { type: "button", "aria-pressed": String(NS.lockContent === v) }, nt(v));
+        b.addEventListener("click", () => { nsSet((s) => { s.lockContent = v; }, "state:lock-content"); render(); });
+        return b;
+      }));
+    const denied = "Notification" in window && Notification.permission === "denied";
+    sheet.replaceChildren(
+      h("h3", {}, nt("title")),
+      bar(h("span", { class: "emb" }, "🐝"), h("span", { class: "grow" }, nt("master")),
+        sw(NS.on, () => { nsSet((s) => { s.on = !s.on; }, "state:master"); if (NS.on) askPerm(); render(); }, nt("master"))),
+      denied && NS.on ? h("p", { class: "ns-note" }, nt("denied")) : h("span"),
+      h("div", { class: NS.on ? "" : "ns-dim", style: "display:flex;flex-direction:column;gap:14px" },
+        h("h4", { style: "margin:0;color:var(--title)" }, nt("alerts")),
+        h("div", { class: "hgrid2" }, modeTile("sound", "🔔"), modeTile("silent", "🔕")),
+        h("h4", { style: "margin:0;color:var(--title)" }, nt("types")),
+        h("div", { class: "hgrid3" },
+          typeTile("lock", "🔒"),
+          typeTile("badge", "", h("span", { class: "hbadge mini", style: "margin:0" }, String(Math.max(1, unreadTotal())))),
+          typeTile("popup", "", h("span", { class: "minibn" }))),
+        (() => {
+          const dur = h("input", { type: "range", min: "0", max: "10", step: "1", value: String(NS.dismiss), "aria-label": nt("dur"), style: "width:100%" });
+          const val = h("span", { class: "hbadge", style: "margin:0;min-width:48px" }, NS.dismiss + nt("sec"));
+          dur.addEventListener("input", () => { val.textContent = dur.value + nt("sec"); });
+          dur.addEventListener("change", () => { nsSet((s) => { s.dismiss = +dur.value; }, "setting:auto-dismiss"); });
+          return h("div", { style: "display:flex;flex-direction:column;gap:6px" },
+            h("h4", { style: "margin:0;color:var(--title)" }, nt("dur")),
+            bar(h("span", { class: "emb" }, "⏱"), h("div", { style: "flex:1;min-width:0" }, dur), val),
+            h("p", { class: "ns-note" }, nt("dur_note")));
+        })(),
+        h("div", { class: lockOk ? "" : "ns-dim", style: "display:flex;flex-direction:column;gap:6px" },
+          h("h4", { style: "margin:0;color:var(--title)" }, nt("lockc")),
+          bar(seg), h("p", { class: "ns-note" }, nt("note"))),
+        h("h4", { style: "margin:0;color:var(--title)" }, nt("cats")),
+        ...NS_CATS.map((k) => bar(h("span", { class: "emb" }, k.ic), h("span", { class: "grow" }, nt("cat_" + k.id)),
+          sw(catOn(k.id) && !k.soon, () => { nsSet((s) => { s.cats[k.id] = !catOn(k.id); }, "state:category:" + k.id); render(); }, nt("cat_" + k.id), k.soon)))),
+      h("div", { class: "row" }, (() => { const ok = h("button", { class: "primary", type: "button" }, nt("done")); ok.addEventListener("click", close); return ok; })()));
+  };
+  render();
+  document.body.append(bg);
+}
+
 function settingsBtn() {
   return h("button", { class: "small hbtn", "aria-label": t2("set_title"), style: "color:#fff;border-color:#fff", onclick: openSettings }, "⚙");
 }
@@ -500,6 +812,9 @@ function openSettings() {
       h("div", { class: "chips" }, ...thBtns),
       h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
       h("label", { class: "fsw" }, fo, t2("focus"))),
+    h("section", { class: "sect" },
+      h("h4", {}, nt("title")),
+      h("button", { class: "hexbtn", type: "button", onclick: openNotifSettings }, "🐝 " + nt("open"))),
     h("div", { class: "row" }, okBtn, cancelBtn, resetBtn)));
   document.body.append(bg);
   refresh();
@@ -813,18 +1128,18 @@ function renderContacts() {
     const tb = b.lastTs && b.lastTs.toMillis ? b.lastTs.toMillis() : 0;
     return tb - ta;
   });
-  const setStatus = (c, status) => updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status }).catch((e) => alert(explain(e)));
+  const setStatus = (c, status) => updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status }).then(() => clearUnread("r:" + c.id)).catch((e) => alert(explain(e)));
   listEl.replaceChildren(...sorted.map((c) => {
     const avatar = h("div", { class: "avatar" }, (c.name || "?").trim().charAt(0));
     if (c.status === "pending") {
-      return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || t(32), t(33)),
+      return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || t(32), t(33)), hexBadge(UNREAD["r:" + c.id]),
         h("div", { class: "acts" },
           h("button", { class: "small accept", onclick: () => setStatus(c, "accepted") }, t(34)),
           h("button", { class: "small block", onclick: () => setStatus(c, "blocked") }, t(35))));
     }
     const rm = h("button", { class: "small", "aria-label": t(74) }, t(74));
     rm.addEventListener("click", (ev) => { ev.stopPropagation(); removeFriend(c); });
-    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)), h("div", { class: "acts" }, rm));
+    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)), hexBadge(UNREAD[c.id]), h("div", { class: "acts" }, rm));
   }));
 }
 
@@ -891,7 +1206,9 @@ function showList() {
   if (!unsubContacts) {
     unsubContacts = onSnapshot(collection(db, "users", me.uid, "contacts"),
       (snap) => {
+        nsDetect(snap);
         contacts = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
+        nsSyncMsgListeners();
         renderContacts();
         if (RESUME) {
           const rc = contacts.find((x) => x.id === RESUME && x.status === "accepted");
@@ -1077,6 +1394,7 @@ async function sendMessage(c, payload, media) {
 
 function openChat(c, push = true) {
   stopMsgs();
+  curChat = c.id; clearUnread(c.id);
   if (push) history.pushState({ chat: c.id }, "");
   try { sessionStorage.setItem("ibf_chat", c.id); } catch (_) {}
 
@@ -1195,7 +1513,7 @@ function start() {
   });
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
+    navigator.serviceWorker.register("sw.js").then(() => initPushSubscription()).catch(() => {});
   }
 }
 start();
