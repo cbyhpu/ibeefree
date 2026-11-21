@@ -3,22 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<script>try{var __u=JSON.parse(localStorage.getItem("ibf_ui")||"{}");document.documentElement.dataset.theme=__u.theme||"night";document.documentElement.dataset.anim=__u.anim||"full";}catch(e){document.documentElement.dataset.theme="night";}</script>
 <meta name="theme-color" content="#0D1C39">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap">
-<title>I Bee Free</title>
+<title>IBeeFree</title>
 <style>
   :root {
     --bg: #F4F1E8; --card: #FFFFFF; --text: #0D1C39; --muted: #4A5575;
-    --brand: #FBBE0E; --brand-text: #000000; --hdr: #0D1C39; --title: #0D1C39; --mine: #FCE7A0; --mine-text: #000000; --theirs: #FFFFFF;
+    --brand: #DDAE40; --brand-text: #000000; --hdr: #0D1C39; --title: #0D1C39; --mine: #F3E3B0; --mine-text: #000000; --theirs: #FFFFFF;
     --line: #E0D9C6; --danger: #B42318;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #081630; --card: #112347; --text: #EAF0FA; --muted: #9FB0CE;
-      --brand: #FBBE0E; --brand-text: #000000; --hdr: #0D1C39; --title: #E6A42A; --mine: #FBBE0E; --mine-text: #000000; --theirs: #172E5C;
+      --brand: #DDAE40; --brand-text: #000000; --hdr: #0D1C39; --title: #E3B554; --mine: #DDAE40; --mine-text: #000000; --theirs: #172E5C;
       --line: #223869; --danger: #F97066;
     }
   }
@@ -142,20 +143,20 @@
   .chip { padding: 8px 12px; border: 2px solid var(--line); background: var(--bg); color: var(--text); font-size: 15px; }
   .sw { padding: 8px 12px; border: 2px solid var(--line); font-size: 14px; display: flex; align-items: center; gap: 8px; }
   .sw .sw-a { font-size: 18px; font-weight: 700; }
-  .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: #F5B800; outline: 3px solid #F5B800; }
+  .chip[aria-pressed="true"], .sw[aria-pressed="true"] { border-color: #D4A22F; outline: 3px solid #D4A22F; }
   .fsw { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .sheet .row { display: flex; gap: 8px; flex-wrap: wrap; }
   .sect { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
   /* ===== نظام إشعارات النحل وقرص العسل ===== */
-  .hexo { padding: 2px; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hexo { padding: 2px; background: linear-gradient(135deg,#EBC862,#D4A22F); clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
   .hexi { background: var(--card); color: var(--text); padding: 12px 28px; min-height: 52px; display: flex; align-items: center; gap: 12px; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
   .hexi .grow { flex: 1; font-weight: 700; font-size: 15px; }
-  .emb, .hext .ic { position: relative; isolation: isolate; width: 38px; height: 42px; flex: none; display: grid; place-items: center; font-size: 20px; line-height: 1; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .emb, .hext .ic { position: relative; isolation: isolate; width: 38px; height: 42px; flex: none; display: grid; place-items: center; font-size: 20px; line-height: 1; background: linear-gradient(#EBC862,#D4A22F); clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
   .emb::before, .hext .ic::before { content: ""; position: absolute; inset: 2px; z-index: -1; background: #081630; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
   .hext .ic { width: 46px; height: 50px; font-size: 24px; }
   .hsw { width: 54px; height: 30px; padding: 3px; border: 0; border-radius: 15px; background: #8a8f9c; display: flex; align-items: center; justify-content: flex-start; flex: none; transition: background .2s; }
   .hsw i { display: block; width: 24px; height: 24px; background: #fff; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); transition: transform .2s; }
-  .hsw.on { background: linear-gradient(90deg,#FFD100,#F5B700); }
+  .hsw.on { background: linear-gradient(90deg,#EBC862,#D4A22F); }
   .hsw.on i { transform: translateX(24px); }
   html[dir="rtl"] .hsw.on i { transform: translateX(-24px); }
   .hsw:disabled { opacity: .4; }
@@ -163,31 +164,31 @@
   .hgrid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding-bottom: 22px; }
   .hgrid3 > :nth-child(2) { transform: translateY(22px); }
   .hext { padding: 2px; border: 0; background: var(--line); aspect-ratio: .9 / 1; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
-  .hext.on { background: linear-gradient(135deg,#FFD100,#F5B700); }
+  .hext.on { background: linear-gradient(135deg,#EBC862,#D4A22F); }
   .hext .hin { width: 100%; height: 100%; background: var(--card); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 14px 10px; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.2; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
-  .hext.sel .hin { background: linear-gradient(135deg,#FFD100,#F5B700); color: #000; }
+  .hext.sel .hin { background: linear-gradient(135deg,#EBC862,#D4A22F); color: #000; }
   .hext .ic { font-size: 24px; }
   .hext small { font-size: 11px; font-weight: 600; opacity: .85; }
-  .minibn { width: 44px; height: 14px; background: linear-gradient(#FFD100,#F5B700); clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%,0 50%); }
-  .hbadge { min-width: 26px; height: 28px; padding: 0 5px; margin-inline-start: 8px; background: linear-gradient(#FFD100,#F5B700); color: #000; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
+  .minibn { width: 44px; height: 14px; background: linear-gradient(#EBC862,#D4A22F); clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%,0 50%); }
+  .hbadge { min-width: 26px; height: 28px; padding: 0 5px; margin-inline-start: 8px; background: linear-gradient(#EBC862,#D4A22F); color: #000; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); }
   .hbadge.mini { min-width: 20px; height: 22px; font-size: 11px; margin: 0; }
   .seg { display: flex; gap: 6px; flex: 1; }
   .seg button { flex: 1; padding: 8px 6px; font-size: 13px; font-weight: 700; background: transparent; color: var(--text); border: 2px solid var(--line); border-radius: 10px; }
-  .seg button[aria-pressed="true"] { background: linear-gradient(#FFD100,#F5B700); color: #000; border-color: #F5B700; }
+  .seg button[aria-pressed="true"] { background: linear-gradient(#EBC862,#D4A22F); color: #000; border-color: #D4A22F; }
   .ns-note { margin: 0; font-size: 12.5px; color: var(--muted); }
   .ns-dim { opacity: .45; pointer-events: none; }
-  .hback { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 8px 24px; font-size: 15px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border: 0; border-radius: 0; clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); }
+  .hback { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 8px 24px; font-size: 15px; font-weight: 800; color: #000; background: linear-gradient(#EBC862,#D4A22F); border: 0; border-radius: 0; clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); }
   header button.back { clip-path: polygon(12px 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,12px 100%,0 50%); background: rgba(255,255,255,.18); padding: 4px 20px; }
-  .hexbtn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 28px; font-weight: 800; color: #000; background: linear-gradient(#FFD100,#F5B700); border-radius: 0; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
-  .hbanner { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(92vw,420px); z-index: 50; padding: 2px; cursor: pointer; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); animation: hbin .35s ease-out; }
+  .hexbtn { display: inline-flex; align-items: center; gap: 12px; padding: 8px 28px; font-weight: 800; color: #000; background: linear-gradient(#EBC862,#D4A22F); border-radius: 0; clip-path: polygon(16px 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,16px 100%,0 50%); }
+  .hbanner { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(92vw,420px); z-index: 50; padding: 2px; cursor: pointer; background: linear-gradient(135deg,#EBC862,#D4A22F); clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); animation: hbin .35s ease-out; }
   .hbanner .hb-in { background: #0D1C39; color: #fff; padding: 12px 28px; display: flex; align-items: center; gap: 10px; clip-path: polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); }
   .hbanner .hb-ic { font-size: 22px; }
   .hbanner .hb-tx { display: flex; flex-direction: column; min-width: 0; }
-  .hbanner .hb-tx b { color: #FFD100; }
+  .hbanner .hb-tx b { color: #EBC862; }
   .hbanner .hb-tx span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @keyframes hbin { from { transform: translate(-50%,-130%); } to { transform: translate(-50%,0); } }
   @media (prefers-reduced-motion: reduce) { .hbanner { animation: none; } .hsw, .hsw i { transition: none; } }
-  .sect h4 { margin: 0; font-size: 16px; color: var(--title); padding-bottom: 6px; border-bottom: 2px solid #F5B800; }
+  .sect h4 { margin: 0; font-size: 16px; color: var(--title); padding-bottom: 6px; border-bottom: 2px solid #D4A22F; }
 
   /* ===== (4) أيقونتا السلة والتبليغ: نظيفتان ومنسجمتان مع الرسالة ===== */
   .bubble .foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
@@ -196,7 +197,7 @@
     display: inline-flex; align-items: center; justify-content: center; color: inherit; opacity: .8; margin: 0; font-size: 0; }
   .bubble .del:active { opacity: 1; background: rgba(0,0,0,.12); }
   .bubble .del svg { width: 18px; height: 18px; display: block; }
-  .bubble button.small, .contact.req .small { background: #0D1C39; color: #FBBE0E; border: 1px solid #FBBE0E; border-radius: 10px; }
+  .bubble button.small, .contact.req .small { background: #0D1C39; color: #DDAE40; border: 1px solid #DDAE40; border-radius: 10px; }
   .bubble button.small { padding: 6px 12px; }
 
   /* ===== (3) أسود داكن وصريح: سماكة وحدّ خفيف للنص الأسود ===== */
@@ -208,7 +209,7 @@
   .fb-clock { --clk: 50px; min-height: 50px; }
   .fb-clock svg { display: block; width: var(--clk); height: var(--clk); filter: drop-shadow(0 0 calc(var(--clk) * .1) rgba(255, 26, 26, .4)); }
   .fb-clock .dh, .fb-clock .dc, .fb-clock .dm { font-size: 24px; line-height: 1; font-weight: 800; -webkit-text-stroke: .3px #FF1A1A; paint-order: stroke fill; text-shadow: 0 0 2.4px rgba(255, 26, 26, .6); }
-  .fb-clock .dh { color: #FBBE0E; }
+  .fb-clock .dh { color: #DDAE40; }
   .fb-clock .dc, .fb-clock .dm { color: #FFFFFF; }
 
   /* ===== الفيديو داخل الفقاعة ===== */
@@ -219,7 +220,7 @@
   /* ===== شريط الضبط ===== */
   .tune { display: flex; flex-direction: column; gap: 4px; }
   .tl { font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .tnum { min-width: 34px; text-align: center; background: #F5B800; color: #000; border-radius: 999px; padding: 2px 8px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tnum { min-width: 34px; text-align: center; background: #D4A22F; color: #000; border-radius: 999px; padding: 2px 8px; font-weight: 800; font-variant-numeric: tabular-nums; }
   .cr { font-size: 13px; font-weight: 700; }
 
   /* ===== عبارة الهوية: تبقى في أقصى الشريط بجانب الأزرار ===== */
@@ -237,11 +238,11 @@
   button.small { background: color-mix(in srgb, var(--title) 14%, transparent); }
   header button.small { background: rgba(255,255,255,.18); }
   .chip { background: var(--line); }
-  .chip[aria-pressed="true"] { background: linear-gradient(#FFD100,#F5B700); color: #000; outline: 0; }
-  .sw[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 4px #F5B800; }
+  .chip[aria-pressed="true"] { background: linear-gradient(#EBC862,#D4A22F); color: #000; outline: 0; }
+  .sw[aria-pressed="true"] { outline: 0; box-shadow: inset 0 0 0 4px #D4A22F; }
   .composer button.attach { clip-path: var(--hx6); background: color-mix(in srgb, var(--title) 14%, transparent); }
   input[type="text"], textarea.msgbox, select { clip-path: var(--hx); border-color: transparent; border-radius: 0; padding-inline: 22px; }
-  input[type="text"]:focus, textarea.msgbox:focus, select:focus { outline: 0; box-shadow: inset 0 -3px 0 #F5B700; }
+  input[type="text"]:focus, textarea.msgbox:focus, select:focus { outline: 0; box-shadow: inset 0 -3px 0 #D4A22F; }
   .codebox, .contact { margin: 4px 10px; border: 0; clip-path: var(--hx); padding-inline: 28px; }
   .codebox { margin-top: 6px; }
   .avatar { border-radius: 0; clip-path: var(--hx6); }
@@ -251,9 +252,9 @@
   .sheet { clip-path: polygon(24px 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%,0 24px); border-radius: 0; }
   input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; height: 34px; }
   input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: var(--line); clip-path: var(--hx); }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 32px; margin-top: -12px; border: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 32px; margin-top: -12px; border: 0; background: linear-gradient(#EBC862,#D4A22F); clip-path: var(--hx6); }
   input[type="range"]::-moz-range-track { height: 8px; background: var(--line); clip-path: var(--hx); }
-  input[type="range"]::-moz-range-thumb { width: 28px; height: 32px; border: 0; border-radius: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
+  input[type="range"]::-moz-range-thumb { width: 28px; height: 32px; border: 0; border-radius: 0; background: linear-gradient(#EBC862,#D4A22F); clip-path: var(--hx6); }
   /* ===== تعديلات الجولة الأخيرة ===== */
   .sw { position: relative; }
   .sw.lite[aria-pressed="true"] { box-shadow: none; }
@@ -269,15 +270,55 @@
   .sp-s[lang="ar"] { font-family: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif; letter-spacing: 0; font-weight: 800; }
   #splash { position: fixed; inset: 0; z-index: 200; background: #06101F; display: grid; place-items: center; transition: opacity .35s; }
   #splash.out { opacity: 0; pointer-events: none; }
-  .sp-o { padding: 3px; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(40px 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,40px 100%,0 50%); }
+  .sp-o { padding: 3px; background: linear-gradient(135deg,#EBC862,#D4A22F); clip-path: polygon(40px 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,40px 100%,0 50%); }
   .sp-i { background: #0D1C39; padding: 34px 64px; display: flex; flex-direction: column; align-items: center; gap: 14px; clip-path: polygon(40px 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,40px 100%,0 50%); }
   .sp-t { color: #fff; font-size: 30px; font-weight: 800; }
-  .sp-t b { color: #FFD100; }
-  .sp-s { color: #FFD100; font-family: "Orbitron", ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 700; letter-spacing: .06em; font-size: clamp(17px, 5.2vw, 24px); white-space: nowrap; }
+  .sp-t b { color: #EBC862; }
+  .sp-s { color: #EBC862; font-family: "Orbitron", ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 700; letter-spacing: .06em; font-size: clamp(17px, 5.2vw, 24px); white-space: nowrap; }
+  /* ===== IBeeFree الدفعة 1: ثيمات Bee + شريط مضغوط + الإعدادات + الحضور ===== */
+  html[data-theme="night"] { --bg: #081630; --card: #112347; --text: #EAF0FA; --muted: #9FB0CE; --brand: #DDAE40; --brand-text: #000; --hdr: #0D1C39; --title: #E3B554; --mine: #DDAE40; --mine-text: #000; --theirs: #172E5C; --line: #223869; --danger: #F97066; }
+  html[data-theme="xray"] { --bg: #030B16; --bgimg: linear-gradient(160deg,#020912 0%,#0B2A4A 45%,#04101F 100%); --card: rgba(120,190,255,.09); --text: #D6ECFF; --muted: #8FB4D6; --brand: #DDAE40; --brand-text: #000; --hdr: rgba(14,40,70,.88); --title: #9FD3FF; --mine: #DDAE40; --mine-text: #000; --theirs: rgba(120,190,255,.16); --line: rgba(140,200,255,.28); --danger: #F97066; }
+  html[data-theme="honey"] { --bg: #15100A; --card: #241A0F; --text: #F6EBD6; --muted: #BBA982; --brand: #DDAE40; --brand-text: #000; --hdr: #1E150B; --title: #E3B554; --mine: #DDAE40; --mine-text: #000; --theirs: #33250F; --line: #4A3718; --danger: #F97066; }
+  html[data-theme="moon"] { --bg: #0E1013; --card: #1A1E24; --text: #E7EAEE; --muted: #9AA3AF; --brand: #DDAE40; --brand-text: #000; --hdr: #14171C; --title: #DDAE40; --mine: #DDAE40; --mine-text: #000; --theirs: #242A33; --line: #2E3540; --danger: #F97066; }
+  html[data-theme="day"] { --bg: #F6F2E6; --card: #FFFFFF; --text: #0D1C39; --muted: #4A5575; --brand: #DDAE40; --brand-text: #000; --hdr: #0D1C39; --title: #0D1C39; --mine: #F3E3B0; --mine-text: #000; --theirs: #FFFFFF; --line: #E0D9C6; --danger: #B42318; }
+  body { background: var(--bgimg, var(--bg)) fixed; }
+  html[data-theme="xray"] body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background: linear-gradient(115deg, rgba(120,190,255,.07) 0 28%, transparent 28% 58%, rgba(120,190,255,.05) 58% 100%); }
+  html[data-theme="xray"] .contact, html[data-theme="xray"] .codebox, html[data-theme="xray"] .sheet, html[data-theme="xray"] .sect, html[data-theme="xray"] .hexi { backdrop-filter: blur(6px); }
+  #dimmer { position: fixed; inset: 0; background: #000; pointer-events: none; z-index: 300; opacity: 0; transition: opacity .2s; }
+  html[data-anim="off"] *, html[data-anim="off"] *::before, html[data-anim="off"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  html[data-anim="fast"] *, html[data-anim="fast"] *::before, html[data-anim="fast"] *::after { animation-duration: .2s !important; transition-duration: .08s !important; }
+  header { padding: 4px 12px; min-height: 0; }
+  header h2 { font-size: 15px; }
+  header button.small { padding: 3px 14px; font-size: 13px; }
+  #focusbar { min-height: 20px; padding: calc(2px + env(safe-area-inset-top, 0px)) 10px 2px; font-size: 12px; gap: 8px; }
+  .fb-clock { min-height: 20px; font-size: 13px; }
+  .fb-q { background: rgba(255,255,255,.14); color: #cdd6ea; padding: 0 12px; min-height: 20px; font-size: 13px; line-height: 1; clip-path: var(--hx); border-radius: 0; }
+  .fb-bat { display: inline-flex; align-items: center; gap: 4px; }
+  .bt { position: relative; display: inline-block; width: 22px; height: 10px; border: 1.5px solid #cdd6ea; border-radius: 2px; padding: 1px; }
+  .bt::after { content: ""; position: absolute; right: -4px; top: 2px; width: 2px; height: 4px; background: #cdd6ea; }
+  .bt .bf { display: block; height: 100%; background: #6EE7A0; }
+  .fb-bat.low .bf { background: #F97066; }
+  .sbox, .srow { display: block; width: 100%; background: none; padding: 0; text-align: inherit; }
+  .srow { margin: 6px 0; width: calc(100% - 20px); margin-inline: 10px; }
+  .sbx { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .chev { font-size: 22px; font-weight: 900; color: var(--title); }
+  .h4 { margin: 6px 0 0; color: var(--title); font-size: 16px; }
+  .tsw { display: inline-block; width: 16px; height: 18px; margin-inline-end: 8px; vertical-align: middle; clip-path: var(--hx6); }
+  .obadge { background: linear-gradient(#EBC862,#D4A22F); color: #000; font-weight: 800; font-size: 11px; padding: 2px 12px; letter-spacing: .04em; clip-path: var(--hx); }
+  .pdots { display: inline-flex; gap: 5px; margin-inline-start: 8px; align-items: center; }
+  .pd { --c: #39FF88; display: inline-block; width: 10px; height: 11px; opacity: .2; }
+  .pd.y { --c: #FFE14A; } .pd.r { --c: #FF4D5A; }
+  .pd i { display: block; width: 100%; height: 100%; background: var(--c); clip-path: var(--hx6); }
+  .pd.on { opacity: 1; filter: drop-shadow(0 0 3px var(--c)) drop-shadow(0 0 8px var(--c)); }
+  .wcard { margin: 6px 10px; padding: 12px 28px; background: linear-gradient(#EBC862,#D4A22F); color: #000; clip-path: var(--hx); display: flex; flex-direction: column; gap: 8px; }
+  .wcard .wmsg { font-weight: 700; font-size: 14px; }
+  .wcard .wrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .wcard button.small { background: rgba(0,0,0,.14); color: #000; }
+  .wcard .wok { background: #000; color: #EBC862; font-weight: 900; padding: 4px 16px; clip-path: var(--hx); border-radius: 0; }
 </style>
 </head>
 <body>
-<div id="splash" dir="ltr" role="presentation"><div class="sp-o"><div class="sp-i"><div class="sp-t">I <b>B</b>ee Free</div><div class="sp-s">Your 101% Freedom</div></div></div></div>
+<div id="splash" dir="ltr" role="presentation"><div class="sp-o"><div class="sp-i"><div class="sp-t">I<b>B</b>eeFree</div><div class="sp-s">Your 101% Freedom</div></div></div></div>
 <script>
 (function () {
   var el = document.getElementById("splash"); if (!el) return;
@@ -320,7 +361,7 @@ const firebaseConfig = {
   projectId: "ibeefree",
   appId: "1:152240669138:web:27cef60434c4a694d2480b"
 };
-const APP_NAME = "I Bee Free";
+const APP_NAME = "IBeeFree";
 /* ======================================================================== */
 
 const T = {"ar": ["تعذر إنشاء الكود", "حساب جديد", "عندي كود استرجاع", "متابعة", "كود الاسترجاع", "اكتب هذه الكلمات الـ12 على ورقة واحفظها. إن ضاع هاتفك فهي الطريقة الوحيدة لاسترجاع حسابك، ولا نستطيع استرجاعها لك.", " حفظتُ الكود", "الكلمات الـ12 بالترتيب", "استرجاع", "الكود من 12 كلمة", "جارٍ الاسترجاع...", "الكود غير صحيح", "رجوع", "اسمك", "ابدأ", "اكتب اسماً من حرفين على الأقل", "جارٍ الإنشاء...", "حدث خطأ: ", "اختر اسماً يظهر لأصدقائك", "تطبيق تجريبي، وقد توجد فيه أخطاء.", "الرسائل غير مشفّرة بالكامل، فلا ترسل معلومات سرية أو بنكية. تخيّل أنك تتحدث في مقهى مملوء بالناس.", "صاحب التطبيق لا يقرأ الرسائل، ولا يجمع عنك إلا اسمك وكودك، ولا توجد إعلانات ولا أرباح.", "تستطيع حذف حسابك في أي وقت من صفحة «حول».", "فهمت", "سيُحذف حسابك وكودك وقائمة أصدقائك نهائياً. هل أنت متأكد؟", "لتأكيد الحذف اكتب كود الاسترجاع (12 كلمة):", "كود الاسترجاع غير صحيح لهذا الحساب", "تعذر الحذف: ", "حذف حسابي", "حول التطبيق", " وضع توفير البيانات (تظهر الصور مصغّرة حتى تضغط عليها)", "لا توجد محادثات بعد. اكتب كود صديقك في الأعلى وأضفه، أو أعطه كودك.", "؟", " يريد محادثتك", "قبول", "حظر", "الكود من 6 خانات", "لا يوجد أحد بهذا الكود", "هذا كودك أنت", "هذا الشخص محظور عندك", "تعذر إرسال الطلب إلى هذا الشخص", "نسخ", "تم", "انسخه يدوياً", "كود الصديق", "إضافة", "تعذرت الإضافة: ", "حول", "كودك:", "الصورة كبيرة جداً", "حفظ في الهاتف", "صورة", "تم حذف هذه الرسالة", "ملف", " ك.ب)", "تعذر تحميل الملف", "حذف الرسالة", "حذف الرسالة للطرفين؟", "إبلاغ", "إبلاغ عن هذه الرسالة؟ ستُرسَل نسخة منها إلى صاحب التطبيق فقط.", "تم الإبلاغ.", "تعذر الإبلاغ: ", "لا يمكن إرسال الرسالة: لم يقبل صديقك طلبك بعد، أو قام بحظرك.", "تعذر الإرسال: ", "اكتب رسالة...", "إرسال صورة", "إرسال", "الملف كبير: الحد الآن 600 كيلوبايت", "حظر ", "هذا الشخص", "تعذر تحميل الرسائل: ", "لم تُضبط إعدادات Firebase بعد. افتح الملف index.html وألصق الإعدادات في الأعلى.", "تعذر الاتصال بالقاعدة: ", "→", "إزالة", "إزالة هذا الصديق من قائمتك؟ تبقى الرسائل محفوظة، ويمكنك إعادة إضافته بكوده لاحقاً.", "تعذرت الإزالة: "], "en": ["Could not create the code", "New account", "I have a recovery code", "Continue", "Recovery code", "Write these 12 words on paper and keep them safe. If you lose your phone, they are the only way to recover your account, and we cannot recover them for you.", " I saved the code", "The 12 words in order", "Recover", "The code has 12 words", "Recovering...", "Incorrect code", "Back", "Your name", "Start", "Write a name of at least 2 letters", "Creating...", "Error: ", "Choose a name your friends will see", "Experimental app, it may contain errors.", "Messages are not fully encrypted, so do not send secret or banking information. Imagine you are talking in a café full of people.", "The app owner does not read messages and collects only your name and code. There are no ads and no profit.", "You can delete your account at any time from the About page.", "Got it", "Your account, code and friends list will be permanently deleted. Are you sure?", "To confirm deletion, enter your recovery code (12 words):", "This recovery code is not valid for this account", "Could not delete: ", "Delete my account", "About the app", " Data saver mode (images appear as thumbnails until you tap them)", "No conversations yet. Enter a friend's code above and add them, or give them your code.", "?", " wants to chat with you", "Accept", "Block", "The code has 6 characters", "Nobody has this code", "This is your own code", "You blocked this person", "Could not send the request to this person", "Copy", "Done", "Copy it manually", "Friend's code", "Add", "Could not add: ", "About", "Your code:", "The image is too large", "Save to phone", "Image", "This message was deleted", "File", " KB)", "Could not load the file", "Delete message", "Delete the message for both?", "Report", "Report this message? A copy will be sent to the app owner only.", "Reported.", "Could not report: ", "Cannot send: your friend has not accepted your request yet, or has blocked you.", "Could not send: ", "Write a message...", "Send an image", "Send", "File too large: the limit is 600 KB for now", "Block ", "this person", "Could not load messages: ", "Firebase settings are missing. Open index.html and paste them at the top.", "Could not connect to the database: ", "←", "Remove", "Remove this friend from your list? Messages are kept, and you can add them again with their code.", "Could not remove: "], "fr": ["Impossible de créer le code", "Nouveau compte", "J'ai un code de récupération", "Continuer", "Code de récupération", "Écrivez ces 12 mots sur papier et gardez-les précieusement. Si vous perdez votre téléphone, c'est le seul moyen de récupérer votre compte, et nous ne pouvons pas les récupérer pour vous.", " J'ai noté le code", "Les 12 mots dans l'ordre", "Récupérer", "Le code comporte 12 mots", "Récupération...", "Code incorrect", "Retour", "Votre nom", "Commencer", "Écrivez un nom d'au moins 2 lettres", "Création...", "Erreur : ", "Choisissez un nom visible par vos amis", "Application expérimentale, elle peut contenir des erreurs.", "Les messages ne sont pas entièrement chiffrés : n'envoyez pas d'informations secrètes ou bancaires. Imaginez que vous parlez dans un café plein de monde.", "Le propriétaire de l'application ne lit pas les messages et ne collecte que votre nom et votre code. Aucune publicité, aucun profit.", "Vous pouvez supprimer votre compte à tout moment depuis la page « À propos ».", "Compris", "Votre compte, votre code et votre liste d'amis seront supprimés définitivement. Êtes-vous sûr ?", "Pour confirmer la suppression, saisissez votre code de récupération (12 mots) :", "Ce code de récupération n'est pas valide pour ce compte", "Suppression impossible : ", "Supprimer mon compte", "À propos de l'application", " Mode économie de données (les images restent en miniature jusqu'au toucher)", "Aucune conversation pour l'instant. Saisissez le code d'un ami ci-dessus, ou donnez-lui votre code.", "?", " veut discuter avec vous", "Accepter", "Bloquer", "Le code comporte 6 caractères", "Personne n'a ce code", "C'est votre propre code", "Vous avez bloqué cette personne", "Impossible d'envoyer la demande à cette personne", "Copier", "Fait", "Copiez-le manuellement", "Code de l'ami", "Ajouter", "Ajout impossible : ", "À propos", "Votre code :", "L'image est trop grande", "Enregistrer sur le téléphone", "Image", "Ce message a été supprimé", "Fichier", " Ko)", "Impossible de charger le fichier", "Supprimer le message", "Supprimer le message pour les deux ?", "Signaler", "Signaler ce message ? Une copie sera envoyée uniquement au propriétaire de l'application.", "Signalé.", "Signalement impossible : ", "Envoi impossible : votre ami n'a pas encore accepté votre demande, ou vous a bloqué.", "Envoi impossible : ", "Écrivez un message...", "Envoyer une image", "Envoyer", "Fichier trop volumineux : la limite est de 600 Ko pour l'instant", "Bloquer ", "cette personne", "Impossible de charger les messages : ", "Les paramètres Firebase manquent. Ouvrez index.html et collez-les en haut.", "Connexion à la base impossible : ", "←", "Retirer", "Retirer cet ami de votre liste ? Les messages sont conservés, vous pourrez le rajouter avec son code.", "Retrait impossible : "]};
@@ -402,8 +443,8 @@ const ICON_FLAG = SVG_HEAD + '<path d="M6 21V4"/><path d="M6 4.5h11l-2.2 3.8L17 
 /* ---------- (3) إعدادات مربع النص: الحجم والنوع واللون ---------- */
 const SYS_FF = 'system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif';
 const TB_COLORS = [
-  { id: "by", bg: "#FBBE0E", fg: "#000000" },
-  { id: "yb", bg: "#000000", fg: "#FBBE0E" },
+  { id: "by", bg: "#DDAE40", fg: "#000000" },
+  { id: "yb", bg: "#000000", fg: "#DDAE40" },
   { id: "wb", bg: "#000000", fg: "#FFFFFF" },
   { id: "bw", bg: "#FFFFFF", fg: "#000000" },
   { id: "gg", bg: "#101214", fg: "#6EE7A0" },
@@ -769,6 +810,318 @@ function hback(fn) {
   return b;
 }
 
+/* ================= IBeeFree: الدفعة 1 (الهوية والثيمات + الإعدادات + الأسماء + About) ================= */
+const S9 = {
+  ar: { bx_app: "المظهر والثيمات", bx_text: "النصوص والخطوط", bx_snd: "الصوت والإشعارات", bx_size: "التحكم بالحجم والأنيميشن", bx_priv: "الخصوصية والأسماء",
+    dark: "الوضع الداكن", bright: "السطوع داخل التطبيق", themes: "الثيمات", themes_note: "هذه الخيارات مستقلة عن إعدادات الهاتف.",
+    scale: "تغيير الحجم (Resize)", fit360: "ملاءمة 360dp", fontfine: "دقة تصغير الخط", dflt: "الافتراضي", anim: "الأنيميشن", a_full: "كامل", a_fast: "سريع", a_off: "متوقف",
+    myname: "اسمي", left: "تغييرات الاسم المتبقية: ", limit: "وصلت للحد الأقصى: 3 تغييرات فقط.", save: "حفظ", gen: "مولّد الأسماء", owner: "المالك / الأدمن",
+    mystatus: "حالتي", st_auto: "تلقائي", st_busy: "مشغول", allow: "السماح لأصدقائي بتسميتي", friends: "تسمية الأصدقاء", nick: "تسمية", nick_ask: "اكتب التسمية (اتركها فارغة للحذف):",
+    nick_locked: "هذا الصديق لم يسمح بتغيير اسمه بعد.", p_on: "متصل", p_busy: "مشغول", p_off: "غير متصل",
+    w_msg: "أهلاً بك في IBeeFree. ننصحك بزيارة صفحة About للتعرف على التطبيق.", w_open: "فتح About", w_later: "ذكّرني لاحقاً", w_ok: "فهمت", w_thanks: "✓ تم. شكراً لك" },
+  en: { bx_app: "Appearance & Themes", bx_text: "Text & Fonts", bx_snd: "Sound & Notifications", bx_size: "Size & Animation", bx_priv: "Privacy & Names",
+    dark: "Dark mode", bright: "In-app brightness", themes: "Themes", themes_note: "These options are independent of the phone's settings.",
+    scale: "Resize", fit360: "Fit 360dp", fontfine: "Font fine-tuning", dflt: "Default", anim: "Animation", a_full: "Full", a_fast: "Fast", a_off: "Off",
+    myname: "My name", left: "Name changes left: ", limit: "Limit reached: only 3 name changes.", save: "Save", gen: "Name generator", owner: "Owner / Admin",
+    mystatus: "My status", st_auto: "Auto", st_busy: "Busy", allow: "Let friends nickname me", friends: "Friend nicknames", nick: "Nickname", nick_ask: "Type the nickname (leave empty to clear):",
+    nick_locked: "This friend hasn't allowed nicknames yet.", p_on: "Online", p_busy: "Busy", p_off: "Offline",
+    w_msg: "Welcome to IBeeFree. We recommend visiting the About page to get to know the app.", w_open: "Open About", w_later: "Remind me later", w_ok: "Got it", w_thanks: "✓ Done. Thank you" },
+  fr: { bx_app: "Apparence et thèmes", bx_text: "Textes et polices", bx_snd: "Son et notifications", bx_size: "Taille et animation", bx_priv: "Confidentialité et noms",
+    dark: "Mode sombre", bright: "Luminosité dans l'app", themes: "Thèmes", themes_note: "Ces options sont indépendantes des réglages du téléphone.",
+    scale: "Redimensionner", fit360: "Adapter à 360dp", fontfine: "Réglage fin de la police", dflt: "Par défaut", anim: "Animation", a_full: "Complète", a_fast: "Rapide", a_off: "Désactivée",
+    myname: "Mon nom", left: "Changements de nom restants : ", limit: "Limite atteinte : 3 changements seulement.", save: "Enregistrer", gen: "Générateur de noms", owner: "Propriétaire / Admin",
+    mystatus: "Mon statut", st_auto: "Auto", st_busy: "Occupé", allow: "Autoriser mes amis à me surnommer", friends: "Surnoms des amis", nick: "Surnom", nick_ask: "Écrivez le surnom (vide pour effacer) :",
+    nick_locked: "Cet ami n'a pas encore autorisé les surnoms.", p_on: "En ligne", p_busy: "Occupé", p_off: "Hors ligne",
+    w_msg: "Bienvenue sur IBeeFree. Nous vous conseillons de visiter la page About pour découvrir l'application.", w_open: "Ouvrir About", w_later: "Me le rappeler plus tard", w_ok: "Compris", w_thanks: "✓ Fait. Merci" }
+};
+const s9 = (k) => (S9[LANG] || S9.en)[k];
+
+/* ----- الثيمات (كلها تحمل كلمة Bee) + السطوع + الحجم + الأنيميشن ----- */
+const OWNER_CODES = ["D6T27D"];                       // كود المالك: يظهر له وسم Owner / Admin ثابت
+const isOwner = () => !!(me && OWNER_CODES.includes(me.code));
+const BEE_THEMES = [
+  { id: "night", dark: true,  prev: "linear-gradient(135deg,#081630,#112347)" },
+  { id: "xray",  dark: true,  prev: "linear-gradient(135deg,#020912,#0B2A4A 55%,#78BEFF)" },
+  { id: "honey", dark: true,  prev: "linear-gradient(135deg,#15100A,#33250F)" },
+  { id: "moon",  dark: true,  prev: "linear-gradient(135deg,#0E1013,#242A33)" },
+  { id: "day",   dark: false, prev: "linear-gradient(135deg,#F4F1E8,#FFFFFF)" }
+];
+const THEME_NAMES = { night: "Night Bee", xray: "X-Ray Bee", honey: "Honey Bee", moon: "Moon Bee", day: "Day Bee" };
+const VP_BASE = "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content";
+let UI = { theme: "night", lastDark: "night", bright: 100, scale: 100, anim: "full" };
+try { Object.assign(UI, JSON.parse(localStorage.getItem("ibf_ui") || "{}")); } catch (_) {}
+if (!BEE_THEMES.some((x) => x.id === UI.theme)) UI.theme = "night";
+const saveUI = () => { try { localStorage.setItem("ibf_ui", JSON.stringify(UI)); } catch (_) {} };
+const isDarkUI = () => !!BEE_THEMES.find((x) => x.id === UI.theme).dark;
+function applyUI() {
+  const root = document.documentElement;
+  root.dataset.theme = UI.theme; root.dataset.anim = UI.anim;
+  let dm = document.getElementById("dimmer");
+  if (!dm) { dm = document.createElement("div"); dm.id = "dimmer"; document.body.append(dm); }
+  dm.style.opacity = String(Math.min(0.7, (100 - clamp(+UI.bright || 100, 30, 100)) / 100));
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp) {
+    const sc = clamp(+UI.scale || 100, 70, 130);
+    vp.setAttribute("content", sc === 100 ? VP_BASE : "width=" + Math.round(screen.width / (sc / 100)) + ", initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content");
+  }
+}
+function setTheme(id) { UI.theme = id; if (isDarkUI()) UI.lastDark = id; saveUI(); applyUI(); }
+function setDark(on) {
+  if (on) { const d = BEE_THEMES.find((x) => x.id === UI.lastDark && x.dark); UI.theme = d ? d.id : "night"; }
+  else { if (isDarkUI()) UI.lastDark = UI.theme; UI.theme = "day"; }
+  saveUI(); applyUI();
+}
+function cycleBright() {
+  const L = [100, 75, 50, 30];
+  UI.bright = L.find((v) => v < UI.bright) || 100;
+  saveUI(); applyUI();
+}
+applyUI();
+
+/* ----- عناصر مشتركة ----- */
+function mkSwitch(on, fn, label) {
+  const b = h("button", { type: "button", class: "hsw" + (on ? " on" : ""), role: "switch", "aria-checked": String(!!on), "aria-label": label }, h("i", {}));
+  b.addEventListener("click", fn); return b;
+}
+function mkBar(...kids) { return h("div", { class: "hexo" }, h("div", { class: "hexi" }, ...kids)); }
+function panel(id, build) {
+  if (document.getElementById(id)) return;
+  const bg = h("div", { class: "sheetbg", id });
+  const sheet = h("div", { class: "sheet", role: "dialog", "aria-modal": "true" });
+  const close = () => bg.remove();
+  const render = () => sheet.replaceChildren(hback(close), ...build(render, close).filter(Boolean));
+  bg.addEventListener("click", (ev) => { if (ev.target === bg) close(); });
+  bg.append(sheet); render(); document.body.append(bg);
+}
+const rangeRow = (input, val) => mkBar(h("div", { style: "flex:1;min-width:0" }, input), val);
+const valBadge = (txt) => h("span", { class: "hbadge", style: "margin:0;min-width:56px" }, txt);
+
+/* ----- المظهر والثيمات ----- */
+function openAppearance() {
+  panel("apsheet", (render) => {
+    const br = h("input", { type: "range", min: "30", max: "100", step: "1", value: String(UI.bright), "aria-label": s9("bright") });
+    const bv = valBadge(UI.bright + "%");
+    br.addEventListener("input", () => { UI.bright = +br.value; bv.textContent = br.value + "%"; applyUI(); });
+    br.addEventListener("change", saveUI);
+    return [
+      h("h3", {}, s9("bx_app")),
+      mkBar(h("span", { class: "emb" }, "🌙"), h("span", { class: "grow" }, s9("dark")), mkSwitch(isDarkUI(), () => { setDark(!isDarkUI()); render(); }, s9("dark"))),
+      h("h4", { class: "h4" }, s9("bright")),
+      rangeRow(br, bv),
+      h("h4", { class: "h4" }, s9("themes")),
+      h("div", { class: "chips" }, ...BEE_THEMES.map((th) => {
+        const b = h("button", { type: "button", class: "chip", "aria-pressed": String(UI.theme === th.id) }, h("span", { class: "tsw", style: "background:" + th.prev }), THEME_NAMES[th.id]);
+        b.addEventListener("click", () => { setTheme(th.id); render(); }); return b;
+      })),
+      h("p", { class: "ns-note" }, s9("themes_note"))
+    ];
+  });
+}
+
+/* ----- الحجم والأنيميشن ----- */
+function openSizeAnim() {
+  panel("szsheet", (render) => {
+    const rs = h("input", { type: "range", min: "70", max: "130", step: "1", value: String(UI.scale), "aria-label": s9("scale") });
+    const rv = valBadge(UI.scale + "%");
+    rs.addEventListener("input", () => { rv.textContent = rs.value + "%"; });
+    rs.addEventListener("change", () => { UI.scale = +rs.value; saveUI(); applyUI(); });
+    const fit = h("button", { type: "button", class: "chip" }, s9("fit360"));
+    fit.addEventListener("click", () => { UI.scale = clamp(Math.round(screen.width / 360 * 100), 70, 130); saveUI(); applyUI(); render(); });
+    const full = h("button", { type: "button", class: "chip" }, "100%");
+    full.addEventListener("click", () => { UI.scale = 100; saveUI(); applyUI(); render(); });
+    const fr = h("input", { type: "range", min: "9", max: "30", step: "0.5", value: String(TB.fs || 17), "aria-label": s9("fontfine") });
+    const fv = valBadge((TB.fs || 17) + "px");
+    const saveTBnow = () => { try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {} applyTB(); if (rerenderChat) rerenderChat(); };
+    fr.addEventListener("input", () => { TB.fs = +fr.value; fv.textContent = fr.value + "px"; applyTB(); });
+    fr.addEventListener("change", saveTBnow);
+    const frd = h("button", { type: "button", class: "chip" }, s9("dflt"));
+    frd.addEventListener("click", () => { TB.fs = 0; saveTBnow(); render(); });
+    return [
+      h("h3", {}, s9("bx_size")),
+      h("h4", { class: "h4" }, s9("scale")),
+      rangeRow(rs, rv),
+      h("div", { class: "chips" }, fit, full),
+      h("h4", { class: "h4" }, s9("fontfine")),
+      rangeRow(fr, fv),
+      h("div", { class: "chips" }, frd),
+      h("h4", { class: "h4" }, s9("anim")),
+      h("div", { class: "chips" }, ...[["full", "a_full"], ["fast", "a_fast"], ["off", "a_off"]].map(([id, k]) => {
+        const b = h("button", { type: "button", class: "chip", "aria-pressed": String(UI.anim === id) }, s9(k));
+        b.addEventListener("click", () => { UI.anim = id; saveUI(); applyUI(); render(); }); return b;
+      }))
+    ];
+  });
+}
+
+/* ----- مولّد الأسماء ----- */
+const NAMEGEN = {
+  en: { a: ["Honey", "Golden", "Swift", "Buzzing", "Sunny", "Brave", "Silent", "Royal", "Wild", "Lucky"], b: ["Wing", "Hive", "Drone", "Nectar", "Comb", "Buzz", "Pollen", "Flight", "Queen", "Rider"] },
+  ar: { a: ["جناح", "رحيق", "طنين", "فارس", "نحلة", "شهد", "ملك"], b: ["الذهب", "الصباح", "الزهور", "العسل", "الحرية", "الخلية"] },
+  fr: { a: ["Aile", "Reine", "Nectar", "Vol", "Ruche", "Rayon"], b: ["d'or", "du matin", "des fleurs", "du miel", "de liberté"] }
+};
+function nameGenBtn(input) {
+  const b = h("button", { type: "button", class: "small" }, "🎲 " + s9("gen"));
+  b.addEventListener("click", () => {
+    const g = NAMEGEN[LANG] || NAMEGEN.en, pick = (a) => a[Math.floor(Math.random() * a.length)];
+    let n = pick(g.a) + " " + pick(g.b);
+    for (let i = 0; i < 6 && n.length > 30; i++) n = pick(g.a) + " " + pick(g.b);
+    input.value = n; input.focus();
+  });
+  return b;
+}
+
+/* ----- الاسم الشخصي (3 تغييرات كحد أقصى) ----- */
+function nameChangesUsed() {
+  let n = 0; try { n = +localStorage.getItem("ibf_nc:" + me.uid) || 0; } catch (_) {}
+  return Math.max(n, +me.nameChanges || 0);
+}
+async function changeMyName(v) {
+  const used = nameChangesUsed();
+  if (used >= 3) throw new Error(s9("limit"));
+  try { await updateDoc(doc(db, "users", me.uid), { name: v, nameChanges: used + 1 }); }
+  catch (_) { await updateDoc(doc(db, "users", me.uid), { name: v }); }
+  try { await setDoc(doc(db, "codes", me.code), { uid: me.uid, name: v }); } catch (e) { console.warn("codes", e); }
+  for (const c of contacts) if (c.status === "accepted") updateDoc(doc(db, "users", c.id, "contacts", me.uid), { name: v }).catch(() => {});
+  me.name = v; me.nameChanges = used + 1;
+  try { localStorage.setItem("ibf_nc:" + me.uid, String(used + 1)); } catch (_) {}
+}
+const ownerBadge = () => (isOwner() ? h("span", { class: "obadge", title: s9("owner") }, "OWNER") : null);
+
+/* ----- الحضور: 3 نقاط نيون (أخضر متصل / أصفر مشغول / أحمر غير متصل) ----- */
+const PRES = {}, presSubs = {};
+let myStatusPref = "auto", allowRenameMe = false, presOn = false;
+try { myStatusPref = localStorage.getItem("ibf_mystatus") === "busy" ? "busy" : "auto"; allowRenameMe = localStorage.getItem("ibf_allowrn") === "1"; } catch (_) {}
+async function writePresence(state) {
+  if (!me || !db) return;
+  try { await setDoc(doc(db, "users", me.uid), { pstate: state, pts: serverTimestamp(), allowRename: allowRenameMe }, { merge: true }); }
+  catch (e) { if (!writePresence.w) { writePresence.w = 1; console.warn("presence", e); } }
+}
+const presTick = () => { if (me && !document.hidden) writePresence(myStatusPref === "busy" ? "busy" : "online"); };
+function startPresence() {
+  if (presOn || !me) return; presOn = true;
+  presTick(); setInterval(presTick, 40000); setInterval(() => renderContacts(), 30000);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) writePresence("offline"); else presTick(); });
+}
+function presSync() {
+  const want = new Set(contacts.filter((c) => c.status === "accepted").map((c) => c.id));
+  for (const id of Object.keys(presSubs)) if (!want.has(id)) { presSubs[id](); delete presSubs[id]; delete PRES[id]; }
+  for (const id of want) {
+    if (presSubs[id]) continue;
+    presSubs[id] = onSnapshot(doc(db, "users", id), (snap) => {
+      const d = snap.exists() ? snap.data({ serverTimestamps: "estimate" }) : {};
+      PRES[id] = { state: d.pstate || "offline", ts: d.pts && d.pts.toMillis ? d.pts.toMillis() : 0, allowRename: d.allowRename === true };
+      renderContacts();
+    }, () => { PRES[id] = { unknown: true }; renderContacts(); });
+  }
+}
+function presOf(id) {
+  const p = PRES[id];
+  if (!p || p.unknown) return "unknown";
+  if (Date.now() - p.ts > 100000) return "offline";
+  return p.state === "busy" ? "busy" : (p.state === "online" ? "online" : "offline");
+}
+function presDots(id) {
+  const st = presOf(id);
+  const lbl = { online: s9("p_on"), busy: s9("p_busy"), offline: s9("p_off"), unknown: "" }[st];
+  const dot = (cls, on) => h("span", { class: "pd " + cls + (on ? " on" : "") }, h("i", {}));
+  return h("span", { class: "pdots", role: "img", "aria-label": lbl }, dot("g", st === "online"), dot("y", st === "busy"), dot("r", st === "offline"));
+}
+
+/* ----- تسمية الأصدقاء (محلية، بموافقة الصديق) ----- */
+let NICK = {};
+try { NICK = JSON.parse(localStorage.getItem("ibf_nick") || "{}") || {}; } catch (_) {}
+const saveNick = () => { try { localStorage.setItem("ibf_nick", JSON.stringify(NICK)); } catch (_) {} };
+const dispName = (c) => ((NICK[c.id] && PRES[c.id] && PRES[c.id].allowRename) ? NICK[c.id] : c.name);
+
+/* ----- الخصوصية والأسماء ----- */
+function openPrivacy() {
+  panel("pvsheet", (render) => {
+    const left = Math.max(0, 3 - nameChangesUsed());
+    const nameIn = h("input", { type: "text", maxlength: "30", value: me.name || "", autocomplete: "off" });
+    const msg = h("p", { class: "msg" });
+    const save = h("button", { type: "button", class: "primary" }, s9("save"));
+    if (left <= 0) { save.disabled = true; nameIn.disabled = true; msg.textContent = s9("limit"); }
+    save.addEventListener("click", async () => {
+      const v = nameIn.value.trim();
+      if (v.length < 2) { msg.textContent = t(15); return; }
+      if (v === me.name) { msg.textContent = ""; return; }
+      save.disabled = true; msg.textContent = t(16);
+      try { await changeMyName(v); render(); } catch (e) { console.error(e); msg.textContent = (e.code ? t(17) + explain(e) : e.message); save.disabled = false; }
+    });
+    const stChip = (id, k) => {
+      const b = h("button", { type: "button", class: "chip", "aria-pressed": String(myStatusPref === id) }, s9(k));
+      b.addEventListener("click", () => { myStatusPref = id; try { localStorage.setItem("ibf_mystatus", id); } catch (_) {} presTick(); render(); }); return b;
+    };
+    const friendRow = (c) => {
+      const ok = !!(PRES[c.id] && PRES[c.id].allowRename);
+      const b = h("button", { type: "button", class: "small" }, s9("nick"));
+      b.disabled = !ok;
+      b.addEventListener("click", () => {
+        const v = prompt(s9("nick_ask"), NICK[c.id] || "");
+        if (v === null) return;
+        const nv = v.trim().slice(0, 30);
+        if (nv) NICK[c.id] = nv; else delete NICK[c.id];
+        saveNick(); renderContacts(); render();
+      });
+      return h("div", { style: "display:flex;flex-direction:column;gap:4px" },
+        mkBar(presDots(c.id), h("span", { class: "grow" }, (ok && NICK[c.id]) ? NICK[c.id] + " (" + c.name + ")" : c.name), b),
+        ok ? null : h("p", { class: "ns-note" }, s9("nick_locked")));
+    };
+    return [
+      h("h3", {}, s9("bx_priv")),
+      h("h4", { class: "h4" }, s9("myname")),
+      mkBar(h("span", { class: "grow" }, me.name), ownerBadge()),
+      h("p", { class: "ns-note" }, s9("left") + left + " / 3"),
+      nameIn, h("div", { class: "row" }, nameGenBtn(nameIn), save), msg,
+      h("h4", { class: "h4" }, s9("mystatus")),
+      h("div", { class: "chips" }, stChip("auto", "st_auto"), stChip("busy", "st_busy")),
+      mkBar(h("span", { class: "grow" }, s9("allow")), mkSwitch(allowRenameMe, () => {
+        allowRenameMe = !allowRenameMe; try { localStorage.setItem("ibf_allowrn", allowRenameMe ? "1" : "0"); } catch (_) {}
+        writePresence(myStatusPref === "busy" ? "busy" : "online"); render();
+      }, s9("allow"))),
+      h("h4", { class: "h4" }, s9("friends")),
+      ...contacts.filter((c) => c.status === "accepted").map(friendRow)
+    ];
+  });
+}
+
+/* ----- صفحة الإعدادات المبوّبة (صناديق أفقية) ----- */
+function showSettings() {
+  const box = (ic, label, fn) => {
+    const b = h("button", { type: "button", class: "sbox" }, mkBar(h("span", { class: "emb" }, ic), h("span", { class: "grow" }, label), h("span", { class: "chev" }, LANG === "ar" ? "‹" : "›")));
+    b.addEventListener("click", fn); return b;
+  };
+  mount(h("div", { class: "screen" },
+    h("header", {}, hback(showList), h("h2", {}, t2("set_title"))),
+    h("div", { class: "list sbx" },
+      box("🎨", s9("bx_app"), openAppearance), box("Aa", s9("bx_text"), openSettings), box("🔔", s9("bx_snd"), openNotifSettings),
+      box("📐", s9("bx_size"), openSizeAnim), box("🔒", s9("bx_priv"), openPrivacy))));
+}
+function settingsRow() {
+  const b = h("button", { type: "button", class: "srow" }, mkBar(h("span", { class: "grow" }, t2("set_title")), h("span", { class: "chev" }, LANG === "ar" ? "‹" : "›")));
+  b.addEventListener("click", showSettings); return b;
+}
+
+/* ----- رسالة التوجيه إلى About عند أول فتح ----- */
+let wLater = false;
+function aboutSeen() { try { return localStorage.getItem("ibf_about_seen") === "1" || localStorage.getItem("ibf_wel_ok") === "1"; } catch (_) { return false; } }
+function welcomeCard() {
+  if (aboutSeen() || wLater) return null;
+  const card = h("div", { class: "wcard", role: "status" });
+  const open = h("button", { type: "button", class: "small" }, s9("w_open"));
+  open.addEventListener("click", showAbout);
+  const later = h("button", { type: "button", class: "small" }, s9("w_later"));
+  later.addEventListener("click", () => { wLater = true; card.remove(); });
+  const ok = h("button", { type: "button", class: "wok", "aria-label": s9("w_ok") }, "✓");
+  ok.addEventListener("click", () => {
+    try { localStorage.setItem("ibf_wel_ok", "1"); } catch (_) {}
+    card.replaceChildren(h("div", { class: "wmsg" }, s9("w_thanks")));
+    setTimeout(() => card.remove(), 1600);
+  });
+  card.append(h("div", { class: "wmsg" }, s9("w_msg")), h("div", { class: "wrow" }, open, later, ok));
+  return card;
+}
+
 function settingsBtn() {
   return h("button", { class: "small hbtn", "aria-label": t2("set_title"), style: "color:#fff;border-color:#fff", onclick: openSettings }, "⚙");
 }
@@ -777,7 +1130,7 @@ function openSettings() {
   if (document.getElementById("tbsheet")) return;
   const d = { fs: TB.fs || 0, ff: TB.ff || "sys", cs: TB.cs || "", th: TB.th === "sender" ? "sender" : "own", tt: TB.tt, tg: TB.tg, ft: TB.ft, fb: TB.fb };
   const pv = h("div", { class: "pvbox", "aria-live": "polite" }, ...PV[LANG].map((x) => h("div", {}, x)));
-  const range = h("input", { type: "range", min: "16", max: "30", step: "1", value: String(d.fs || 17), "aria-label": t2("size") });
+  const range = h("input", { type: "range", min: "9", max: "30", step: "0.5", value: String(d.fs || 17), "aria-label": t2("size") });
   const fontBtns = TB_FONTS.map((f) => {
     const b = h("button", { class: "chip", type: "button" }, t2("f_" + f.id));
     if (f.css) b.style.fontFamily = f.css;
@@ -856,7 +1209,7 @@ function openSettings() {
 
   bg.append(h("div", { class: "sheet", role: "dialog", "aria-modal": "true" },
     hback(close),
-    h("h3", {}, t2("set_title")),
+    h("h3", {}, s9("bx_text")),
     h("section", { class: "sect" },
       h("h4", {}, t2("sec_text")),
       pv,
@@ -873,9 +1226,6 @@ function openSettings() {
       h("div", { class: "chips" }, ...thBtns),
       h("div", { class: "lbl", style: "font-weight:500" }, t2("th_hint")),
       h("label", { class: "fsw" }, fo, t2("focus"))),
-    h("section", { class: "sect" },
-      h("h4", {}, nt("title")),
-      h("button", { class: "hexbtn", type: "button", onclick: openNotifSettings }, h("span", { class: "emb" }, "🐝"), nt("open"))),
     h("div", { class: "row" }, okBtn, cancelBtn, resetBtn)));
   document.body.append(bg);
   refresh();
@@ -888,7 +1238,11 @@ function initFocusBar() {
   const clk = h("button", { class: "fb-clock", "aria-label": t2("clock_toggle") });
   const bat = h("span", { class: "fb-bat" }, "🔋 --");
   const net = h("span", { class: "fb-net" });
-  bar.replaceChildren(clk, bat, net);
+  const dk = h("button", { class: "fb-q", type: "button", "aria-label": s9("dark") }, "◐");
+  dk.addEventListener("click", () => setDark(!isDarkUI()));
+  const br = h("button", { class: "fb-q", type: "button", "aria-label": s9("bright") }, "☀");
+  br.addEventListener("click", cycleBright);
+  bar.replaceChildren(clk, dk, br, bat, net);
 
   let analog = false;
   try { analog = localStorage.getItem("ibf_clock") === "a"; } catch (_) {}
@@ -900,7 +1254,7 @@ function initFocusBar() {
       return;
     }
     const s = d.getSeconds() * 6, m = d.getMinutes() * 6 + d.getSeconds() / 10, hr = (d.getHours() % 12) * 30 + d.getMinutes() / 2;
-    const RED = "#FF1A1A", YEL = "#FBBE0E";
+    const RED = "#FF1A1A", YEL = "#DDAE40";
     // أيدٍ مفرغة: إطار فقط بلا تعبئة
     const hand = (len, w, col, rot) => '<rect x="' + (-w / 2) + '" y="' + (-len) + '" width="' + w + '" height="' + len + '" rx="' + (w / 2) + '" fill="none" stroke="' + col + '" stroke-width="0.7" transform="rotate(' + rot + ')"/>';
     clk.innerHTML = '<svg viewBox="-13 -13 26 26" aria-hidden="true">' +
@@ -918,7 +1272,7 @@ function initFocusBar() {
 
   if (navigator.getBattery) {
     navigator.getBattery().then((b) => {
-      const u = () => { bat.textContent = (b.charging ? "⚡" : "🔋") + " " + Math.round(b.level * 100) + "%"; };
+      const u = () => { const pc = Math.round(b.level * 100); bat.className = "fb-bat" + (pc <= 20 && !b.charging ? " low" : ""); bat.innerHTML = (b.charging ? "⚡" : "") + '<span class="bt"><span class="bf" style="width:' + pc + '%"></span></span><span>' + pc + "%</span>"; };
       u();
       b.addEventListener("levelchange", u);
       b.addEventListener("chargingchange", u);
@@ -965,6 +1319,7 @@ function brandNode() {
 const GLYPHS = "!@#$%&*+=?<>/\\|~^§¤µ¶ΩΣ¥€£0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 function scrambleLoop(el, finalText) {
   el.textContent = finalText;
+  if (document.documentElement.dataset.anim === "off") return;
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const chars = Array.from(finalText);
   const n = chars.length;
@@ -1104,7 +1459,7 @@ function showNameForm() {
   mount(h("div", { class: "center" },
     h("h1", {}, APP_NAME),
     h("p", {}, t(18)),
-    input, btn, msg));
+    input, nameGenBtn(input), btn, msg));
 }
 
 const ABOUT = [
@@ -1153,6 +1508,7 @@ async function deleteAccount() {
   } catch (e) { console.error(e); alert(t(27) + explain(e)); }
 }
 function showAbout() {
+  try { localStorage.setItem("ibf_about_seen", "1"); } catch (_) {}
   const ds = h("input", { type: "checkbox", id: "ds" });
   ds.checked = dataSaver();
   ds.addEventListener("change", () => { try { localStorage.setItem("ibf_ds", ds.checked ? "1" : "0"); } catch (_) {} });
@@ -1188,7 +1544,7 @@ function renderContacts() {
   });
   const setStatus = (c, status) => updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status }).then(() => clearUnread("r:" + c.id)).catch((e) => alert(explain(e)));
   listEl.replaceChildren(...sorted.map((c) => {
-    const avatar = h("div", { class: "avatar" }, (c.name || "?").trim().charAt(0));
+    const avatar = h("div", { class: "avatar" }, (dispName(c) || "?").trim().charAt(0));
     if (c.status === "pending") {
       return h("div", { class: "contact req" }, avatar, h("div", {}, c.name || t(32), t(33)), hexBadge(UNREAD["r:" + c.id]),
         h("div", { class: "acts" },
@@ -1197,7 +1553,7 @@ function renderContacts() {
     }
     const rm = h("button", { class: "small", "aria-label": t(74) }, t(74));
     rm.addEventListener("click", (ev) => { ev.stopPropagation(); removeFriend(c); });
-    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, c.name || t(32)), hexBadge(UNREAD[c.id]), h("div", { class: "acts" }, rm));
+    return h("div", { class: "contact", onclick: () => openChat(c) }, avatar, h("div", {}, dispName(c) || t(32)), presDots(c.id), hexBadge(UNREAD[c.id]), h("div", { class: "acts" }, rm));
   }));
 }
 
@@ -1254,12 +1610,15 @@ function showList() {
   });
 
   mount(h("div", { class: "screen" },
-    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), settingsBtn(), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
+    h("header", {}, h("h2", { "aria-label": APP_NAME }, brandNode()), ownerBadge(), hpuNode(), h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: showAbout }, t(47))),
     h("div", { class: "codebox" }, h("span", {}, t(48)), h("b", { class: "code" }, me.code), copyBtn),
     h("div", { class: "add" }, addInput, addBtn),
     addMsg,
+    settingsRow(),
+    welcomeCard(),
     listEl));
   renderContacts();
+  startPresence();
 
   if (!unsubContacts) {
     unsubContacts = onSnapshot(collection(db, "users", me.uid, "contacts"),
@@ -1267,6 +1626,7 @@ function showList() {
         nsDetect(snap);
         contacts = snap.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
         nsSyncMsgListeners();
+        presSync();
         renderContacts();
         if (RESUME) {
           const rc = contacts.find((x) => x.id === RESUME && x.status === "accepted");
@@ -1502,7 +1862,7 @@ function openChat(c, push = true) {
   back.addEventListener("click", () => history.back());
 
   mount(h("div", { class: "screen" },
-    h("header", {}, back, h("h2", {}, c.name || t(32)), settingsBtn(),
+    h("header", {}, back, h("h2", {}, dispName(c) || t(32)),
       h("button", { class: "small", style: "color:#fff;border-color:#fff", onclick: async () => {
         if (!confirm(t(68) + (c.name || t(69)) + t(32))) return;
         try { await updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status: "blocked" }); history.back(); }
@@ -1561,7 +1921,7 @@ function start() {
       const snap = await getDoc(doc(db, "users", user.uid));
       if (snap.exists()) {
         const d = snap.data();
-        me = { uid: user.uid, name: d.name, code: d.code };
+        me = { uid: user.uid, name: d.name, code: d.code, nameChanges: +d.nameChanges || 0 };
         showList();
       } else {
         showNameForm();
