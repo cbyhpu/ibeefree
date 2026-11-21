@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0D1C39">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap">
 <title>I Bee Free</title>
 <style>
   :root {
@@ -244,16 +246,62 @@
   .codebox { margin-top: 6px; }
   .avatar { border-radius: 0; clip-path: var(--hx6); }
   .bubble { clip-path: var(--hx); border: 0; border-radius: 0; padding: 8px 18px; }
-  .sect, .pvbox { clip-path: var(--hxc); border: 0; border-radius: 0; background: color-mix(in srgb, var(--line) 40%, transparent); }
+  .sect { clip-path: var(--hxc); border: 0; border-radius: 0; background: color-mix(in srgb, var(--line) 40%, transparent); }
+  .pvbox { clip-path: var(--hxc); border: 0; border-radius: 0; background: var(--tb-bg); color: var(--tb-fg); padding: 12px 18px; margin-bottom: 4px; }
   .sheet { clip-path: polygon(24px 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%,0 24px); border-radius: 0; }
   input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; height: 34px; }
   input[type="range"]::-webkit-slider-runnable-track { height: 8px; background: var(--line); clip-path: var(--hx); }
   input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 32px; margin-top: -12px; border: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
   input[type="range"]::-moz-range-track { height: 8px; background: var(--line); clip-path: var(--hx); }
   input[type="range"]::-moz-range-thumb { width: 28px; height: 32px; border: 0; border-radius: 0; background: linear-gradient(#FFD100,#F5B700); clip-path: var(--hx6); }
+  /* ===== تعديلات الجولة الأخيرة ===== */
+  .sw { position: relative; }
+  .sw.lite[aria-pressed="true"] { box-shadow: none; }
+  .sw.lite[aria-pressed="true"]::before, .sw.lite[aria-pressed="true"]::after { content: ""; position: absolute; left: 22%; right: 22%; height: 2px; background: #000; }
+  .sw.lite[aria-pressed="true"]::before { top: 4px; }
+  .sw.lite[aria-pressed="true"]::after { bottom: 4px; }
+  .arr { font-size: 26px; line-height: 1; font-weight: 900; -webkit-text-stroke: 1.4px currentColor; }
+  header button.back { font-size: 28px; font-weight: 900; line-height: 1; -webkit-text-stroke: 1.4px currentColor; }
+  .composer { gap: 6px; padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); }
+  .composer textarea.msgbox { padding: 6px 14px; min-height: 36px; line-height: 1.3; }
+  .composer button.primary { padding: 6px 16px; font-size: 14px; min-height: 36px; }
+  .composer button.attach { width: 34px; height: 36px; padding: 0; font-size: 18px; display: grid; place-items: center; }
+  .sp-s[lang="ar"] { font-family: system-ui, "Segoe UI", Tahoma, "Noto Sans Arabic", sans-serif; letter-spacing: 0; font-weight: 800; }
+  #splash { position: fixed; inset: 0; z-index: 200; background: #06101F; display: grid; place-items: center; transition: opacity .35s; }
+  #splash.out { opacity: 0; pointer-events: none; }
+  .sp-o { padding: 3px; background: linear-gradient(135deg,#FFD100,#F5B700); clip-path: polygon(40px 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,40px 100%,0 50%); }
+  .sp-i { background: #0D1C39; padding: 34px 64px; display: flex; flex-direction: column; align-items: center; gap: 14px; clip-path: polygon(40px 0,calc(100% - 40px) 0,100% 50%,calc(100% - 40px) 100%,40px 100%,0 50%); }
+  .sp-t { color: #fff; font-size: 30px; font-weight: 800; }
+  .sp-t b { color: #FFD100; }
+  .sp-s { color: #FFD100; font-family: "Orbitron", ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 700; letter-spacing: .06em; font-size: clamp(17px, 5.2vw, 24px); white-space: nowrap; }
 </style>
 </head>
 <body>
+<div id="splash" dir="ltr" role="presentation"><div class="sp-o"><div class="sp-i"><div class="sp-t">I <b>B</b>ee Free</div><div class="sp-s">Your 101% Freedom</div></div></div></div>
+<script>
+(function () {
+  var el = document.getElementById("splash"); if (!el) return;
+  /* خريطة الشعار حسب اللغة. لإضافة لغة: أضف سطراً هنا (de / it / es / ru) وأضفها إلى LANGS في سكربت التطبيق.
+     RTL_LANGS: اللغات التي تُكتب من اليمين لليسار */
+  var TAGLINES = {
+    ar: "عش الحرية 101%",
+    en: "Your 101% Freedom",
+    fr: "Votre liberté à 101%"
+    // de: "", it: "", es: "", ru: ""
+  };
+  var RTL_LANGS = { ar: true };
+  var lang = ""; try { lang = localStorage.getItem("ibf_lang") || ""; } catch (_) {}
+  if (!TAGLINES[lang]) { var nl = (navigator.language || "en").slice(0, 2).toLowerCase(); lang = TAGLINES[nl] ? nl : "en"; }
+  var tg = el.querySelector(".sp-s");
+  if (tg) { tg.textContent = TAGLINES[lang]; tg.lang = lang; tg.dir = RTL_LANGS[lang] ? "rtl" : "ltr"; }
+  var t0 = Date.now(), gone = false, tm = setTimeout(hide, 5000);
+  function hide() { if (gone) return; gone = true; clearTimeout(tm); el.classList.add("out"); setTimeout(function () { el.remove(); }, 350); }
+  el.addEventListener("pointerdown", function () {
+    clearTimeout(tm);
+    tm = setTimeout(hide, Math.max(0, Math.min(2000, 5000 - (Date.now() - t0))));
+  }, { once: true });
+})();
+</script>
 <div id="focusbar" dir="ltr"></div>
 <div id="root"></div>
 
@@ -716,7 +764,7 @@ function openNotifSettings() {
 }
 
 function hback(fn) {
-  const b = h("button", { type: "button", class: "hback", "aria-label": nt("back") }, (LANG === "ar" ? "→ " : "← ") + nt("back"));
+  const b = h("button", { type: "button", class: "hback", "aria-label": nt("back") }, h("span", { class: "arr" }, LANG === "ar" ? "→" : "←"), " " + nt("back"));
   b.addEventListener("click", (ev) => { ev.stopPropagation(); fn(); });
   return b;
 }
@@ -758,6 +806,7 @@ function openSettings() {
   const colBtns = TB_COLORS.map((c) => {
     const b = h("button", { class: "sw", type: "button" }, h("span", { class: "sw-a" }, "Aa"), h("span", {}, t2("c_" + c.id)));
     b.style.background = c.bg; b.style.color = c.fg;
+    { const n = parseInt(c.bg.slice(1), 16); if ((0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255 > 0.55) b.classList.add("lite"); }
     b.addEventListener("click", () => { d.cs = c.id; d.tt = d.tg = d.ft = d.fb = 5; syncTunes(); refresh(); });
     return b;
   });
@@ -851,15 +900,13 @@ function initFocusBar() {
       return;
     }
     const s = d.getSeconds() * 6, m = d.getMinutes() * 6 + d.getSeconds() / 10, hr = (d.getHours() % 12) * 30 + d.getMinutes() / 2;
-    const RED = "#FF1A1A";
-    const hand = (len, w, col, rot) => '<line y2="' + (-len) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" transform="rotate(' + rot + ')"/>';
-    const HANDS = [[5.4, 2.4, "#FFFFFF", hr], [7.8, 1.9, "#FFFFFF", m], [8.6, 1.1, "#FBBE0E", s]];
+    const RED = "#FF1A1A", YEL = "#FBBE0E";
+    // أيدٍ مفرغة: إطار فقط بلا تعبئة
+    const hand = (len, w, col, rot) => '<rect x="' + (-w / 2) + '" y="' + (-len) + '" width="' + w + '" height="' + len + '" rx="' + (w / 2) + '" fill="none" stroke="' + col + '" stroke-width="0.7" transform="rotate(' + rot + ')"/>';
     clk.innerHTML = '<svg viewBox="-13 -13 26 26" aria-hidden="true">' +
-      '<circle r="12.1" fill="none" stroke="' + RED + '" stroke-width="0.8"/>' +
-      '<circle r="11" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>' +
-      HANDS.map((x) => hand(x[0], x[1] + 0.5, RED, x[3])).join("") +
-      HANDS.map((x) => hand(x[0], x[1], x[2], x[3])).join("") +
-      '<circle r="1.7" fill="' + RED + '"/><circle r="1.1" fill="#FBBE0E"/></svg>';
+      '<circle r="12" fill="none" stroke="' + RED + '" stroke-width="0.9"/>' +
+      hand(5.6, 2.2, RED, hr) + hand(8, 1.8, RED, m) + hand(9, 1.3, YEL, s) +
+      '<circle r="1.5" fill="none" stroke="' + RED + '" stroke-width="0.7"/></svg>';
   }
   clk.addEventListener("click", () => {
     analog = !analog;
