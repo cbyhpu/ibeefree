@@ -468,6 +468,25 @@
   @keyframes twk { 0%, 100% { opacity: .15; transform: translate(-50%, -50%) scale(.4) rotate(0deg); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.25) rotate(45deg); } }
   .honeyname { background: linear-gradient(180deg, #FFE08A 0%, #E8B53A 55%, #B8801C 100%); -webkit-background-clip: text; background-clip: text; color: transparent !important; font-weight: 800; filter: drop-shadow(0 0 5px rgba(232,181,58,.55)); }
   .hvname { font-size: 22px; padding: 2px 4px; }
+  /* ===== الجزء 2: مسارات سداسية + معاينات الحجم + أسهم التدفق + أيقونات ===== */
+  input[type="range"]::-webkit-slider-runnable-track { height: 18px; clip-path: polygon(9px 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,9px 100%,0 50%); }
+  input[type="range"]::-webkit-slider-thumb { margin-top: -8px; }
+  input[type="range"]::-moz-range-track, input[type="range"]::-moz-range-progress { height: 18px; clip-path: polygon(9px 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,9px 100%,0 50%); }
+  .hprog { height: 16px; clip-path: polygon(8px 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,8px 100%,0 50%); }
+  .emb svg { width: 22px; height: 22px; display: block; }
+  .hext .ic svg { width: 26px; height: 26px; display: block; }
+  .hb-ic svg { width: 28px; height: 28px; display: block; }
+  .chip { display: inline-flex; align-items: center; }
+  .arw { display: inline-flex; margin-inline-end: 8px; }
+  .arw svg { width: 22px; height: 22px; }
+  .szprev { position: relative; height: 118px; display: grid; place-items: center; }
+  .szghost { position: absolute; width: 70px; height: 80px; clip-path: var(--hx6); background: color-mix(in srgb, var(--text) 20%, transparent); }
+  .szhex { position: relative; width: calc(70px * var(--k, 1)); height: calc(80px * var(--k, 1)); clip-path: var(--hx6); background: linear-gradient(#EBC862,#D4A22F); transition: width .12s, height .12s; }
+  .szprev .szdelta { position: absolute; bottom: 0; font-weight: 800; color: var(--title); }
+  .fsprev { display: flex; flex-direction: column; gap: 6px; padding: 10px 26px; background: color-mix(in srgb, var(--text) 10%, var(--cards, var(--card))); clip-path: var(--hxc); }
+  .fsline { line-height: 1.3; word-break: break-word; }
+  .fsline.ghost { opacity: .5; }
+  .fsprev .szdelta { font-weight: 800; color: var(--title); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -489,11 +508,10 @@
   var tg = el.querySelector(".sp-s");
   if (tg) { tg.textContent = TAGLINES[lang]; tg.lang = lang; tg.dir = RTL_LANGS[lang] ? "rtl" : "ltr"; }
   var t0 = Date.now(), gone = false, tm = setTimeout(hide, 5000);
-  function hide() { if (gone) return; gone = true; clearTimeout(tm); el.classList.add("out"); setTimeout(function () { el.remove(); }, 350); }
-  el.addEventListener("pointerdown", function () {
-    clearTimeout(tm);
-    tm = setTimeout(hide, Math.max(0, Math.min(2000, 5000 - (Date.now() - t0))));
-  }, { once: true });
+  function hide() { if (gone) return; gone = true; clearTimeout(tm); evs.forEach(function (ev) { document.removeEventListener(ev, skip, true); }); el.classList.add("out"); setTimeout(function () { el.remove(); }, 350); }
+  var evs = ["pointerdown", "touchstart", "mousedown", "click", "keydown"];
+  function skip() { hide(); }
+  evs.forEach(function (ev) { document.addEventListener(ev, skip, { capture: true, passive: true }); });
 })();
 </script>
 <div id="focusbar" dir="ltr"></div>
@@ -538,6 +556,34 @@ let RESUME = null;
 try { RESUME = sessionStorage.getItem("ibf_chat"); } catch (_) {}
 
 /* ---------- أدوات صغيرة ---------- */
+/* ===== أيقونات صغيرة مرسومة (خطوط ذهبية بسيطة، تعمل مع الثيم الداكن والفاتح لأنها داخل سداسي داكن) ===== */
+const ICON_PATHS = {
+  bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  bellOff: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20.5a2 2 0 0 0 4 0"/><path d="M4 4l16 16"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  chat: '<path d="M4 5h16v11H10l-4 4v-4H4z"/>',
+  userPlus: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 3-6 6-6s6 2.5 6 6"/><path d="M18 7v6M15 10h6"/>',
+  clock: '<circle cx="12" cy="13.5" r="7"/><path d="M12 13.5V9.5M12 13.5l3 2"/><path d="M9.5 3.5h5"/>',
+  hive: '<path d="M7.5 3.9l3.98 2.3v4.6L7.5 13.1 3.52 10.8V6.2z"/><path d="M16.5 3.9l3.98 2.3v4.6l-3.98 2.3-3.98-2.3V6.2z"/><path d="M12 11.7l3.98 2.3v4.6L12 20.9l-3.98-2.3V14z"/>',
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/>',
+  book: '<path d="M4 5h7a2 2 0 0 1 1 .3 2 2 0 0 1 1-.3h7v14h-7a2 2 0 0 0-1 .3 2 2 0 0 0-1-.3H4z"/><path d="M12 5.3v14"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2s0-2.5 1.5-2.5H18a3 3 0 0 0 3-3C21 7 17 3 12 3z"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/>',
+  ruler: '<path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  check: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/>',
+  trash: '<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>',
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M4 17l5-5 4 4 3-3 4 4"/><circle cx="9" cy="9" r="1.4"/>',
+  note: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>',
+  box: '<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'
+};
+const EMOJI_ICON = { "🌙": "moon", "☀": "sun", "📖": "book", "🎨": "palette", "📐": "ruler", "🔒": "lock", "🔔": "bell", "🔕": "bellOff", "🐝": "hive", "💬": "chat", "🤝": "userPlus", "⏱": "clock", "📋": "copy", "☑": "check", "🗑": "trash", "🖼": "image", "📝": "note", "📦": "box" };
+function iconNode(name) {
+  const w = document.createElement("span");
+  w.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#EBC862" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + ICON_PATHS[name] + "</svg>";
+  return w.firstChild;
+}
+
 function h(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -548,6 +594,7 @@ function h(tag, attrs = {}, ...kids) {
   }
   for (const kid of kids.flat()) {
     if (kid === null || kid === undefined) continue;
+    if (typeof kid === "string" && EMOJI_ICON[kid] && /(^| )(emb|ic|hb-ic)( |$)/.test(e.className)) { e.append(iconNode(EMOJI_ICON[kid])); continue; }
     e.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
   }
   return e;
@@ -924,7 +971,7 @@ function openNotifSettings() {
     sheet.replaceChildren(
       hback(close),
       h("h3", {}, nt("title")),
-      bar(h("span", { class: "emb" }, "🐝"), h("span", { class: "grow" }, nt("master")),
+      bar(h("span", { class: "emb" }, "🔔"), h("span", { class: "grow" }, nt("master")),
         sw(NS.on, () => { nsSet((s) => { s.on = !s.on; }, "state:master"); if (NS.on) askPerm(); render(); }, nt("master"))),
       denied && NS.on ? h("p", { class: "ns-note" }, nt("denied")) : h("span"),
       h("div", { class: NS.on ? "" : "ns-dim", style: "display:flex;flex-direction:column;gap:14px" },
@@ -971,21 +1018,21 @@ const S9 = {
     myname: "اسمي", left: "تغييرات الاسم المتبقية: ", limit: "وصلت للحد الأقصى: 3 تغييرات فقط.", save: "حفظ", gen: "مولّد الأسماء", owner: "المالك / الأدمن",
     mystatus: "حالتي", st_auto: "تلقائي", st_busy: "مشغول", allow: "السماح لأصدقائي بتسميتي", friends: "تسمية الأصدقاء", nick: "تسمية", nick_ask: "اكتب التسمية (اتركها فارغة للحذف):",
     nick_locked: "هذا الصديق لم يسمح بتغيير اسمه بعد.", p_on: "متصل", p_busy: "مشغول", p_off: "غير متصل",
-    w_msg: "أهلاً بك في IBeeFree. ننصحك بزيارة صفحة About للتعرف على التطبيق.", w_open: "فتح About", w_later: "ذكّرني لاحقاً", w_ok: "فهمت", w_thanks: "✓ تم. شكراً لك", reading: "Reading Mode", reading_note: "يحوّل خلفية المحادثة فقط إلى ورقة X-ray بألوان نيون زرقاء، ولا يغيّر الشريطين العلوي والسفلي.", smaller: "أصغر", normal: "عادي", larger: "أكبر", layoutw: "عرض الواجهة الحالي:", chat_set: "إعدادات المحادثة", quick: "تحكم سريع", flow: "تدفق الكلام", flow_down: "من الأعلى للأسفل (الأقدم أولاً)", flow_up: "الأحدث في الأعلى", browse: "نمط التصفح", m_vertical: "تمرير عمودي", m_horizontal: "تمرير أفقي", m_side: "تقليب جانبي (حسب اتجاه اللغة)", m_notepad: "تقليب للأعلى كالمفكرة", gest: "إيماءات السحب", gest_note: "اسحب من حافة الشاشة للرجوع. في التمرير العمودي: اسحب فقاعة جانباً لنسخ نصها.", block_note: "الحظر يوقف المراسلة مع هذا الصديق. سيُطلب تأكيدك قبل التنفيذ.", copied: "تم النسخ", today: "اليوم", yesterday: "أمس", search: "بحث في المحادثة", s_ph: "ابحث في الرسائل...", s_date: "التاريخ", s_from: "من الساعة", s_to: "إلى الساعة", s_topic: "الموضوع (Topic)", s_type: "النوع", t_all: "الكل", t_text: "نصوص", t_img: "صور", t_file: "ملفات", s_clear: "مسح الفلاتر", s_count: "نتيجة", s_notopics: "لا توجد وسوم في هذه المحادثة. اكتب #موضوع داخل رسالتك ليظهر هنا.", s_note: "يشمل آخر 200 رسالة محمّلة في المحادثة.", msg_actions: "إجراءات الرسالة", m_copy: "نسخ", m_select: "تحديد", m_delete: "حذف", selected: "المحدد:", only_own: "يمكنك حذف رسائلك فقط.", del_n: "حذف الرسائل المحددة؟ العدد: ", cancel: "إلغاء", tab_display: "العرض والخطوط", tab_nav: "الإيماءات والتنقل", tab_priv: "الخصوصية والحظر", tab_snd: "الصوت والإشعارات", blocked: "الأصدقاء المحظورون", no_blocked: "لا يوجد أصدقاء محظورون.", unblock: "إلغاء الحظر", unblock_ask: "إلغاء الحظر عن ", rs_blue: "أزرق نيون", rs_neg: "أبيض وأسود (Negative)", rs_teal: "فيروزي", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "الحروف التفاعلية", hv_next: "الهدف التالي:", hv_note_count: "يُحتسب ما ترسله أنت فقط، بحد أقصى 20 حرفاً لكل رسالة.", hv_letters: "تفصيل الحروف", hv_milestones: "المحطات", hv_perks: "الميزات المؤقتة", hv_perk_m: "ميزة المليون", hv_until: "حتى", hv_folder: "مجلد Hive", hv_images: "الصور", hv_texts: "النصوص", hv_other: "ملفات أخرى", hv_empty: "المجلد فارغ.", hv_delete: "حذف", hv_open: "فتح", hv_save: "حفظ في Hive Store", hv_saved: "تم الحفظ في Hive Store", hv_live: "تفاعل الحروف في المحادثة", hv_live_note: "إيقافه يوقف تلوين الحروف داخل المحادثة فقط. العدّاد يواصل العمل في الخلفية ونتائجه في Hive Store.", hv_100: "وصلت إلى 100 حرف تفاعلي!", hv_gift: "بلغت {n} حرفاً تفاعلياً. هديتك قادمة قريباً.", hv_mil: "بلغت مليون حرف! فُعّلت ميزة كبيرة لمدة 7 أيام (التفاصيل لاحقاً).", hv_test: "تجربة مؤقتة (للاختبار فقط)" },
+    w_msg: "أهلاً بك في IBeeFree. ننصحك بزيارة صفحة About للتعرف على التطبيق.", w_open: "فتح About", w_later: "ذكّرني لاحقاً", w_ok: "فهمت", w_thanks: "✓ تم. شكراً لك", reading: "Reading Mode", reading_note: "يحوّل خلفية المحادثة فقط إلى ورقة X-ray بألوان نيون زرقاء، ولا يغيّر الشريطين العلوي والسفلي.", smaller: "أصغر", normal: "عادي", larger: "أكبر", layoutw: "عرض الواجهة الحالي:", sz_before: "قبل", sz_now: "الآن", sz_sample: "نص تجريبي للتحقق من الحجم", chat_set: "إعدادات المحادثة", quick: "تحكم سريع", flow: "تدفق الكلام", flow_down: "من الأعلى للأسفل (الأقدم أولاً)", flow_up: "الأحدث في الأعلى", browse: "نمط التصفح", m_vertical: "تمرير عمودي", m_horizontal: "تمرير أفقي", m_side: "تقليب جانبي (حسب اتجاه اللغة)", m_notepad: "تقليب للأعلى كالمفكرة", gest: "إيماءات السحب", gest_note: "اسحب من حافة الشاشة للرجوع. في التمرير العمودي: اسحب فقاعة جانباً لنسخ نصها.", block_note: "الحظر يوقف المراسلة مع هذا الصديق. سيُطلب تأكيدك قبل التنفيذ.", copied: "تم النسخ", today: "اليوم", yesterday: "أمس", search: "بحث في المحادثة", s_ph: "ابحث في الرسائل...", s_date: "التاريخ", s_from: "من الساعة", s_to: "إلى الساعة", s_topic: "الموضوع (Topic)", s_type: "النوع", t_all: "الكل", t_text: "نصوص", t_img: "صور", t_file: "ملفات", s_clear: "مسح الفلاتر", s_count: "نتيجة", s_notopics: "لا توجد وسوم في هذه المحادثة. اكتب #موضوع داخل رسالتك ليظهر هنا.", s_note: "يشمل آخر 200 رسالة محمّلة في المحادثة.", msg_actions: "إجراءات الرسالة", m_copy: "نسخ", m_select: "تحديد", m_delete: "حذف", selected: "المحدد:", only_own: "يمكنك حذف رسائلك فقط.", del_n: "حذف الرسائل المحددة؟ العدد: ", cancel: "إلغاء", tab_display: "العرض والخطوط", tab_nav: "التنقل", tab_priv: "الخصوصية والحظر", tab_snd: "الصوت والإشعارات", blocked: "الأصدقاء المحظورون", no_blocked: "لا يوجد أصدقاء محظورون.", unblock: "إلغاء الحظر", unblock_ask: "إلغاء الحظر عن ", rs_blue: "أزرق نيون", rs_neg: "أبيض وأسود (Negative)", rs_teal: "فيروزي", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "الحروف التفاعلية", hv_next: "الهدف التالي:", hv_note_count: "يُحتسب ما ترسله أنت فقط، بحد أقصى 20 حرفاً لكل رسالة.", hv_letters: "تفصيل الحروف", hv_milestones: "المحطات", hv_perks: "الميزات المؤقتة", hv_perk_m: "ميزة المليون", hv_until: "حتى", hv_folder: "مجلد Hive", hv_images: "الصور", hv_texts: "النصوص", hv_other: "ملفات أخرى", hv_empty: "المجلد فارغ.", hv_delete: "حذف", hv_open: "فتح", hv_save: "حفظ في Hive Store", hv_saved: "تم الحفظ في Hive Store", hv_live: "تفاعل الحروف في المحادثة", hv_live_note: "إيقافه يوقف تلوين الحروف داخل المحادثة فقط. العدّاد يواصل العمل في الخلفية ونتائجه في Hive Store.", hv_100: "وصلت إلى 100 حرف تفاعلي!", hv_gift: "بلغت {n} حرفاً تفاعلياً. هديتك قادمة قريباً.", hv_mil: "بلغت مليون حرف! فُعّلت ميزة كبيرة لمدة 7 أيام (التفاصيل لاحقاً).", hv_test: "تجربة مؤقتة (للاختبار فقط)" },
   en: { bx_app: "Appearance & Themes", bx_text: "Text & Fonts", bx_snd: "Sound & Notifications", bx_size: "Size & Animation", bx_priv: "Privacy & Names",
     dark: "Dark mode", bright: "In-app brightness", themes: "Themes", themes_note: "These options are independent of the phone's settings.",
     scale: "Resize", fit360: "Fit 360dp", fontfine: "Font fine-tuning", dflt: "Default", anim: "Animation", a_full: "Full", a_fast: "Fast", a_off: "Off",
     myname: "My name", left: "Name changes left: ", limit: "Limit reached: only 3 name changes.", save: "Save", gen: "Name generator", owner: "Owner / Admin",
     mystatus: "My status", st_auto: "Auto", st_busy: "Busy", allow: "Let friends nickname me", friends: "Friend nicknames", nick: "Nickname", nick_ask: "Type the nickname (leave empty to clear):",
     nick_locked: "This friend hasn't allowed nicknames yet.", p_on: "Online", p_busy: "Busy", p_off: "Offline",
-    w_msg: "Welcome to IBeeFree. We recommend visiting the About page to get to know the app.", w_open: "Open About", w_later: "Remind me later", w_ok: "Got it", w_thanks: "✓ Done. Thank you", reading: "Reading Mode", reading_note: "Turns only the chat background into an X-ray sheet with neon blue colors. The top and bottom bars stay unchanged.", smaller: "Smaller", normal: "Normal", larger: "Larger", layoutw: "Current layout width:", chat_set: "Chat settings", quick: "Quick controls", flow: "Conversation flow", flow_down: "Top to bottom (oldest first)", flow_up: "Newest on top", browse: "Browse mode", m_vertical: "Vertical scroll", m_horizontal: "Horizontal scroll", m_side: "Side flip (follows language direction)", m_notepad: "Flip up like a notepad", gest: "Swipe gestures", gest_note: "Swipe from the screen edge to go back. In vertical scroll: swipe a bubble sideways to copy its text.", block_note: "Blocking stops messaging with this friend. You will be asked to confirm.", copied: "Copied", today: "Today", yesterday: "Yesterday", search: "Search in chat", s_ph: "Search messages...", s_date: "Date", s_from: "From time", s_to: "To time", s_topic: "Topic", s_type: "Type", t_all: "All", t_text: "Text", t_img: "Images", t_file: "Files", s_clear: "Clear filters", s_count: "results", s_notopics: "No topics in this chat. Type #topic inside a message and it will appear here.", s_note: "Covers the latest 200 messages loaded in the chat.", msg_actions: "Message actions", m_copy: "Copy", m_select: "Select", m_delete: "Delete", selected: "Selected:", only_own: "You can delete your own messages only.", del_n: "Delete the selected messages? Count: ", cancel: "Cancel", tab_display: "Display & Fonts", tab_nav: "Gestures & Navigation", tab_priv: "Privacy & Blocking", tab_snd: "Sound & Notifications", blocked: "Blocked friends", no_blocked: "No blocked friends.", unblock: "Unblock", unblock_ask: "Unblock ", rs_blue: "Neon blue", rs_neg: "Black & white (Negative)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Interactive letters", hv_next: "Next goal:", hv_note_count: "Only what you send is counted, up to 20 letters per message.", hv_letters: "Letter breakdown", hv_milestones: "Milestones", hv_perks: "Temporary perks", hv_perk_m: "Million perk", hv_until: "until", hv_folder: "Hive folder", hv_images: "Images", hv_texts: "Texts", hv_other: "Other files", hv_empty: "The folder is empty.", hv_delete: "Delete", hv_open: "Open", hv_save: "Save to Hive Store", hv_saved: "Saved to Hive Store", hv_live: "Letter interaction in chat", hv_live_note: "Turning it off stops coloring letters inside the chat only. The counter keeps running in the background and its results go to Hive Store.", hv_100: "You reached 100 interactive letters!", hv_gift: "You reached {n} interactive letters. Your gift is coming soon.", hv_mil: "You reached one million letters! A big feature is unlocked for 7 days (details later).", hv_test: "Temporary test (for testing only)" },
+    w_msg: "Welcome to IBeeFree. We recommend visiting the About page to get to know the app.", w_open: "Open About", w_later: "Remind me later", w_ok: "Got it", w_thanks: "✓ Done. Thank you", reading: "Reading Mode", reading_note: "Turns only the chat background into an X-ray sheet with neon blue colors. The top and bottom bars stay unchanged.", smaller: "Smaller", normal: "Normal", larger: "Larger", layoutw: "Current layout width:", sz_before: "Before", sz_now: "Now", sz_sample: "Sample text to check the size", chat_set: "Chat settings", quick: "Quick controls", flow: "Conversation flow", flow_down: "Top to bottom (oldest first)", flow_up: "Newest on top", browse: "Browse mode", m_vertical: "Vertical scroll", m_horizontal: "Horizontal scroll", m_side: "Side flip (follows language direction)", m_notepad: "Flip up like a notepad", gest: "Swipe gestures", gest_note: "Swipe from the screen edge to go back. In vertical scroll: swipe a bubble sideways to copy its text.", block_note: "Blocking stops messaging with this friend. You will be asked to confirm.", copied: "Copied", today: "Today", yesterday: "Yesterday", search: "Search in chat", s_ph: "Search messages...", s_date: "Date", s_from: "From time", s_to: "To time", s_topic: "Topic", s_type: "Type", t_all: "All", t_text: "Text", t_img: "Images", t_file: "Files", s_clear: "Clear filters", s_count: "results", s_notopics: "No topics in this chat. Type #topic inside a message and it will appear here.", s_note: "Covers the latest 200 messages loaded in the chat.", msg_actions: "Message actions", m_copy: "Copy", m_select: "Select", m_delete: "Delete", selected: "Selected:", only_own: "You can delete your own messages only.", del_n: "Delete the selected messages? Count: ", cancel: "Cancel", tab_display: "Display & Fonts", tab_nav: "Navigation", tab_priv: "Privacy & Blocking", tab_snd: "Sound & Notifications", blocked: "Blocked friends", no_blocked: "No blocked friends.", unblock: "Unblock", unblock_ask: "Unblock ", rs_blue: "Neon blue", rs_neg: "Black & white (Negative)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Interactive letters", hv_next: "Next goal:", hv_note_count: "Only what you send is counted, up to 20 letters per message.", hv_letters: "Letter breakdown", hv_milestones: "Milestones", hv_perks: "Temporary perks", hv_perk_m: "Million perk", hv_until: "until", hv_folder: "Hive folder", hv_images: "Images", hv_texts: "Texts", hv_other: "Other files", hv_empty: "The folder is empty.", hv_delete: "Delete", hv_open: "Open", hv_save: "Save to Hive Store", hv_saved: "Saved to Hive Store", hv_live: "Letter interaction in chat", hv_live_note: "Turning it off stops coloring letters inside the chat only. The counter keeps running in the background and its results go to Hive Store.", hv_100: "You reached 100 interactive letters!", hv_gift: "You reached {n} interactive letters. Your gift is coming soon.", hv_mil: "You reached one million letters! A big feature is unlocked for 7 days (details later).", hv_test: "Temporary test (for testing only)" },
   fr: { bx_app: "Apparence et thèmes", bx_text: "Textes et polices", bx_snd: "Son et notifications", bx_size: "Taille et animation", bx_priv: "Confidentialité et noms",
     dark: "Mode sombre", bright: "Luminosité dans l'app", themes: "Thèmes", themes_note: "Ces options sont indépendantes des réglages du téléphone.",
     scale: "Redimensionner", fit360: "Adapter à 360dp", fontfine: "Réglage fin de la police", dflt: "Par défaut", anim: "Animation", a_full: "Complète", a_fast: "Rapide", a_off: "Désactivée",
     myname: "Mon nom", left: "Changements de nom restants : ", limit: "Limite atteinte : 3 changements seulement.", save: "Enregistrer", gen: "Générateur de noms", owner: "Propriétaire / Admin",
     mystatus: "Mon statut", st_auto: "Auto", st_busy: "Occupé", allow: "Autoriser mes amis à me surnommer", friends: "Surnoms des amis", nick: "Surnom", nick_ask: "Écrivez le surnom (vide pour effacer) :",
     nick_locked: "Cet ami n'a pas encore autorisé les surnoms.", p_on: "En ligne", p_busy: "Occupé", p_off: "Hors ligne",
-    w_msg: "Bienvenue sur IBeeFree. Nous vous conseillons de visiter la page About pour découvrir l'application.", w_open: "Ouvrir About", w_later: "Me le rappeler plus tard", w_ok: "Compris", w_thanks: "✓ Fait. Merci", reading: "Reading Mode", reading_note: "Transforme seulement le fond de la discussion en feuille de radio X avec des couleurs bleu néon. Les barres du haut et du bas ne changent pas.", smaller: "Plus petit", normal: "Normal", larger: "Plus grand", layoutw: "Largeur actuelle de l'interface :", chat_set: "Paramètres de la discussion", quick: "Contrôles rapides", flow: "Flux de la conversation", flow_down: "De haut en bas (plus ancien d'abord)", flow_up: "Plus récent en haut", browse: "Mode de navigation", m_vertical: "Défilement vertical", m_horizontal: "Défilement horizontal", m_side: "Pages latérales (selon la langue)", m_notepad: "Pages vers le haut (bloc-notes)", gest: "Gestes de balayage", gest_note: "Balayez depuis le bord de l'écran pour revenir. En défilement vertical : balayez une bulle pour copier son texte.", block_note: "Le blocage arrête les messages avec cet ami. Une confirmation sera demandée.", copied: "Copié", today: "Aujourd'hui", yesterday: "Hier", search: "Rechercher dans la discussion", s_ph: "Rechercher des messages...", s_date: "Date", s_from: "De (heure)", s_to: "À (heure)", s_topic: "Sujet (Topic)", s_type: "Type", t_all: "Tout", t_text: "Textes", t_img: "Images", t_file: "Fichiers", s_clear: "Effacer les filtres", s_count: "résultats", s_notopics: "Aucun sujet dans cette discussion. Écrivez #sujet dans un message pour qu'il apparaisse ici.", s_note: "Couvre les 200 derniers messages chargés.", msg_actions: "Actions du message", m_copy: "Copier", m_select: "Sélectionner", m_delete: "Supprimer", selected: "Sélection :", only_own: "Vous ne pouvez supprimer que vos messages.", del_n: "Supprimer les messages sélectionnés ? Nombre : ", cancel: "Annuler", tab_display: "Affichage et polices", tab_nav: "Gestes et navigation", tab_priv: "Confidentialité et blocage", tab_snd: "Son et notifications", blocked: "Amis bloqués", no_blocked: "Aucun ami bloqué.", unblock: "Débloquer", unblock_ask: "Débloquer ", rs_blue: "Bleu néon", rs_neg: "Noir et blanc (Négatif)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Lettres interactives", hv_next: "Prochain objectif :", hv_note_count: "Seul ce que vous envoyez est compté, jusqu'à 20 lettres par message.", hv_letters: "Détail des lettres", hv_milestones: "Étapes", hv_perks: "Avantages temporaires", hv_perk_m: "Avantage du million", hv_until: "jusqu'au", hv_folder: "Dossier Hive", hv_images: "Images", hv_texts: "Textes", hv_other: "Autres fichiers", hv_empty: "Le dossier est vide.", hv_delete: "Supprimer", hv_open: "Ouvrir", hv_save: "Enregistrer dans Hive Store", hv_saved: "Enregistré dans Hive Store", hv_live: "Interaction des lettres dans la discussion", hv_live_note: "La désactiver arrête seulement la coloration des lettres dans la discussion. Le compteur continue en arrière-plan et ses résultats vont dans Hive Store.", hv_100: "Vous avez atteint 100 lettres interactives !", hv_gift: "Vous avez atteint {n} lettres interactives. Votre cadeau arrive bientôt.", hv_mil: "Vous avez atteint un million de lettres ! Une grande fonction est débloquée pour 7 jours (détails plus tard).", hv_test: "Test temporaire (pour essai seulement)" }
+    w_msg: "Bienvenue sur IBeeFree. Nous vous conseillons de visiter la page About pour découvrir l'application.", w_open: "Ouvrir About", w_later: "Me le rappeler plus tard", w_ok: "Compris", w_thanks: "✓ Fait. Merci", reading: "Reading Mode", reading_note: "Transforme seulement le fond de la discussion en feuille de radio X avec des couleurs bleu néon. Les barres du haut et du bas ne changent pas.", smaller: "Plus petit", normal: "Normal", larger: "Plus grand", layoutw: "Largeur actuelle de l'interface :", sz_before: "Avant", sz_now: "Maintenant", sz_sample: "Texte d'essai pour vérifier la taille", chat_set: "Paramètres de la discussion", quick: "Contrôles rapides", flow: "Flux de la conversation", flow_down: "De haut en bas (plus ancien d'abord)", flow_up: "Plus récent en haut", browse: "Mode de navigation", m_vertical: "Défilement vertical", m_horizontal: "Défilement horizontal", m_side: "Pages latérales (selon la langue)", m_notepad: "Pages vers le haut (bloc-notes)", gest: "Gestes de balayage", gest_note: "Balayez depuis le bord de l'écran pour revenir. En défilement vertical : balayez une bulle pour copier son texte.", block_note: "Le blocage arrête les messages avec cet ami. Une confirmation sera demandée.", copied: "Copié", today: "Aujourd'hui", yesterday: "Hier", search: "Rechercher dans la discussion", s_ph: "Rechercher des messages...", s_date: "Date", s_from: "De (heure)", s_to: "À (heure)", s_topic: "Sujet (Topic)", s_type: "Type", t_all: "Tout", t_text: "Textes", t_img: "Images", t_file: "Fichiers", s_clear: "Effacer les filtres", s_count: "résultats", s_notopics: "Aucun sujet dans cette discussion. Écrivez #sujet dans un message pour qu'il apparaisse ici.", s_note: "Couvre les 200 derniers messages chargés.", msg_actions: "Actions du message", m_copy: "Copier", m_select: "Sélectionner", m_delete: "Supprimer", selected: "Sélection :", only_own: "Vous ne pouvez supprimer que vos messages.", del_n: "Supprimer les messages sélectionnés ? Nombre : ", cancel: "Annuler", tab_display: "Affichage et polices", tab_nav: "Navigation", tab_priv: "Confidentialité et blocage", tab_snd: "Son et notifications", blocked: "Amis bloqués", no_blocked: "Aucun ami bloqué.", unblock: "Débloquer", unblock_ask: "Débloquer ", rs_blue: "Bleu néon", rs_neg: "Noir et blanc (Négatif)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Lettres interactives", hv_next: "Prochain objectif :", hv_note_count: "Seul ce que vous envoyez est compté, jusqu'à 20 lettres par message.", hv_letters: "Détail des lettres", hv_milestones: "Étapes", hv_perks: "Avantages temporaires", hv_perk_m: "Avantage du million", hv_until: "jusqu'au", hv_folder: "Dossier Hive", hv_images: "Images", hv_texts: "Textes", hv_other: "Autres fichiers", hv_empty: "Le dossier est vide.", hv_delete: "Supprimer", hv_open: "Ouvrir", hv_save: "Enregistrer dans Hive Store", hv_saved: "Enregistré dans Hive Store", hv_live: "Interaction des lettres dans la discussion", hv_live_note: "La désactiver arrête seulement la coloration des lettres dans la discussion. Le compteur continue en arrière-plan et ses résultats vont dans Hive Store.", hv_100: "Vous avez atteint 100 lettres interactives !", hv_gift: "Vous avez atteint {n} lettres interactives. Votre cadeau arrive bientôt.", hv_mil: "Vous avez atteint un million de lettres ! Une grande fonction est débloquée pour 7 jours (détails plus tard).", hv_test: "Test temporaire (pour essai seulement)" }
 };
 const s9 = (k) => (S9[LANG] || S9.en)[k];
 
@@ -1075,45 +1122,54 @@ function openAppearance() { panel("apsheet", buildAppearance); }
 
 /* ----- الحجم والأنيميشن ----- */
 function buildSizeAnim(render) {
-    const fitV = clamp(Math.round(screen.width / 360 * 100), 70, 130);
-    const setScale = (v) => { UI.scale = clamp(Math.round(v), 70, 130); saveUI(); applyUI(); render(); };
-    const chip = (txt, fn, pressed, extra) => {
-      const b = h("button", { type: "button", class: "chip" + (extra ? " " + extra : ""), "aria-pressed": String(!!pressed) }, txt);
-      b.addEventListener("click", fn); return b;
-    };
-    const rs = h("input", { type: "range", min: "70", max: "130", step: "1", value: String(UI.scale), "aria-label": s9("scale") });
-    const rv = valBadge(UI.scale + "%");
-    rs.addEventListener("input", () => { rv.textContent = rs.value + "%"; });
-    rs.addEventListener("change", () => setScale(+rs.value));
-    const layoutW = Math.round(screen.width / (UI.scale / 100));
-
-    const fcur = TB.fs || 17;
-    const setFs = (v) => { TB.fs = clamp(Math.round(v * 2) / 2, 9, 30); try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {} applyTB(); if (rerenderChat) rerenderChat(); render(); };
-    const fr = h("input", { type: "range", min: "9", max: "30", step: "0.5", value: String(fcur), "aria-label": s9("fontfine") });
-    const fv = valBadge(fcur + "px");
-    fr.addEventListener("input", () => { fv.textContent = fr.value + "px"; });
-    fr.addEventListener("change", () => setFs(+fr.value));
-    return [
-      h("h3", {}, s9("bx_size")),
-      h("h4", { class: "h4" }, s9("scale")),
-      rangeRow(rs, rv),
-      h("div", { class: "chips" },
-        chip("−", () => setScale(UI.scale - 5), false, "stp"),
-        chip(s9("smaller") + " 85%", () => setScale(85), UI.scale === 85),
-        chip(s9("normal") + " 100%", () => setScale(100), UI.scale === 100),
-        chip(s9("larger") + " 115%", () => setScale(115), UI.scale === 115),
-        chip(s9("fit360"), () => setScale(fitV), UI.scale === fitV && ![85, 100, 115].includes(fitV)),
-        chip("+", () => setScale(UI.scale + 5), false, "stp")),
-      h("p", { class: "ns-note" }, s9("layoutw") + " " + layoutW + " dp"),
-      h("h4", { class: "h4" }, s9("fontfine")),
-      rangeRow(fr, fv),
-      h("div", { class: "chips" },
-        chip("A−", () => setFs(fcur - 0.5), false, "stp"),
-        chip(s9("dflt"), () => { TB.fs = 0; try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {} applyTB(); if (rerenderChat) rerenderChat(); render(); }, !TB.fs),
-        chip("A+", () => setFs(fcur + 0.5), false, "stp")),
-      h("h4", { class: "h4" }, s9("anim")),
-      h("div", { class: "chips" }, ...[["full", "a_full"], ["fast", "a_fast"], ["off", "a_off"]].map(([id, k]) => chip(s9(k), () => { UI.anim = id; saveUI(); applyUI(); render(); }, UI.anim === id)))
-    ];
+  const chip = (txt, fn, pressed, extra) => {
+    const b = h("button", { type: "button", class: "chip" + (extra ? " " + extra : ""), "aria-pressed": String(!!pressed) }, txt);
+    b.addEventListener("click", fn); return b;
+  };
+  /* Resize: أداة واحدة (شريط + أزرار − و+) مع معاينة سداسية تكبر وتصغر مباشرة */
+  const setScale = (v) => { let n = clamp(Math.round(v), 70, 130); if (Math.abs(n - 100) <= 2) n = 100; UI.scale = n; saveUI(); applyUI(); render(); };
+  const rs = h("input", { type: "range", min: "70", max: "130", step: "1", value: String(UI.scale), "aria-label": s9("scale") });
+  const rv = valBadge(UI.scale + "%");
+  const hex = h("div", { class: "szhex" }), dl = h("div", { class: "szdelta" });
+  const showScale = (v) => { const d = Math.round(v) - 100; hex.style.setProperty("--k", String(v / 100)); dl.textContent = (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d) + "%"; rv.textContent = Math.round(v) + "%"; };
+  showScale(UI.scale);
+  rs.addEventListener("input", () => showScale(+rs.value));
+  rs.addEventListener("change", () => setScale(+rs.value));
+  const layoutW = Math.round(screen.width / (UI.scale / 100));
+  /* تعديل الخط الدقيق: معاينة قبل/الآن بحجمين فعليين */
+  const DEF = 17, fcur = TB.fs || DEF;
+  const setFs = (v) => { TB.fs = clamp(Math.round(v * 2) / 2, 9, 30); try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {} applyTB(); if (rerenderChat) rerenderChat(); render(); };
+  const fr = h("input", { type: "range", min: "9", max: "30", step: "0.5", value: String(fcur), "aria-label": s9("fontfine") });
+  const fv = valBadge(fcur + "px");
+  const before = h("div", { class: "fsline ghost", style: "font-size:" + DEF + "px" }, s9("sz_before") + " " + DEF + "px · " + s9("sz_sample"));
+  const now = h("div", { class: "fsline", style: "font-size:" + fcur + "px" }, s9("sz_now") + " " + fcur + "px · " + s9("sz_sample"));
+  const fd = h("div", { class: "szdelta" });
+  const showFs = (v) => {
+    const d = Math.round((v - DEF) * 10) / 10;
+    now.style.fontSize = v + "px"; now.textContent = s9("sz_now") + " " + v + "px · " + s9("sz_sample");
+    fd.textContent = DEF + "px → " + v + "px (" + (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d) + "px)";
+    fv.textContent = v + "px";
+  };
+  showFs(fcur);
+  fr.addEventListener("input", () => showFs(+fr.value));
+  fr.addEventListener("change", () => setFs(+fr.value));
+  return [
+    h("h3", {}, s9("bx_size")),
+    h("h4", { class: "h4" }, s9("scale")),
+    rangeRow(rs, rv),
+    h("div", { class: "chips" }, chip("−", () => setScale(UI.scale - 1), false, "stp"), chip("+", () => setScale(UI.scale + 1), false, "stp")),
+    h("div", { class: "szprev" }, h("div", { class: "szghost" }), hex, dl),
+    h("p", { class: "ns-note" }, s9("layoutw") + " " + layoutW + " dp"),
+    h("h4", { class: "h4" }, s9("fontfine")),
+    rangeRow(fr, fv),
+    h("div", { class: "chips" },
+      chip("A−", () => setFs((TB.fs || DEF) - 0.5), false, "stp"),
+      chip("A+", () => setFs((TB.fs || DEF) + 0.5), false, "stp"),
+      chip(s9("dflt"), () => { TB.fs = 0; try { localStorage.setItem("ibf_tb", JSON.stringify(TB)); } catch (_) {} applyTB(); if (rerenderChat) rerenderChat(); render(); }, !TB.fs)),
+    h("div", { class: "fsprev" }, before, now, fd),
+    h("h4", { class: "h4" }, s9("anim")),
+    h("div", { class: "chips" }, ...[["full", "a_full"], ["fast", "a_fast"], ["off", "a_off"]].map(([id, k]) => chip(s9(k), () => { UI.anim = id; saveUI(); applyUI(); render(); }, UI.anim === id)))
+  ];
 }
 function openSizeAnim() { panel("szsheet", buildSizeAnim); }
 
@@ -1339,18 +1395,20 @@ function openChatSearch(c, getItems, jumpTo) {
 }
 
 /* ----- تبويب الإيماءات والتنقل (عام) + قائمة المحظورين ----- */
+const ARROW_SVG = { down: '<path d="M12 4v14M5 12l7 7 7-7"/>', up: '<path d="M12 20V6M5 12l7-7 7 7"/>' };
+function arrowChip(dir, label, on, fn) {
+  const a = document.createElement("span"); a.className = "arw";
+  a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">' + ARROW_SVG[dir] + "</svg>";
+  const b = h("button", { type: "button", class: "chip", "aria-pressed": String(!!on) }, a, label);
+  b.addEventListener("click", fn); return b;
+}
 function buildNav(render) {
   const chip = (txt, on, fn) => { const b = h("button", { type: "button", class: "chip", "aria-pressed": String(!!on) }, txt); b.addEventListener("click", fn); return b; };
   const apply = (fn) => { fn(); saveCV(); render(); };
   return [
     h("h3", {}, s9("tab_nav")),
     h("h4", { class: "h4" }, s9("flow")),
-    h("div", { class: "chips" }, chip("↓ " + s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })), chip("↑ " + s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; }))),
-    h("h4", { class: "h4" }, s9("browse")),
-    h("div", { class: "chips" }, ...["vertical", "horizontal", "side", "notepad"].map((m) => chip(s9("m_" + m), CV.mode === m, () => apply(() => { CV.mode = m; })))),
-    h("h4", { class: "h4" }, s9("gest")),
-    mkBar(h("span", { class: "grow" }, s9("gest")), mkSwitch(CV.gestures, () => { CV.gestures = !CV.gestures; saveCV(); render(); }, s9("gest"))),
-    h("p", { class: "ns-note" }, s9("gest_note"))
+    h("div", { class: "chips" }, arrowChip("down", s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })), arrowChip("up", s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; })))
   ];
 }
 function buildBlocked(render) {
@@ -1428,6 +1486,7 @@ let CV = { flow: "down", mode: "vertical", gestures: true };
 try { Object.assign(CV, JSON.parse(localStorage.getItem("ibf_cv") || "{}")); } catch (_) {}
 if (!["vertical", "horizontal", "side", "notepad"].includes(CV.mode)) CV.mode = "vertical";
 if (CV.flow !== "up") CV.flow = "down";
+CV.mode = "vertical"; CV.gestures = false;     // Browse mode مؤجل + إيماءات السحب ملغاة (التنقل فقط)
 const saveCV = () => { try { localStorage.setItem("ibf_cv", JSON.stringify(CV)); } catch (_) {} };
 const PAGE_SIZE = { side: 8, notepad: 6 };
 
@@ -1531,13 +1590,8 @@ function openChatSettings(c, redraw) {
       rstyleChips(),
       h("h4", { class: "h4" }, s9("flow")),
       h("div", { class: "chips" },
-        chip("↓ " + s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })),
-        chip("↑ " + s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; }))),
-      h("h4", { class: "h4" }, s9("browse")),
-      h("div", { class: "chips" }, ...["vertical", "horizontal", "side", "notepad"].map((m) => chip(s9("m_" + m), CV.mode === m, () => apply(() => { CV.mode = m; })))),
-      h("h4", { class: "h4" }, s9("gest")),
-      mkBar(h("span", { class: "grow" }, s9("gest")), mkSwitch(CV.gestures, () => { CV.gestures = !CV.gestures; saveCV(); render(); }, s9("gest"))),
-      h("p", { class: "ns-note" }, s9("gest_note")),
+        arrowChip("down", s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })),
+        arrowChip("up", s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; }))),
       h("h4", { class: "h4" }, s9("hv_live")),
       mkBar(h("span", { class: "grow" }, s9("hv_live")), mkSwitch(HV.live, () => { HV.live = !HV.live; saveHV(); redraw(); render(); }, s9("hv_live"))),
       h("p", { class: "ns-note" }, s9("hv_live_note")),
@@ -2537,7 +2591,6 @@ function openChat(c, push = true) {
     box,
     selbar,
     h("div", { class: "composer" }, attach, input, sendBtn, fileInput)));
-  attachGestures(document.querySelector(".screen"));
 
   const q = query(collection(db, "chats", c.chatId, "messages"), orderBy("ts", "desc"), limit(200));
   unsubMsgs = onSnapshot(q,
