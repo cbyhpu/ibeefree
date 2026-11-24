@@ -497,6 +497,20 @@
   .cstack { display: flex; flex-direction: column; gap: 3px; width: 62px; flex: none; }
   .composer .cstack button { width: 100%; height: 26px; min-height: 0; padding: 0 6px; font-size: 13px; display: grid; place-items: center; }
   .composer .cstack button.attach { font-size: 15px; }
+  /* ===== تحديد النص: وضوح + قائمة عائمة صغيرة ===== */
+  .msgs .bubble { -webkit-user-select: none; user-select: none; }
+  .msgs .bubble .mt { -webkit-user-select: text; user-select: text; }
+  .msgs.selmode .bubble .mt { -webkit-user-select: none; user-select: none; }
+  .msgs ::selection, .msgs .mt ::selection { background: #FFD34D; color: #0B0B0B; text-shadow: none; }
+  .seltool { position: fixed; z-index: 120; padding: 2px; background: linear-gradient(#EBC862,#D4A22F); clip-path: var(--hx); transition: opacity .12s; }
+  .seltool.hide { opacity: 0; pointer-events: none; }
+  .seltool > div { display: flex; gap: 2px; align-items: center; background: #0B1830; padding: 2px 14px; clip-path: var(--hx); }
+  .seltool button { width: 34px; height: 38px; padding: 0; display: grid; place-items: center; background: none; border-radius: 0; clip-path: var(--hx6); }
+  .seltool button svg { width: 20px; height: 20px; }
+  .seltool button:active { background: #EBC862; }
+  .seltool button:active svg { stroke: #0B1830; }
+  .selbar { padding: 3px 8px; gap: 6px; }
+  .selbar button.small { padding: 2px 12px; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -612,7 +626,7 @@ function h(tag, attrs = {}, ...kids) {
 function mount(node) { root.replaceChildren(node); }
 function explain(e) { return (e && (e.code || e.message)) || String(e); }
 let rerenderChat = null;
-function stopMsgs() { curChat = null; rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+function stopMsgs() { if (selToolCleanup) selToolCleanup(); curChat = null; rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
@@ -1810,6 +1824,62 @@ function buildHive() {
   ];
 }
 
+/* ================= تحديد النص: قائمة عائمة صغيرة قرب التحديد ================= */
+async function hiveSaveText(c, m, text) {
+  await hiveTx("readwrite", (st) => st.put({ id: c.chatId + ":" + m.id + ":t:" + Date.now(), kind: "text", chatName: dispName(c) || c.name || "", ms: msgMs(m), mine: m.from === me.uid, text }));
+}
+let selToolCleanup = null;
+function mountSelTool(env) {
+  if (selToolCleanup) selToolCleanup();
+  const btn = (icon, label, fn) => { const b = h("button", { type: "button", "aria-label": label, title: label }, iconNode(icon)); b.addEventListener("click", fn); return b; };
+  const tool = h("div", { id: "seltool", class: "seltool hide", role: "toolbar" });
+  let cur = null;
+  const hide = () => tool.classList.add("hide");
+  const clearSelection = () => { const s = window.getSelection(); if (s) s.removeAllRanges(); hide(); };
+  const build = () => {
+    const m = cur.m, row = h("div", {});
+    row.append(
+      btn("copy", s9("m_copy"), () => { const tx = cur.text; if (navigator.clipboard) navigator.clipboard.writeText(tx).then(() => toast(s9("copied"))).catch(() => {}); clearSelection(); }),
+      btn("check", s9("m_select"), () => { const id = m.id; clearSelection(); env.startSel(id); }),
+      btn("hive", s9("hv_save"), async () => {
+        const part = cur.partial, tx = cur.text; clearSelection();
+        try { if (part) await hiveSaveText(env.c, m, tx); else await hiveSaveMsg(env.c, m); toast(s9("hv_saved")); } catch (e) { console.error(e); alert(String((e && e.message) || e)); }
+      })
+    );
+    if (m.from === me.uid && !m.deleted) row.append(btn("trash", s9("m_delete"), async () => {
+      clearSelection();
+      if (!confirm(t(57))) return;
+      try { await deleteMsgDoc(env.c, m); } catch (e) { console.error(e); alert(t(27) + explain(e)); }
+    }));
+    tool.replaceChildren(row);
+  };
+  const show = () => {
+    if (SEL) { hide(); return; }
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) { hide(); return; }
+    const rg = sel.getRangeAt(0), cn = rg.commonAncestorContainer, el = cn.nodeType === 1 ? cn : cn.parentElement, mt = el && el.closest && el.closest(".mt");
+    if (!mt || !env.box.contains(mt)) { hide(); return; }
+    const b = mt.closest(".bubble"), m = b && env.getItems().find((x) => x.id === b.dataset.id), text = sel.toString();
+    if (!m || !text.trim()) { hide(); return; }
+    cur = { m, text, partial: text.length < mt.textContent.length };
+    build();
+    const rect = rg.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+    tool.classList.remove("hide");
+    const w = tool.offsetWidth || 190, hh = tool.offsetHeight || 46;
+    let top = rect.top - hh - 8;                       // فوق النص المحدد حتى لا يحجبه
+    if (top < 56) top = rect.bottom + 28;               // وإن ضاق المكان: تحته مع ترك مساحة لمقابض التحديد
+    tool.style.top = clamp(top, 56, vh - hh - 70) + "px";
+    tool.style.left = clamp(rect.left + rect.width / 2 - w / 2, 6, vw - w - 6) + "px";
+  };
+  let tm = null;
+  const later = () => { hide(); clearTimeout(tm); tm = setTimeout(show, 350); };   // أثناء سحب المقابض أو التمرير تختفي القائمة ثم تعود
+  tool.addEventListener("mousedown", (e) => e.preventDefault());
+  document.addEventListener("selectionchange", later);
+  env.box.addEventListener("scroll", later, { passive: true });
+  document.body.append(tool);
+  selToolCleanup = () => { document.removeEventListener("selectionchange", later); env.box.removeEventListener("scroll", later); clearTimeout(tm); tool.remove(); selToolCleanup = null; };
+}
+
 function settingsBtn() {
   return h("button", { class: "small hbtn", "aria-label": t2("set_title"), style: "color:#fff;border-color:#fff", onclick: openSettings }, "⚙");
 }
@@ -2554,6 +2624,7 @@ function openChat(c, push = true) {
   const copyText = (txt) => { if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => toast(s9("copied"))).catch(() => {}); };
   const selbar = h("div", { class: "selbar", style: "display:none" });
   function updateSel() {
+    box.classList.toggle("selmode", !!SEL);
     if (!SEL) { selbar.style.display = "none"; return; }
     selbar.style.display = "flex";
     const cp = h("button", { type: "button", class: "small" }, s9("m_copy")), dl = h("button", { type: "button", class: "small" }, s9("m_delete")), cn = h("button", { type: "button", class: "small" }, s9("cancel"));
@@ -2574,27 +2645,17 @@ function openChat(c, push = true) {
   }
   function clearSel() { SEL = null; box.querySelectorAll(".bubble.sel").forEach((b) => b.classList.remove("sel")); updateSel(); }
   const toggleSel = (b) => { const id = b.dataset.id; if (!id || !SEL) return; if (SEL.has(id)) SEL.delete(id); else SEL.add(id); b.classList.toggle("sel", SEL.has(id)); updateSel(); };
-  const startSel = (id) => { SEL = new Set([id]); box.querySelectorAll('.bubble[data-id="' + id + '"]').forEach((b) => b.classList.add("sel")); updateSel(); };
-  const openMsgMenu = (m) => panel("mmenu", (render, close) => {
-    const act = (ic, label, fn) => { const b = h("button", { type: "button", class: "sbox" }, mkBar(h("span", { class: "emb" }, ic), h("span", { class: "grow" }, label))); b.addEventListener("click", () => { close(); fn(); }); return b; };
-    return [
-      h("h3", {}, s9("msg_actions")),
-      m.text ? act("📋", s9("m_copy"), () => copyText(m.text)) : null,
-      act("☑", s9("m_select"), () => startSel(m.id)),
-      act("🐝", s9("hv_save"), () => hiveSaveMsg(c, m).then(() => toast(s9("hv_saved"))).catch((e) => { console.error(e); alert(String((e && e.message) || e)); })),
-      (m.from === me.uid && !m.deleted) ? act("🗑", s9("m_delete"), async () => {
-        if (!confirm(t(57))) return;
-        try { await deleteMsgDoc(c, m); } catch (e) { console.error(e); alert(t(27) + explain(e)); }
-      }) : null
-    ];
-  });
-  // ضغطة مطوّلة (أو نقر يمين) على فقاعة: قائمة الإجراءات. لا تتعارض مع السحب، تعمل سواء كانت الإيماءات مفعّلة أم لا
+  const startSel = (id) => { const sl = window.getSelection(); if (sl) sl.removeAllRanges(); SEL = new Set([id]); box.querySelectorAll('.bubble[data-id="' + id + '"]').forEach((b) => b.classList.add("sel")); updateSel(); };
+  // ضغطة مطوّلة على فقاعة: تحدّد نصها بوضوح فتظهر القائمة العائمة الصغيرة (أو تبدّل التحديد أثناء وضع التحديد المتعدد)
   box.addEventListener("contextmenu", (e) => {
     const b = e.target.closest && e.target.closest(".bubble"); if (!b || !b.dataset.id) return;
     e.preventDefault();
     if (SEL) { toggleSel(b); return; }
-    const m = items.find((x) => x.id === b.dataset.id); if (m) openMsgMenu(m);
+    const mt = b.querySelector(".mt");
+    if (mt) { const rg = document.createRange(), sl = window.getSelection(); rg.selectNodeContents(mt); sl.removeAllRanges(); sl.addRange(rg); }
+    else startSel(b.dataset.id);
   });
+  mountSelTool({ box, c, getItems: () => items, startSel });
   // أثناء التحديد: النقر يبدّل التحديد بدل فتح الصور والأزرار
   box.addEventListener("click", (e) => {
     if (!SEL) return;
