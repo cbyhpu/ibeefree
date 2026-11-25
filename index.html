@@ -511,6 +511,34 @@
   .seltool button:active svg { stroke: #0B1830; }
   .selbar { padding: 3px 8px; gap: 6px; }
   .selbar button.small { padding: 2px 12px; font-size: 12px; }
+  /* ===== العجلة السداسية العائمة ===== */
+  .twheel { position: fixed; z-index: 130; width: 0; height: 0; }
+  .twheel.fade { opacity: .18; pointer-events: none; transition: opacity .12s; }
+  .twheel .wsvg { position: absolute; overflow: visible; filter: drop-shadow(0 4px 10px rgba(0,0,0,.45)); }
+  .wg polygon { fill: #0B1830; stroke: #EBC862; stroke-width: 2; stroke-linejoin: round; cursor: pointer; }
+  .wg.c polygon { fill: #12274D; }
+  .wg .wi { fill: none; stroke: #EBC862; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+  .wg text { fill: #EBC862; font-size: 10px; font-weight: 800; pointer-events: none; }
+  .wg.c text { font-size: 8px; }
+  .wg.on polygon { fill: #EBC862; }
+  .wg.on .wi { stroke: #0B1830; }
+  .wg.on text { fill: #0B1830; }
+  .wfab, .whandle { position: absolute; isolation: isolate; padding: 0; display: grid; place-items: center; background: linear-gradient(#EBC862,#D4A22F); clip-path: var(--hx6); border-radius: 0; touch-action: none; }
+  .wfab { left: -23px; top: -26px; width: 46px; height: 52px; }
+  .whandle { width: 32px; height: 36px; }
+  .wfab::before, .whandle::before { content: ""; position: absolute; inset: 2px; background: #0B1830; clip-path: var(--hx6); z-index: -1; }
+  .wfab svg { width: 24px; height: 24px; }
+  .whandle svg { width: 18px; height: 18px; fill: #EBC862; stroke: none; }
+  .wsub { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  .wcell { position: absolute; isolation: isolate; transform: translate(-50%, -50%); width: 70px; height: 62px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: linear-gradient(#EBC862,#D4A22F); color: #EBC862; font-size: 10px; font-weight: 800; clip-path: var(--hx6); border: 0; border-radius: 0; }
+  .wcell::before { content: ""; position: absolute; inset: 2px; background: #0B1830; clip-path: var(--hx6); z-index: -1; }
+  .wcell svg { width: 20px; height: 20px; }
+  .wcell.sm { width: 40px; height: 44px; }
+  .wcell.sm::before { display: none; }
+  .wcell.clr { background: #0B1830; color: #EBC862; font-size: 16px; }
+  .bubble.tgt { box-shadow: inset 0 0 0 2px rgba(235,200,98,.65); }
+  mark.mk { color: #111; border-radius: 3px; padding: 0 1px; }
+  mark.mk .hl { color: inherit; }
 </style>
 </head>
 <body>
@@ -626,7 +654,7 @@ function h(tag, attrs = {}, ...kids) {
 function mount(node) { root.replaceChildren(node); }
 function explain(e) { return (e && (e.code || e.message)) || String(e); }
 let rerenderChat = null;
-function stopMsgs() { if (selToolCleanup) selToolCleanup(); curChat = null; rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
+function stopMsgs() { if (selToolCleanup) selToolCleanup(); if (wheelCleanup) wheelCleanup(); wheelRemount = null; curChat = null; rerenderChat = null; if (unsubMsgs) { unsubMsgs(); unsubMsgs = null; } }
 
 /* ---------- نصوص إضافية (T2) ---------- */
 const T2 = {
@@ -1042,21 +1070,21 @@ const S9 = {
     myname: "اسمي", left: "تغييرات الاسم المتبقية: ", limit: "وصلت للحد الأقصى: 3 تغييرات فقط.", save: "حفظ", gen: "مولّد الأسماء", owner: "المالك / الأدمن",
     mystatus: "حالتي", st_auto: "تلقائي", st_busy: "مشغول", allow: "السماح لأصدقائي بتسميتي", friends: "تسمية الأصدقاء", nick: "تسمية", nick_ask: "اكتب التسمية (اتركها فارغة للحذف):",
     nick_locked: "هذا الصديق لم يسمح بتغيير اسمه بعد.", p_on: "متصل", p_busy: "مشغول", p_off: "غير متصل",
-    w_msg: "أهلاً بك في IBeeFree. ننصحك بزيارة صفحة About للتعرف على التطبيق.", w_open: "فتح About", w_later: "ذكّرني لاحقاً", w_ok: "فهمت", w_thanks: "✓ تم. شكراً لك", reading: "Reading Mode", reading_note: "يحوّل خلفية المحادثة فقط إلى ورقة X-ray بألوان نيون زرقاء، ولا يغيّر الشريطين العلوي والسفلي.", smaller: "أصغر", normal: "عادي", larger: "أكبر", layoutw: "عرض الواجهة الحالي:", sz_before: "قبل", sz_now: "الآن", sz_sample: "نص تجريبي للتحقق من الحجم", btn_side: "مكان أزرار الإرسال والملفات", side_right: "يمين", side_left: "يسار", chat_set: "إعدادات المحادثة", quick: "تحكم سريع", flow: "تدفق الكلام", flow_down: "من الأعلى للأسفل (الأقدم أولاً)", flow_up: "الأحدث في الأعلى", browse: "نمط التصفح", m_vertical: "تمرير عمودي", m_horizontal: "تمرير أفقي", m_side: "تقليب جانبي (حسب اتجاه اللغة)", m_notepad: "تقليب للأعلى كالمفكرة", gest: "إيماءات السحب", gest_note: "اسحب من حافة الشاشة للرجوع. في التمرير العمودي: اسحب فقاعة جانباً لنسخ نصها.", block_note: "الحظر يوقف المراسلة مع هذا الصديق. سيُطلب تأكيدك قبل التنفيذ.", copied: "تم النسخ", today: "اليوم", yesterday: "أمس", search: "بحث في المحادثة", s_ph: "ابحث في الرسائل...", s_date: "التاريخ", s_from: "من الساعة", s_to: "إلى الساعة", s_topic: "الموضوع (Topic)", s_type: "النوع", t_all: "الكل", t_text: "نصوص", t_img: "صور", t_file: "ملفات", s_clear: "مسح الفلاتر", s_count: "نتيجة", s_notopics: "لا توجد وسوم في هذه المحادثة. اكتب #موضوع داخل رسالتك ليظهر هنا.", s_note: "يشمل آخر 200 رسالة محمّلة في المحادثة.", msg_actions: "إجراءات الرسالة", m_copy: "نسخ", m_select: "تحديد", m_delete: "حذف", selected: "المحدد:", only_own: "يمكنك حذف رسائلك فقط.", del_n: "حذف الرسائل المحددة؟ العدد: ", cancel: "إلغاء", tab_display: "العرض والخطوط", tab_nav: "التنقل", tab_priv: "الخصوصية والحظر", tab_snd: "الصوت والإشعارات", blocked: "الأصدقاء المحظورون", no_blocked: "لا يوجد أصدقاء محظورون.", unblock: "إلغاء الحظر", unblock_ask: "إلغاء الحظر عن ", rs_blue: "أزرق نيون", rs_neg: "أبيض وأسود (Negative)", rs_teal: "فيروزي", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "الحروف التفاعلية", hv_next: "الهدف التالي:", hv_note_count: "يُحتسب ما ترسله أنت فقط، بحد أقصى 20 حرفاً لكل رسالة.", hv_letters: "تفصيل الحروف", hv_milestones: "المحطات", hv_perks: "الميزات المؤقتة", hv_perk_m: "ميزة المليون", hv_until: "حتى", hv_folder: "مجلد Hive", hv_images: "الصور", hv_texts: "النصوص", hv_other: "ملفات أخرى", hv_empty: "المجلد فارغ.", hv_delete: "حذف", hv_open: "فتح", hv_save: "حفظ في Hive Store", hv_saved: "تم الحفظ في Hive Store", hv_live: "تفاعل الحروف في المحادثة", hv_live_note: "إيقافه يوقف تلوين الحروف داخل المحادثة فقط. العدّاد يواصل العمل في الخلفية ونتائجه في Hive Store.", hv_100: "وصلت إلى 100 حرف تفاعلي!", hv_gift: "بلغت {n} حرفاً تفاعلياً. هديتك قادمة قريباً.", hv_mil: "بلغت مليون حرف! فُعّلت ميزة كبيرة لمدة 7 أيام (التفاصيل لاحقاً).", hv_test: "تجربة مؤقتة (للاختبار فقط)" },
+    w_msg: "أهلاً بك في IBeeFree. ننصحك بزيارة صفحة About للتعرف على التطبيق.", w_open: "فتح About", w_later: "ذكّرني لاحقاً", w_ok: "فهمت", w_thanks: "✓ تم. شكراً لك", reading: "Reading Mode", reading_note: "يحوّل خلفية المحادثة فقط إلى ورقة X-ray بألوان نيون زرقاء، ولا يغيّر الشريطين العلوي والسفلي.", smaller: "أصغر", normal: "عادي", larger: "أكبر", layoutw: "عرض الواجهة الحالي:", sz_before: "قبل", sz_now: "الآن", sz_sample: "نص تجريبي للتحقق من الحجم", wh_title: "عجلة النص", wh_on: "العجلة السداسية العائمة", wh_reset: "إعادة العجلة لمكانها", wh_select: "تحديد", wh_hive: "مخزن العسل", wh_copy: "نسخ", wh_translate: "ترجمة", wh_undo: "تراجع", wh_paste: "لصق", wh_marker: "تلوين", wh_cut: "قص", wh_hint_tap: "المس رسالة أو حدّد نصاً أولاً.", wh_cut_hint: "القص يعمل في حقل الكتابة. تم نسخ النص.", wh_paste_denied: "منع المتصفح اللصق. اضغط مطولاً في حقل الكتابة.", wh_marker_hint: "التلوين يعمل على نص الرسائل.", wh_clear: "إزالة التلوين", hv_nomatch: "لا يوجد في هذه الرسالة محتوى يناسب هذه الوجهة.", hv_notepad: "مفكرة", hv_gallery: "معرض", hv_video: "فيديو", hv_files: "ملفات", hv_videos: "الفيديو", btn_side: "مكان أزرار الإرسال والملفات", side_right: "يمين", side_left: "يسار", chat_set: "إعدادات المحادثة", quick: "تحكم سريع", flow: "تدفق الكلام", flow_down: "من الأعلى للأسفل (الأقدم أولاً)", flow_up: "الأحدث في الأعلى", browse: "نمط التصفح", m_vertical: "تمرير عمودي", m_horizontal: "تمرير أفقي", m_side: "تقليب جانبي (حسب اتجاه اللغة)", m_notepad: "تقليب للأعلى كالمفكرة", gest: "إيماءات السحب", gest_note: "اسحب من حافة الشاشة للرجوع. في التمرير العمودي: اسحب فقاعة جانباً لنسخ نصها.", block_note: "الحظر يوقف المراسلة مع هذا الصديق. سيُطلب تأكيدك قبل التنفيذ.", copied: "تم النسخ", today: "اليوم", yesterday: "أمس", search: "بحث في المحادثة", s_ph: "ابحث في الرسائل...", s_date: "التاريخ", s_from: "من الساعة", s_to: "إلى الساعة", s_topic: "الموضوع (Topic)", s_type: "النوع", t_all: "الكل", t_text: "نصوص", t_img: "صور", t_file: "ملفات", s_clear: "مسح الفلاتر", s_count: "نتيجة", s_notopics: "لا توجد وسوم في هذه المحادثة. اكتب #موضوع داخل رسالتك ليظهر هنا.", s_note: "يشمل آخر 200 رسالة محمّلة في المحادثة.", msg_actions: "إجراءات الرسالة", m_copy: "نسخ", m_select: "تحديد", m_delete: "حذف", selected: "المحدد:", only_own: "يمكنك حذف رسائلك فقط.", del_n: "حذف الرسائل المحددة؟ العدد: ", cancel: "إلغاء", tab_display: "العرض والخطوط", tab_nav: "التنقل", tab_priv: "الخصوصية والحظر", tab_snd: "الصوت والإشعارات", blocked: "الأصدقاء المحظورون", no_blocked: "لا يوجد أصدقاء محظورون.", unblock: "إلغاء الحظر", unblock_ask: "إلغاء الحظر عن ", rs_blue: "أزرق نيون", rs_neg: "أبيض وأسود (Negative)", rs_teal: "فيروزي", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "الحروف التفاعلية", hv_next: "الهدف التالي:", hv_note_count: "يُحتسب ما ترسله أنت فقط، بحد أقصى 20 حرفاً لكل رسالة.", hv_letters: "تفصيل الحروف", hv_milestones: "المحطات", hv_perks: "الميزات المؤقتة", hv_perk_m: "ميزة المليون", hv_until: "حتى", hv_folder: "مجلد Hive", hv_images: "الصور", hv_texts: "النصوص", hv_other: "ملفات أخرى", hv_empty: "المجلد فارغ.", hv_delete: "حذف", hv_open: "فتح", hv_save: "حفظ في Hive Store", hv_saved: "تم الحفظ في Hive Store", hv_live: "تفاعل الحروف في المحادثة", hv_live_note: "إيقافه يوقف تلوين الحروف داخل المحادثة فقط. العدّاد يواصل العمل في الخلفية ونتائجه في Hive Store.", hv_100: "وصلت إلى 100 حرف تفاعلي!", hv_gift: "بلغت {n} حرفاً تفاعلياً. هديتك قادمة قريباً.", hv_mil: "بلغت مليون حرف! فُعّلت ميزة كبيرة لمدة 7 أيام (التفاصيل لاحقاً).", hv_test: "تجربة مؤقتة (للاختبار فقط)" },
   en: { bx_app: "Appearance & Themes", bx_text: "Text & Fonts", bx_snd: "Sound & Notifications", bx_size: "Size & Animation", bx_priv: "Privacy & Names",
     dark: "Dark mode", bright: "In-app brightness", themes: "Themes", themes_note: "These options are independent of the phone's settings.",
     scale: "Resize", fit360: "Fit 360dp", fontfine: "Font fine-tuning", dflt: "Default", anim: "Animation", a_full: "Full", a_fast: "Fast", a_off: "Off",
     myname: "My name", left: "Name changes left: ", limit: "Limit reached: only 3 name changes.", save: "Save", gen: "Name generator", owner: "Owner / Admin",
     mystatus: "My status", st_auto: "Auto", st_busy: "Busy", allow: "Let friends nickname me", friends: "Friend nicknames", nick: "Nickname", nick_ask: "Type the nickname (leave empty to clear):",
     nick_locked: "This friend hasn't allowed nicknames yet.", p_on: "Online", p_busy: "Busy", p_off: "Offline",
-    w_msg: "Welcome to IBeeFree. We recommend visiting the About page to get to know the app.", w_open: "Open About", w_later: "Remind me later", w_ok: "Got it", w_thanks: "✓ Done. Thank you", reading: "Reading Mode", reading_note: "Turns only the chat background into an X-ray sheet with neon blue colors. The top and bottom bars stay unchanged.", smaller: "Smaller", normal: "Normal", larger: "Larger", layoutw: "Current layout width:", sz_before: "Before", sz_now: "Now", sz_sample: "Sample text to check the size", btn_side: "Side of the Send and Files buttons", side_right: "Right", side_left: "Left", chat_set: "Chat settings", quick: "Quick controls", flow: "Conversation flow", flow_down: "Top to bottom (oldest first)", flow_up: "Newest on top", browse: "Browse mode", m_vertical: "Vertical scroll", m_horizontal: "Horizontal scroll", m_side: "Side flip (follows language direction)", m_notepad: "Flip up like a notepad", gest: "Swipe gestures", gest_note: "Swipe from the screen edge to go back. In vertical scroll: swipe a bubble sideways to copy its text.", block_note: "Blocking stops messaging with this friend. You will be asked to confirm.", copied: "Copied", today: "Today", yesterday: "Yesterday", search: "Search in chat", s_ph: "Search messages...", s_date: "Date", s_from: "From time", s_to: "To time", s_topic: "Topic", s_type: "Type", t_all: "All", t_text: "Text", t_img: "Images", t_file: "Files", s_clear: "Clear filters", s_count: "results", s_notopics: "No topics in this chat. Type #topic inside a message and it will appear here.", s_note: "Covers the latest 200 messages loaded in the chat.", msg_actions: "Message actions", m_copy: "Copy", m_select: "Select", m_delete: "Delete", selected: "Selected:", only_own: "You can delete your own messages only.", del_n: "Delete the selected messages? Count: ", cancel: "Cancel", tab_display: "Display & Fonts", tab_nav: "Navigation", tab_priv: "Privacy & Blocking", tab_snd: "Sound & Notifications", blocked: "Blocked friends", no_blocked: "No blocked friends.", unblock: "Unblock", unblock_ask: "Unblock ", rs_blue: "Neon blue", rs_neg: "Black & white (Negative)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Interactive letters", hv_next: "Next goal:", hv_note_count: "Only what you send is counted, up to 20 letters per message.", hv_letters: "Letter breakdown", hv_milestones: "Milestones", hv_perks: "Temporary perks", hv_perk_m: "Million perk", hv_until: "until", hv_folder: "Hive folder", hv_images: "Images", hv_texts: "Texts", hv_other: "Other files", hv_empty: "The folder is empty.", hv_delete: "Delete", hv_open: "Open", hv_save: "Save to Hive Store", hv_saved: "Saved to Hive Store", hv_live: "Letter interaction in chat", hv_live_note: "Turning it off stops coloring letters inside the chat only. The counter keeps running in the background and its results go to Hive Store.", hv_100: "You reached 100 interactive letters!", hv_gift: "You reached {n} interactive letters. Your gift is coming soon.", hv_mil: "You reached one million letters! A big feature is unlocked for 7 days (details later).", hv_test: "Temporary test (for testing only)" },
+    w_msg: "Welcome to IBeeFree. We recommend visiting the About page to get to know the app.", w_open: "Open About", w_later: "Remind me later", w_ok: "Got it", w_thanks: "✓ Done. Thank you", reading: "Reading Mode", reading_note: "Turns only the chat background into an X-ray sheet with neon blue colors. The top and bottom bars stay unchanged.", smaller: "Smaller", normal: "Normal", larger: "Larger", layoutw: "Current layout width:", sz_before: "Before", sz_now: "Now", sz_sample: "Sample text to check the size", wh_title: "Text wheel", wh_on: "Floating hexagonal wheel", wh_reset: "Reset wheel position", wh_select: "Select", wh_hive: "Hive Store", wh_copy: "Copy", wh_translate: "Translate", wh_undo: "Undo", wh_paste: "Paste", wh_marker: "Marker", wh_cut: "Cut", wh_hint_tap: "Tap a message or select text first.", wh_cut_hint: "Cut works in the input box. The text was copied.", wh_paste_denied: "The browser blocked pasting. Long-press in the input box.", wh_marker_hint: "Marker works on message text.", wh_clear: "Clear marks", hv_nomatch: "This message has no content for that destination.", hv_notepad: "Notepad", hv_gallery: "Gallery", hv_video: "Video", hv_files: "Files", hv_videos: "Videos", btn_side: "Side of the Send and Files buttons", side_right: "Right", side_left: "Left", chat_set: "Chat settings", quick: "Quick controls", flow: "Conversation flow", flow_down: "Top to bottom (oldest first)", flow_up: "Newest on top", browse: "Browse mode", m_vertical: "Vertical scroll", m_horizontal: "Horizontal scroll", m_side: "Side flip (follows language direction)", m_notepad: "Flip up like a notepad", gest: "Swipe gestures", gest_note: "Swipe from the screen edge to go back. In vertical scroll: swipe a bubble sideways to copy its text.", block_note: "Blocking stops messaging with this friend. You will be asked to confirm.", copied: "Copied", today: "Today", yesterday: "Yesterday", search: "Search in chat", s_ph: "Search messages...", s_date: "Date", s_from: "From time", s_to: "To time", s_topic: "Topic", s_type: "Type", t_all: "All", t_text: "Text", t_img: "Images", t_file: "Files", s_clear: "Clear filters", s_count: "results", s_notopics: "No topics in this chat. Type #topic inside a message and it will appear here.", s_note: "Covers the latest 200 messages loaded in the chat.", msg_actions: "Message actions", m_copy: "Copy", m_select: "Select", m_delete: "Delete", selected: "Selected:", only_own: "You can delete your own messages only.", del_n: "Delete the selected messages? Count: ", cancel: "Cancel", tab_display: "Display & Fonts", tab_nav: "Navigation", tab_priv: "Privacy & Blocking", tab_snd: "Sound & Notifications", blocked: "Blocked friends", no_blocked: "No blocked friends.", unblock: "Unblock", unblock_ask: "Unblock ", rs_blue: "Neon blue", rs_neg: "Black & white (Negative)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Interactive letters", hv_next: "Next goal:", hv_note_count: "Only what you send is counted, up to 20 letters per message.", hv_letters: "Letter breakdown", hv_milestones: "Milestones", hv_perks: "Temporary perks", hv_perk_m: "Million perk", hv_until: "until", hv_folder: "Hive folder", hv_images: "Images", hv_texts: "Texts", hv_other: "Other files", hv_empty: "The folder is empty.", hv_delete: "Delete", hv_open: "Open", hv_save: "Save to Hive Store", hv_saved: "Saved to Hive Store", hv_live: "Letter interaction in chat", hv_live_note: "Turning it off stops coloring letters inside the chat only. The counter keeps running in the background and its results go to Hive Store.", hv_100: "You reached 100 interactive letters!", hv_gift: "You reached {n} interactive letters. Your gift is coming soon.", hv_mil: "You reached one million letters! A big feature is unlocked for 7 days (details later).", hv_test: "Temporary test (for testing only)" },
   fr: { bx_app: "Apparence et thèmes", bx_text: "Textes et polices", bx_snd: "Son et notifications", bx_size: "Taille et animation", bx_priv: "Confidentialité et noms",
     dark: "Mode sombre", bright: "Luminosité dans l'app", themes: "Thèmes", themes_note: "Ces options sont indépendantes des réglages du téléphone.",
     scale: "Redimensionner", fit360: "Adapter à 360dp", fontfine: "Réglage fin de la police", dflt: "Par défaut", anim: "Animation", a_full: "Complète", a_fast: "Rapide", a_off: "Désactivée",
     myname: "Mon nom", left: "Changements de nom restants : ", limit: "Limite atteinte : 3 changements seulement.", save: "Enregistrer", gen: "Générateur de noms", owner: "Propriétaire / Admin",
     mystatus: "Mon statut", st_auto: "Auto", st_busy: "Occupé", allow: "Autoriser mes amis à me surnommer", friends: "Surnoms des amis", nick: "Surnom", nick_ask: "Écrivez le surnom (vide pour effacer) :",
     nick_locked: "Cet ami n'a pas encore autorisé les surnoms.", p_on: "En ligne", p_busy: "Occupé", p_off: "Hors ligne",
-    w_msg: "Bienvenue sur IBeeFree. Nous vous conseillons de visiter la page About pour découvrir l'application.", w_open: "Ouvrir About", w_later: "Me le rappeler plus tard", w_ok: "Compris", w_thanks: "✓ Fait. Merci", reading: "Reading Mode", reading_note: "Transforme seulement le fond de la discussion en feuille de radio X avec des couleurs bleu néon. Les barres du haut et du bas ne changent pas.", smaller: "Plus petit", normal: "Normal", larger: "Plus grand", layoutw: "Largeur actuelle de l'interface :", sz_before: "Avant", sz_now: "Maintenant", sz_sample: "Texte d'essai pour vérifier la taille", btn_side: "Côté des boutons Envoyer et Fichiers", side_right: "Droite", side_left: "Gauche", chat_set: "Paramètres de la discussion", quick: "Contrôles rapides", flow: "Flux de la conversation", flow_down: "De haut en bas (plus ancien d'abord)", flow_up: "Plus récent en haut", browse: "Mode de navigation", m_vertical: "Défilement vertical", m_horizontal: "Défilement horizontal", m_side: "Pages latérales (selon la langue)", m_notepad: "Pages vers le haut (bloc-notes)", gest: "Gestes de balayage", gest_note: "Balayez depuis le bord de l'écran pour revenir. En défilement vertical : balayez une bulle pour copier son texte.", block_note: "Le blocage arrête les messages avec cet ami. Une confirmation sera demandée.", copied: "Copié", today: "Aujourd'hui", yesterday: "Hier", search: "Rechercher dans la discussion", s_ph: "Rechercher des messages...", s_date: "Date", s_from: "De (heure)", s_to: "À (heure)", s_topic: "Sujet (Topic)", s_type: "Type", t_all: "Tout", t_text: "Textes", t_img: "Images", t_file: "Fichiers", s_clear: "Effacer les filtres", s_count: "résultats", s_notopics: "Aucun sujet dans cette discussion. Écrivez #sujet dans un message pour qu'il apparaisse ici.", s_note: "Couvre les 200 derniers messages chargés.", msg_actions: "Actions du message", m_copy: "Copier", m_select: "Sélectionner", m_delete: "Supprimer", selected: "Sélection :", only_own: "Vous ne pouvez supprimer que vos messages.", del_n: "Supprimer les messages sélectionnés ? Nombre : ", cancel: "Annuler", tab_display: "Affichage et polices", tab_nav: "Navigation", tab_priv: "Confidentialité et blocage", tab_snd: "Son et notifications", blocked: "Amis bloqués", no_blocked: "Aucun ami bloqué.", unblock: "Débloquer", unblock_ask: "Débloquer ", rs_blue: "Bleu néon", rs_neg: "Noir et blanc (Négatif)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Lettres interactives", hv_next: "Prochain objectif :", hv_note_count: "Seul ce que vous envoyez est compté, jusqu'à 20 lettres par message.", hv_letters: "Détail des lettres", hv_milestones: "Étapes", hv_perks: "Avantages temporaires", hv_perk_m: "Avantage du million", hv_until: "jusqu'au", hv_folder: "Dossier Hive", hv_images: "Images", hv_texts: "Textes", hv_other: "Autres fichiers", hv_empty: "Le dossier est vide.", hv_delete: "Supprimer", hv_open: "Ouvrir", hv_save: "Enregistrer dans Hive Store", hv_saved: "Enregistré dans Hive Store", hv_live: "Interaction des lettres dans la discussion", hv_live_note: "La désactiver arrête seulement la coloration des lettres dans la discussion. Le compteur continue en arrière-plan et ses résultats vont dans Hive Store.", hv_100: "Vous avez atteint 100 lettres interactives !", hv_gift: "Vous avez atteint {n} lettres interactives. Votre cadeau arrive bientôt.", hv_mil: "Vous avez atteint un million de lettres ! Une grande fonction est débloquée pour 7 jours (détails plus tard).", hv_test: "Test temporaire (pour essai seulement)" }
+    w_msg: "Bienvenue sur IBeeFree. Nous vous conseillons de visiter la page About pour découvrir l'application.", w_open: "Ouvrir About", w_later: "Me le rappeler plus tard", w_ok: "Compris", w_thanks: "✓ Fait. Merci", reading: "Reading Mode", reading_note: "Transforme seulement le fond de la discussion en feuille de radio X avec des couleurs bleu néon. Les barres du haut et du bas ne changent pas.", smaller: "Plus petit", normal: "Normal", larger: "Plus grand", layoutw: "Largeur actuelle de l'interface :", sz_before: "Avant", sz_now: "Maintenant", sz_sample: "Texte d'essai pour vérifier la taille", wh_title: "Roue de texte", wh_on: "Roue hexagonale flottante", wh_reset: "Réinitialiser la position", wh_select: "Sélect.", wh_hive: "Hive Store", wh_copy: "Copier", wh_translate: "Traduire", wh_undo: "Annuler", wh_paste: "Coller", wh_marker: "Surligner", wh_cut: "Couper", wh_hint_tap: "Touchez un message ou sélectionnez du texte.", wh_cut_hint: "Couper fonctionne dans la zone de saisie. Le texte a été copié.", wh_paste_denied: "Le navigateur a bloqué le collage. Appui long dans la zone de saisie.", wh_marker_hint: "Le surlignage fonctionne sur le texte des messages.", wh_clear: "Effacer le surlignage", hv_nomatch: "Ce message n'a pas de contenu pour cette destination.", hv_notepad: "Bloc-notes", hv_gallery: "Galerie", hv_video: "Vidéo", hv_files: "Fichiers", hv_videos: "Vidéos", btn_side: "Côté des boutons Envoyer et Fichiers", side_right: "Droite", side_left: "Gauche", chat_set: "Paramètres de la discussion", quick: "Contrôles rapides", flow: "Flux de la conversation", flow_down: "De haut en bas (plus ancien d'abord)", flow_up: "Plus récent en haut", browse: "Mode de navigation", m_vertical: "Défilement vertical", m_horizontal: "Défilement horizontal", m_side: "Pages latérales (selon la langue)", m_notepad: "Pages vers le haut (bloc-notes)", gest: "Gestes de balayage", gest_note: "Balayez depuis le bord de l'écran pour revenir. En défilement vertical : balayez une bulle pour copier son texte.", block_note: "Le blocage arrête les messages avec cet ami. Une confirmation sera demandée.", copied: "Copié", today: "Aujourd'hui", yesterday: "Hier", search: "Rechercher dans la discussion", s_ph: "Rechercher des messages...", s_date: "Date", s_from: "De (heure)", s_to: "À (heure)", s_topic: "Sujet (Topic)", s_type: "Type", t_all: "Tout", t_text: "Textes", t_img: "Images", t_file: "Fichiers", s_clear: "Effacer les filtres", s_count: "résultats", s_notopics: "Aucun sujet dans cette discussion. Écrivez #sujet dans un message pour qu'il apparaisse ici.", s_note: "Couvre les 200 derniers messages chargés.", msg_actions: "Actions du message", m_copy: "Copier", m_select: "Sélectionner", m_delete: "Supprimer", selected: "Sélection :", only_own: "Vous ne pouvez supprimer que vos messages.", del_n: "Supprimer les messages sélectionnés ? Nombre : ", cancel: "Annuler", tab_display: "Affichage et polices", tab_nav: "Navigation", tab_priv: "Confidentialité et blocage", tab_snd: "Son et notifications", blocked: "Amis bloqués", no_blocked: "Aucun ami bloqué.", unblock: "Débloquer", unblock_ask: "Débloquer ", rs_blue: "Bleu néon", rs_neg: "Noir et blanc (Négatif)", rs_teal: "Turquoise", tab_hive: "Hive Store", hv_title: "Hive Store", hv_total: "Lettres interactives", hv_next: "Prochain objectif :", hv_note_count: "Seul ce que vous envoyez est compté, jusqu'à 20 lettres par message.", hv_letters: "Détail des lettres", hv_milestones: "Étapes", hv_perks: "Avantages temporaires", hv_perk_m: "Avantage du million", hv_until: "jusqu'au", hv_folder: "Dossier Hive", hv_images: "Images", hv_texts: "Textes", hv_other: "Autres fichiers", hv_empty: "Le dossier est vide.", hv_delete: "Supprimer", hv_open: "Ouvrir", hv_save: "Enregistrer dans Hive Store", hv_saved: "Enregistré dans Hive Store", hv_live: "Interaction des lettres dans la discussion", hv_live_note: "La désactiver arrête seulement la coloration des lettres dans la discussion. Le compteur continue en arrière-plan et ses résultats vont dans Hive Store.", hv_100: "Vous avez atteint 100 lettres interactives !", hv_gift: "Vous avez atteint {n} lettres interactives. Votre cadeau arrive bientôt.", hv_mil: "Vous avez atteint un million de lettres ! Une grande fonction est débloquée pour 7 jours (détails plus tard).", hv_test: "Test temporaire (pour essai seulement)" }
 };
 const s9 = (k) => (S9[LANG] || S9.en)[k];
 
@@ -1433,6 +1461,8 @@ function buildNav(render) {
     h("h3", {}, s9("tab_nav")),
     h("h4", { class: "h4" }, s9("flow")),
     h("div", { class: "chips" }, arrowChip("down", s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })), arrowChip("up", s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; }))),
+    h("h4", { class: "h4" }, s9("wh_title")),
+    mkBar(h("span", { class: "grow" }, s9("wh_on")), mkSwitch(CV.wheel, () => { CV.wheel = !CV.wheel; saveCV(); if (wheelRemount) wheelRemount(); render(); }, s9("wh_on"))),
     h("h4", { class: "h4" }, s9("btn_side")),
     h("div", { class: "chips" }, chip(s9("side_right"), CV.btnSide === "right", () => apply(() => { CV.btnSide = "right"; })), chip(s9("side_left"), CV.btnSide === "left", () => apply(() => { CV.btnSide = "left"; })))
   ];
@@ -1513,6 +1543,7 @@ try { Object.assign(CV, JSON.parse(localStorage.getItem("ibf_cv") || "{}")); } c
 if (!["vertical", "horizontal", "side", "notepad"].includes(CV.mode)) CV.mode = "vertical";
 if (CV.flow !== "up") CV.flow = "down";
 if (CV.btnSide !== "left") CV.btnSide = "right";
+if (CV.wheel !== false) CV.wheel = true;
 CV.mode = "vertical"; CV.gestures = false;     // Browse mode مؤجل + إيماءات السحب ملغاة (التنقل فقط)
 const saveCV = () => { try { localStorage.setItem("ibf_cv", JSON.stringify(CV)); } catch (_) {} };
 const PAGE_SIZE = { side: 8, notepad: 6 };
@@ -1534,6 +1565,7 @@ function drawMsgs(box, items, c) {
     for (let i = 0; i < groups.length; i += n) pages.push(h("div", { class: "page" }, ...groups.slice(i, i + n).flat()));
     box.replaceChildren(...pages);
   } else box.replaceChildren(...groups.flat());
+  applyMarks(box, c);
   hvTint(box);
 }
 function scrollNewest(box) {
@@ -1619,6 +1651,9 @@ function openChatSettings(c, redraw) {
       h("div", { class: "chips" },
         arrowChip("down", s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })),
         arrowChip("up", s9("flow_up"), CV.flow === "up", () => apply(() => { CV.flow = "up"; }))),
+      h("h4", { class: "h4" }, s9("wh_title")),
+      mkBar(h("span", { class: "grow" }, s9("wh_on")), mkSwitch(CV.wheel, () => { CV.wheel = !CV.wheel; saveCV(); if (wheelRemount) wheelRemount(); render(); }, s9("wh_on"))),
+      h("div", { class: "chips" }, chip(s9("wh_reset"), false, () => { resetWheelPos(); if (wheelRemount) wheelRemount(); toast(s9("copied")); })),
       h("h4", { class: "h4" }, s9("hv_live")),
       mkBar(h("span", { class: "grow" }, s9("hv_live")), mkSwitch(HV.live, () => { HV.live = !HV.live; saveHV(); redraw(); render(); }, s9("hv_live"))),
       h("p", { class: "ns-note" }, s9("hv_live_note")),
@@ -1782,12 +1817,12 @@ function openHiveFolder(kind) {
       const acts = h("div", { class: "row" }, del);
       let body;
       if (it.kind === "image") { body = h("img", { src: it.dataUrl, class: "hvimg", alt: "" }); body.addEventListener("click", () => openImage(it.dataUrl)); }
-      else body = h("div", { class: "hvtxt" }, it.kind === "other" ? "📄 " + (it.fileName || "") : it.text);
+      else body = h("div", { class: "hvtxt" }, (it.kind === "other" || it.kind === "video") ? "📄 " + (it.fileName || "") : it.text);
       if (it.kind === "text") { const cp = h("button", { type: "button", class: "small" }, s9("m_copy")); cp.addEventListener("click", () => { if (navigator.clipboard) navigator.clipboard.writeText(it.text).then(() => toast(s9("copied"))).catch(() => {}); }); acts.prepend(cp); }
-      if (it.kind === "other" && it.dataUrl) { const dl = h("button", { type: "button", class: "small" }, s9("hv_open")); dl.addEventListener("click", () => { const a = h("a", { href: it.dataUrl, download: it.fileName || "file" }); document.body.append(a); a.click(); a.remove(); }); acts.prepend(dl); }
+      if ((it.kind === "other" || it.kind === "video") && it.dataUrl) { const dl = h("button", { type: "button", class: "small" }, s9("hv_open")); dl.addEventListener("click", () => { const a = h("a", { href: it.dataUrl, download: it.fileName || "file" }); document.body.append(a); a.click(); a.remove(); }); acts.prepend(dl); }
       return h("div", { class: "hvrow" }, body, meta, acts);
     });
-    return [h("h3", {}, s9(kind === "image" ? "hv_images" : kind === "text" ? "hv_texts" : "hv_other")), rows.length ? null : h("p", { class: "ns-note" }, s9("hv_empty")), ...rows];
+    return [h("h3", {}, s9(kind === "image" ? "hv_images" : kind === "text" ? "hv_texts" : kind === "video" ? "hv_videos" : "hv_other")), rows.length ? null : h("p", { class: "ns-note" }, s9("hv_empty")), ...rows];
   });
 }
 function buildHive() {
@@ -1795,7 +1830,7 @@ function buildHive() {
   const prog = h("div", { class: "hprog" }, h("i", { style: "width:" + (next ? Math.min(100, Math.floor(HV.total / next * 100)) : 100) + "%" }));
   const letters = [["i", "I"], ["b", "B"], ["f", "F"], ["re", "RE"], ["ا", "ا"], ["ن", "ن"], ["ح", "ح"], ["ل", "ل"], ["ر", "ر"]];
   const cnts = {};
-  const folders = [["image", "hv_images", "🖼"], ["text", "hv_texts", "📝"], ["other", "hv_other", "📦"]].map(([k, lk, ic]) => {
+  const folders = [["image", "hv_images", "🖼"], ["text", "hv_texts", "📝"], ["video", "hv_videos", "🎞"], ["other", "hv_other", "📦"]].map(([k, lk, ic]) => {
     const sp = h("span", { class: "hbadge", style: "margin:0" }, "…"); cnts[k] = sp;
     const b = h("button", { type: "button", class: "sbox" }, mkBar(h("span", { class: "emb" }, ic), h("span", { class: "grow" }, s9(lk)), sp));
     b.addEventListener("click", () => openHiveFolder(k)); return b;
@@ -1879,6 +1914,260 @@ function mountSelTool(env) {
   document.body.append(tool);
   selToolCleanup = () => { document.removeEventListener("selectionchange", later); env.box.removeEventListener("scroll", later); clearTimeout(tm); tool.remove(); selToolCleanup = null; };
 }
+
+/* ================= الجزء 3: العجلة السداسية العائمة + التلوين + تنظيف المحادثة ================= */
+Object.assign(ICON_PATHS, {
+  translate: '<path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 7 8M11 5c0 3-2 6-6 8"/><path d="M13 20l3.5-9 3.5 9M14.2 17h4.6"/>',
+  undo: '<path d="M8 5L3 10l5 5"/><path d="M3 10h10a6 6 0 0 1 0 11h-3"/>',
+  paste: '<rect x="6" y="5" width="12" height="16" rx="2"/><path d="M9 5V3.5h6V5M9 11h6M9 15h6"/>',
+  marker: '<path d="M14 4l6 6-8 8H6v-6z"/><path d="M4 21h8"/>',
+  cut: '<circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8 16L19 4M16 16L5 4"/>',
+  video: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+  wheel: '<path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z"/><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/>',
+  grip: '<circle cx="8" cy="8" r="1.2"/><circle cx="16" cy="8" r="1.2"/><circle cx="8" cy="12" r="1.2"/><circle cx="16" cy="12" r="1.2"/><circle cx="8" cy="16" r="1.2"/><circle cx="16" cy="16" r="1.2"/>'
+});
+EMOJI_ICON["🎞"] = "video";
+
+/* ----- تلوين النص (Marker): يُحفظ محلياً بمواضع الحروف داخل كل رسالة ----- */
+let MARKS = {};
+try { MARKS = JSON.parse(localStorage.getItem("ibf_marks") || "{}") || {}; } catch (_) {}
+const saveMarks = () => { try { localStorage.setItem("ibf_marks", JSON.stringify(MARKS)); } catch (_) {} };
+const MARK_COLORS = ["#FFE14A", "#7CFF8A", "#6FE7FF", "#FF9AD5", "#FFB35C"];
+let lastOp = null;                                   // آخر عملية قابلة للتراجع: { k } لتلوين، أو null لحقل الكتابة
+function wrapRange(mt, s, e, color) {
+  const walker = document.createTreeWalker(mt, NodeFilter.SHOW_TEXT), segs = [];
+  let pos = 0, node;
+  while ((node = walker.nextNode())) {
+    const len = node.nodeValue.length, a = Math.max(s, pos), b = Math.min(e, pos + len);
+    if (a < b) segs.push([node, a - pos, b - pos]);
+    pos += len;
+  }
+  for (const [n, a, b] of segs) {
+    const t = a > 0 ? n.splitText(a) : n;
+    if (b - a < t.nodeValue.length) t.splitText(b - a);
+    const m = document.createElement("mark"); m.className = "mk"; m.style.background = color;
+    t.parentNode.replaceChild(m, t); m.append(t);
+  }
+}
+function applyMarks(box, c) {
+  box.querySelectorAll(".bubble[data-id]").forEach((b) => {
+    const list = MARKS[c.chatId + ":" + b.dataset.id], mt = b.querySelector(".mt");
+    if (list && mt) list.forEach((mk) => wrapRange(mt, mk.s, mk.e, mk.c));
+  });
+}
+
+/* ----- حفظ في Hive Store بوجهة محددة (مفكرة / معرض / فيديو / ملفات) ----- */
+async function hiveSaveTo(c, m, kind, textOverride) {
+  if (!m || m.deleted) return false;
+  const base = { chatName: dispName(c) || c.name || "", ms: msgMs(m), mine: m.from === me.uid };
+  const key = c.chatId + ":" + m.id + ":" + kind;
+  const small = typeof m.thumb === "string" ? m.thumb : m.image;
+  if (kind === "text") {
+    const txt = textOverride || m.text; if (typeof txt !== "string" || !txt) return false;
+    await hiveTx("readwrite", (st) => st.put({ ...base, id: textOverride ? key + ":" + Date.now() : key, kind: "text", text: txt })); return true;
+  }
+  if (kind === "image") {
+    if (m.hasFile || typeof small !== "string" || !small.startsWith("data:image")) return false;
+    let d = null; try { d = await fullOf(m, c); } catch (_) {}
+    await hiveTx("readwrite", (st) => st.put({ ...base, id: key, kind: "image", dataUrl: d || small, text: m.text || "" })); return true;
+  }
+  if (!m.hasFile) return false;
+  const isVid = VIDEO_RE.test(m.fileName || "");
+  if ((kind === "video") !== isVid) return false;
+  let d = null; try { d = await fullOf(m, c); } catch (_) {}
+  await hiveTx("readwrite", (st) => st.put({ ...base, id: key, kind, fileName: m.fileName || "file", dataUrl: d || null, text: m.text || "" })); return true;
+}
+
+/* ----- العجلة السداسية العائمة الثابتة ----- */
+const WHEEL_R = 104;
+let wheelCleanup = null;
+function mountTextWheel(env) {
+  if (wheelCleanup) wheelCleanup();
+  const R = WHEEL_R, H = Math.sqrt(3) * R, r = R * 0.4, SVGNS = "http://www.w3.org/2000/svg";
+  let W = { x: 0.68, y: 0.6, open: false };
+  try { Object.assign(W, JSON.parse(localStorage.getItem("ibf_wheel") || "{}")); } catch (_) {}
+  const root = h("div", { id: "twheel", class: "twheel" });
+  const saveW = () => { try { localStorage.setItem("ibf_wheel", JSON.stringify(W)); } catch (_) {} };
+  const clampPos = () => {
+    const hw = W.open ? R + 24 : 30, hh = W.open ? H / 2 + 24 : 34, vw = window.innerWidth, vh = window.innerHeight;
+    let cx = clamp(W.x * vw, hw, vw - hw), cy = clamp(W.y * vh, hh + 44, vh - hh);
+    root.style.left = cx + "px"; root.style.top = cy + "px";
+    return [cx, cy];
+  };
+  let subEl = null;
+  const closeSub = () => { if (subEl) { subEl.remove(); subEl = null; } };
+
+  /* --- الهدف الحالي: تحديد داخل فقاعة، أو داخل حقل الكتابة، أو آخر رسالة لُمست --- */
+  const target = () => {
+    const sel = window.getSelection(), ae = document.activeElement;
+    if (ae === env.input && env.input.selectionStart !== env.input.selectionEnd) return { type: "input", text: env.input.value.slice(env.input.selectionStart, env.input.selectionEnd) };
+    if (sel && !sel.isCollapsed && sel.rangeCount) {
+      const rg = sel.getRangeAt(0), cn = rg.commonAncestorContainer, el = cn.nodeType === 1 ? cn : cn.parentElement, mt = el && el.closest(".mt");
+      if (mt && env.box.contains(mt)) return { type: "msg", mt, bubble: mt.closest(".bubble"), text: sel.toString(), range: rg.cloneRange(), partial: true };
+    }
+    const b = env.getLast();
+    if (b) { const mt = b.querySelector(".mt"); return { type: "msg", bubble: b, mt, text: mt ? mt.textContent : "", partial: false }; }
+    if (ae === env.input) return { type: "input", text: env.input.value };
+    return null;
+  };
+  const msgOf = (tg) => tg && tg.bubble ? env.getItems().find((x) => x.id === tg.bubble.dataset.id) : null;
+  const say = (k) => toast(s9(k));
+  const copyTxt = (txt) => { if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => toast(s9("copied"))).catch(() => {}); };
+
+  const ACTIONS = {
+    select() {
+      const tg = target();
+      if (tg && tg.type === "input") { env.input.focus(); env.input.select(); return; }
+      if (!tg || !tg.bubble) { say("wh_hint_tap"); return; }
+      const sel = window.getSelection();
+      const whole = tg.mt && sel.rangeCount && !sel.isCollapsed && sel.toString() === tg.mt.textContent;
+      if (whole) { sel.removeAllRanges(); env.startSel(tg.bubble.dataset.id); return; }     // الضغطة الثانية: تحديد الرسالة كاملة (حذف/نسخ متعدد)
+      if (tg.mt) { const rg = document.createRange(); rg.selectNodeContents(tg.mt); sel.removeAllRanges(); sel.addRange(rg); }
+      else env.startSel(tg.bubble.dataset.id);
+    },
+    copy() { const tg = target(); if (!tg || !tg.text) { say("wh_hint_tap"); return; } copyTxt(tg.text); },
+    cut() {
+      const tg = target();
+      if (tg && tg.type === "input" && env.input.selectionStart !== env.input.selectionEnd) { env.input.focus(); if (!document.execCommand("cut")) { copyTxt(tg.text); const a = env.input.selectionStart; env.input.setRangeText("", a, env.input.selectionEnd, "end"); } lastOp = null; return; }
+      if (tg && tg.text) { copyTxt(tg.text); say("wh_cut_hint"); return; }
+      say("wh_hint_tap");
+    },
+    paste() {
+      if (!navigator.clipboard || !navigator.clipboard.readText) { say("wh_paste_denied"); return; }
+      navigator.clipboard.readText().then((txt) => { if (!txt) return; env.input.focus(); if (!document.execCommand("insertText", false, txt)) env.input.setRangeText(txt, env.input.selectionStart, env.input.selectionEnd, "end"); lastOp = null; env.input.dispatchEvent(new Event("input")); }).catch(() => say("wh_paste_denied"));
+    },
+    undo() {
+      if (lastOp && MARKS[lastOp.k] && MARKS[lastOp.k].length) { MARKS[lastOp.k].pop(); if (!MARKS[lastOp.k].length) delete MARKS[lastOp.k]; saveMarks(); lastOp = null; env.redraw(); return; }
+      env.input.focus(); document.execCommand("undo");
+    }
+  };
+  /* القوائم الفرعية السداسية الجانبية: ترجمة / تلوين / مخزن العسل */
+  const sub = (kind, anchorAngle) => {
+    closeSub();
+    const tg = target();
+    const cell = (label, icon, fn, small, color) => {
+      const b = h("button", { type: "button", class: "wcell" + (small ? " sm" : "") }, (color || !icon) ? "" : iconNode(icon), (color || !icon) ? "" : h("span", {}, label));
+      if (color) { b.style.background = color; b.setAttribute("aria-label", label); }
+      b.addEventListener("click", () => { closeSub(); fn(); });
+      return b;
+    };
+    let cells = [];
+    if (kind === "translate") {
+      const text = tg && tg.text;
+      const go = (code) => { if (!text) { say("wh_hint_tap"); return; } window.open("https://translate.google.com/?sl=auto&tl=" + code + "&text=" + encodeURIComponent(text) + "&op=translate", "_blank", "noopener"); };
+      cells = [cell("العربية", "translate", () => go("ar")), cell("English", "translate", () => go("en")), cell("Français", "translate", () => go("fr"))];
+    } else if (kind === "marker") {
+      const paint = (color) => {
+        const m = msgOf(tg);
+        if (!tg || tg.type !== "msg" || !tg.mt || !m) { say("wh_marker_hint"); return; }
+        let s = 0, e = tg.mt.textContent.length;
+        if (tg.partial) { const pre = document.createRange(); pre.selectNodeContents(tg.mt); pre.setEnd(tg.range.startContainer, tg.range.startOffset); s = pre.toString().length; e = s + tg.range.toString().length; }
+        if (e <= s) return;
+        const k = env.chatId + ":" + m.id; (MARKS[k] = MARKS[k] || []).push({ s, e, c: color }); saveMarks(); lastOp = { k };
+        window.getSelection().removeAllRanges(); env.redraw();
+      };
+      cells = MARK_COLORS.map((col) => cell(col, "", () => paint(col), true, col));
+      const clr = cell(s9("wh_clear"), "", () => { const m = msgOf(tg); if (m) { delete MARKS[env.chatId + ":" + m.id]; saveMarks(); env.redraw(); } }, true);
+      clr.textContent = "✕"; clr.classList.add("clr"); cells.push(clr);
+    } else {
+      const save = async (k) => {
+        const m = msgOf(tg);
+        if (!m) { say("wh_hint_tap"); return; }
+        try { const ok = await hiveSaveTo(env.c, m, k, k === "text" && tg.partial ? tg.text : ""); toast(s9(ok ? "hv_saved" : "hv_nomatch")); } catch (e) { console.error(e); alert(String((e && e.message) || e)); }
+      };
+      cells = [cell(s9("hv_notepad"), "note", () => save("text")), cell(s9("hv_gallery"), "image", () => save("image")), cell(s9("hv_video"), "video", () => save("video")), cell(s9("hv_files"), "box", () => save("other"))];
+    }
+    const small = kind === "marker", cw = small ? 40 : 70, gap = small ? 6 : 6;
+    const rightSide = (parseFloat(root.style.left) || 0) < window.innerWidth / 2;
+    let ux, uy, tx, ty, dist;
+    if (anchorAngle === null) { ux = rightSide ? 1 : -1; uy = 0; dist = R + 10 + cw / 2; }
+    else { const a = anchorAngle * Math.PI / 180; ux = Math.cos(a); uy = Math.sin(a); dist = R * Math.cos(Math.PI / 6) + 10 + cw / 2; }
+    tx = -uy; ty = ux;
+    subEl = h("div", { class: "wsub" });
+    cells.forEach((cel, i) => {
+      const off = (i - (cells.length - 1) / 2) * (cw + gap);
+      cel.style.left = (ux * dist + tx * off) + "px"; cel.style.top = (uy * dist + ty * off) + "px";
+      subEl.append(cel);
+    });
+    root.append(subEl);
+  };
+
+  /* --- بناء العجلة (SVG): 6 أقسام خارجية + سداسي وسطي مقسوم إلى جزأين --- */
+  const buildWheel = () => {
+    const svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", [-R, -H / 2, 2 * R, H].join(" ")); svg.setAttribute("width", 2 * R); svg.setAttribute("height", H); svg.setAttribute("class", "wsvg");
+    const P = (rad, k) => [rad * Math.cos(k * Math.PI / 3), rad * Math.sin(k * Math.PI / 3)];
+    const pts = (a) => a.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+    const cen = (a) => [a.reduce((s, p) => s + p[0], 0) / a.length, a.reduce((s, p) => s + p[1], 0) / a.length];
+    const mk = (act, poly, icon, label, center) => {
+      const g = document.createElementNS(SVGNS, "g"); g.setAttribute("class", "wg" + (center ? " c" : "")); g.dataset.a = act;
+      const pg = document.createElementNS(SVGNS, "polygon"); pg.setAttribute("points", pts(poly)); g.append(pg);
+      const [cx, cy] = cen(poly), sc = center ? 0.7 : 0.84;
+      const ig = document.createElementNS(SVGNS, "g"); ig.setAttribute("class", "wi"); ig.setAttribute("transform", "translate(" + (cx - 12 * sc) + "," + (cy - (center ? 15 : 19)) + ") scale(" + sc + ")"); ig.innerHTML = ICON_PATHS[icon]; g.append(ig);
+      const tx = document.createElementNS(SVGNS, "text"); tx.setAttribute("x", cx); tx.setAttribute("y", cy + (center ? 11 : 14)); tx.setAttribute("text-anchor", "middle"); tx.textContent = label; g.append(tx);
+      svg.append(g);
+    };
+    const secs = [["translate", "translate", "wh_translate"], ["copy", "copy", "wh_copy"], ["cut", "cut", "wh_cut"], ["marker", "marker", "wh_marker"], ["paste", "paste", "wh_paste"], ["undo", "undo", "wh_undo"]];
+    secs.forEach(([act, icon, lk], k) => mk(act, [P(R, k), P(R, k + 1), P(r, k + 1), P(r, k)], icon, s9(lk), false));
+    mk("select", [P(r, 3), P(r, 4), P(r, 5), P(r, 0)], "check", s9("wh_select"), true);         // العلوي (7)
+    mk("hive", [P(r, 0), P(r, 1), P(r, 2), P(r, 3)], "hive", s9("wh_hive"), true);            // السفلي (8)
+    return svg;
+  };
+  const ANGLE = { translate: 30, copy: 90, cut: 150, marker: 210, paste: 270, undo: 330 };
+  const handleDrag = (el, onTap) => {
+    let st = null;
+    el.addEventListener("pointerdown", (e) => { const [cx, cy] = clampPos(); st = { sx: e.clientX, sy: e.clientY, dx: cx - e.clientX, dy: cy - e.clientY, moved: false }; el.setPointerCapture(e.pointerId); closeSub(); });
+    el.addEventListener("pointermove", (e) => {
+      if (!st) return;
+      if (!st.moved && Math.hypot(e.clientX - st.sx, e.clientY - st.sy) > 8) st.moved = true;
+      if (st.moved) { W.x = (e.clientX + st.dx) / window.innerWidth; W.y = (e.clientY + st.dy) / window.innerHeight; clampPos(); }
+    });
+    const end = () => { if (!st) return; const moved = st.moved; st = null; if (moved) { const [cx, cy] = clampPos(); W.x = cx / window.innerWidth; W.y = cy / window.innerHeight; saveW(); } else onTap(); };
+    el.addEventListener("pointerup", end); el.addEventListener("pointercancel", () => { st = null; });
+  };
+  const render = () => {
+    closeSub();
+    root.replaceChildren();
+    root.classList.toggle("open", !!W.open);
+    if (!W.open) {
+      const fab = h("button", { type: "button", class: "wfab", "aria-label": s9("wh_title"), title: s9("wh_title") }, iconNode("wheel"));
+      handleDrag(fab, () => { W.open = true; saveW(); render(); });
+      root.append(fab);
+    } else {
+      const svg = buildWheel(); svg.style.left = -R + "px"; svg.style.top = -H / 2 + "px";
+      svg.addEventListener("click", (e) => {
+        const g = e.target.closest && e.target.closest(".wg"); if (!g) return;
+        const act = g.dataset.a; g.classList.add("on"); setTimeout(() => g.classList.remove("on"), 220);
+        if (act === "translate" || act === "marker") sub(act, ANGLE[act]);
+        else if (act === "hive") sub("hive", null);
+        else { closeSub(); ACTIONS[act](); }
+      });
+      const hd = h("button", { type: "button", class: "whandle", "aria-label": s9("wh_title"), title: s9("wh_title") }, iconNode("grip"));
+      hd.style.left = (-R - 16) + "px"; hd.style.top = (-H / 2 - 16) + "px";
+      handleDrag(hd, () => { W.open = false; saveW(); render(); });
+      root.append(svg, hd);
+    }
+    clampPos();
+  };
+  /* لا تُفقد التحديد ولا التركيز عند لمس العجلة */
+  root.addEventListener("mousedown", (e) => e.preventDefault());
+  /* أثناء سحب التحديد تتلاشى العجلة حتى لا تحجب النص */
+  let fadeT = null;
+  const onSel = () => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && env.box.contains(sel.anchorNode)) { root.classList.add("fade"); clearTimeout(fadeT); fadeT = setTimeout(() => root.classList.remove("fade"), 800); }
+  };
+  const onDocDown = (e) => { if (subEl && !root.contains(e.target)) closeSub(); };
+  const onResize = () => clampPos();
+  document.addEventListener("selectionchange", onSel);
+  document.addEventListener("pointerdown", onDocDown, true);
+  window.addEventListener("resize", onResize);
+  document.body.append(root);
+  render();
+  wheelCleanup = () => { document.removeEventListener("selectionchange", onSel); document.removeEventListener("pointerdown", onDocDown, true); window.removeEventListener("resize", onResize); clearTimeout(fadeT); root.remove(); wheelCleanup = null; };
+}
+let wheelRemount = null;
+const resetWheelPos = () => { try { localStorage.removeItem("ibf_wheel"); } catch (_) {} };
 
 function settingsBtn() {
   return h("button", { class: "small hbtn", "aria-label": t2("set_title"), style: "color:#fff;border-color:#fff", onclick: openSettings }, "⚙");
@@ -2604,8 +2893,8 @@ function openChat(c, push = true) {
 
   const back = h("button", { class: "back chatback", "aria-label": t(12) }, t(73));
   back.addEventListener("click", backFromChat);
-  let items = [];
-  const draw = () => drawMsgs(box, items, c);
+  let items = [], lastId = null;
+  const draw = () => { drawMsgs(box, items, c); if (lastId) { const tb = box.querySelector('.bubble[data-id="' + lastId + '"]'); if (tb) tb.classList.add("tgt"); } };
   const cog = h("button", { class: "fb-q", type: "button", "aria-label": s9("chat_set"), title: s9("chat_set") });
   cog.innerHTML = gearIcon();
   cog.addEventListener("click", () => openChatSettings(c, () => { draw(); scrollNewest(box); }));
@@ -2655,7 +2944,15 @@ function openChat(c, push = true) {
     if (mt) { const rg = document.createRange(), sl = window.getSelection(); rg.selectNodeContents(mt); sl.removeAllRanges(); sl.addRange(rg); }
     else startSel(b.dataset.id);
   });
-  mountSelTool({ box, c, getItems: () => items, startSel });
+  box.addEventListener("click", (e) => {
+    if (SEL) return;
+    const b = e.target.closest && e.target.closest(".bubble");
+    box.querySelectorAll(".bubble.tgt").forEach((x) => x.classList.remove("tgt"));
+    if (b && b.dataset.id) { lastId = b.dataset.id; b.classList.add("tgt"); }
+  });
+  const wenv = { box, c, chatId: c.chatId, input, getItems: () => items, getLast: () => (lastId ? box.querySelector('.bubble[data-id="' + lastId + '"]') : null), startSel, redraw: () => draw() };
+  wheelRemount = () => { if (wheelCleanup) wheelCleanup(); if (selToolCleanup) selToolCleanup(); if (CV.wheel) mountTextWheel(wenv); else mountSelTool({ box, c, getItems: () => items, startSel }); };
+  wheelRemount();
   // أثناء التحديد: النقر يبدّل التحديد بدل فتح الصور والأزرار
   box.addEventListener("click", (e) => {
     if (!SEL) return;
