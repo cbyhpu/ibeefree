@@ -1,9 +1,13 @@
-// يحفظ نسخة من واجهة التطبيق ليفتح بسرعة. يجرّب الشبكة أولاً حتى تصل التحديثات.
-const CACHE = "chat-shell-v6";
+// IBeeFree: نسخة محلية للواجهة ليفتح التطبيق بدون إنترنت (حفظ أساسي).
+// الواجهة: الشبكة أولاً ثم النسخة المحفوظة. مكتبات Firebase والخطوط: النسخة المحفوظة أولاً (تُحفظ عند أول فتح بالإنترنت).
+// طلبات Firestore والمصادقة لا تمر من هنا إطلاقاً.
+const CACHE = "chat-shell-v7";
 const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png", "logo.png"];
+const CDN = /^https:\/\/(www\.gstatic\.com\/firebasejs\/|fonts\.googleapis\.com\/|fonts\.gstatic\.com\/)/;
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)));
+  // ملف ناقص لا يُفشل التثبيت كله
+  e.waitUntil(caches.open(CACHE).then((c) => Promise.all(SHELL.map((u) => c.add(u).catch(() => {})))));
   self.skipWaiting();
 });
 
@@ -17,13 +21,38 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const r = e.request;
-  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
+  if (r.method !== "GET") return;
+  const url = new URL(r.url);
+
+  // مكتبات Firebase والخطوط: من النسخة المحفوظة أولاً مع تحديث هادئ في الخلفية
+  if (CDN.test(r.url)) {
+    e.respondWith(
+      caches.open(CACHE).then((c) =>
+        c.match(r).then((hit) => {
+          const net = fetch(r).then((res) => { if (res && (res.ok || res.type === "opaque")) c.put(r, res.clone()); return res; }).catch(() => hit);
+          return hit || net;
+        })
+      )
+    );
+    return;
+  }
+
+  if (url.origin !== location.origin) return;       // أي نطاق آخر (Firestore وغيره): لا نتدخل
+
+  // صفحة التطبيق: الشبكة أولاً، وبدون إنترنت نعرض النسخة المحفوظة
+  if (r.mode === "navigate") {
+    e.respondWith(
+      fetch(r)
+        .then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => { c.put("index.html", copy.clone()); c.put(r, copy); }); } return res; })
+        .catch(() => caches.match(r).then((hit) => hit || caches.match("index.html") || caches.match("./")))
+    );
+    return;
+  }
+
+  // بقية ملفات الموقع: الشبكة أولاً، والنسخة المحفوظة عند انقطاعها
   e.respondWith(
     fetch(r)
-      .then((res) => {
-        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(r, copy)); }
-        return res;
-      })
+      .then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(r, copy)); } return res; })
       .catch(() => caches.match(r))
   );
 });
@@ -34,7 +63,7 @@ self.addEventListener("fetch", (e) => {
 self.addEventListener("push", (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) {}
-  e.waitUntil(self.registration.showNotification(d.title || "I Bee Free", {
+  e.waitUntil(self.registration.showNotification(d.title || "IBeeFree", {
     body: d.body || "",
     tag: d.tag || "ibf",
     icon: "icon-192.png",
