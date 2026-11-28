@@ -3091,17 +3091,27 @@ new MutationObserver((muts) => {
   }
 }).observe(document.body, { childList: true });
 
-/* الخروج من القائمة الرئيسية: ضغطتان. مدخل حارس في السجل يلتقط الضغطة الأولى */
-const EXIT_MSG = { ar: "اضغط مرة أخرى للخروج", en: "Press back again to exit", fr: "Appuyez encore pour quitter" };
-let rootArmed = false, userActive = false, guardWait = false;
+/* الخروج من التطبيق: ثلاث ضغطات متتالية على زر الرجوع (كل ضغطة خلال 2.5 ثانية من السابقة).
+   «سلّم» من مدخلين حارسين في سجل المتصفح فوق الصفحة الأولى: [base, g1, g2]. نقف على g2، فتنزل كل ضغطة درجة:
+   g2→g1 (رسالة: ضغطتان)، g1→base (رسالة: ضغطة)، والثالثة تخرج طبيعياً. إن مرّت 2.5 ثانية دون ضغطة يُعاد بناء السلّم كاملاً. */
+const EXIT_MSG = {
+  ar: { 2: "اضغط زر الرجوع مرتين أخريين للخروج", 1: "اضغط مرة أخرى للخروج" },
+  en: { 2: "Press back 2 more times to exit", 1: "Press back once more to exit" },
+  fr: { 2: "Appuyez encore 2 fois sur retour pour quitter", 1: "Appuyez encore une fois pour quitter" }
+};
+let userActive = false, rootTimer = null;
 function ensureGuard() {
+  // كروم/WebView يتخطى مدخلات السجل المضافة قبل أي تفاعل، فلا نبني السلّم إلا بعد أول لمسة
+  if (!userActive || curChat || document.querySelector(LAYER_SEL)) return;
   const st = history.state || {};
-  if (rootArmed || st.guard || st.chat || st.layer) return;
-  if (userActive) { history.pushState({ guard: true }, ""); return; }
-  // كروم/WebView يتجاهل مدخلات السجل المضافة بلا تفاعل، فننتظر أول لمسة (المستمع أدناه) ثم نضيف الحارس
+  if (st.chat || st.layer) return;
+  const g = st.guard | 0;
+  if (g >= 2) return;
+  if (g === 0) history.pushState({ guard: 1 }, "");
+  history.pushState({ guard: 2 }, "");
 }
-// اللمس لا يُعدّ «تفاعلاً» عند pointerdown، فنضيف الحارس عند الرفع/النقر ليقبله كروم ولا يتخطاه زر الرجوع (يعمل في كل الشاشات بما فيها تسجيل الدخول)
-const armBack = () => { userActive = true; if (!document.querySelector(LAYER_SEL)) ensureGuard(); };
+// اللمس لا يُعدّ «تفاعلاً» عند pointerdown، فنبني السلّم عند الرفع/النقر (يعمل في كل الشاشات بما فيها تسجيل الدخول)
+const armBack = () => { userActive = true; if (!rootTimer) ensureGuard(); };
 ["pointerup", "touchend", "click", "keydown"].forEach((ev) => window.addEventListener(ev, armBack, { capture: true, passive: true }));
 window.addEventListener("popstate", () => {
   if (skipPops > 0) {
@@ -3114,14 +3124,13 @@ window.addEventListener("popstate", () => {
   const layers = document.querySelectorAll(LAYER_SEL);
   if (layers.length) { const top = layers[layers.length - 1]; layerTracked.delete(top); top.remove(); if (!curChat) ensureGuard(); return; }
   const st = history.state || {};
-  if (st.guard) { if (me) showList(); return; }  // رجعنا من محادثة إلى مدخل القائمة
-  if (me && curChat) { showList(); return; }     // مدخل بلا حارس قادم من محادثة: القائمة + إعادة الحارس
-  // (شاشات البداية وتسجيل الدخول تمرّ أيضاً من هنا: ضغطتان للخروج)
-  // الضغطة الأولى من القائمة: رسالة فقط. الثانية المتتالية (خلال 1.5 ثانية) تخرج، وإن تأخرت يعود الحارس ويلزم ضغطتان من جديد
-  if (!rootArmed) {
-    rootArmed = true; toast(EXIT_MSG[LANG] || EXIT_MSG.en);
-    setTimeout(() => { rootArmed = false; if (!curChat && !document.querySelector(LAYER_SEL)) ensureGuard(); }, 1500);
-  }
+  if (curChat) { if (me) showList(); return; }     // رجعنا من محادثة: القائمة (وتُعاد بناء السلّم إن لزم)
+  if (st.chat || st.layer) return;
+  // ضغطة على زر الرجوع في الشاشة الرئيسية أو شاشات البداية: لا خروج إلا بعد ثلاث ضغطات متتالية
+  const left = (st.guard | 0) + 1;                 // الضغطات المتبقية للخروج (2 أو 1)
+  toast((EXIT_MSG[LANG] || EXIT_MSG.en)[left] || "");
+  clearTimeout(rootTimer);
+  rootTimer = setTimeout(() => { rootTimer = null; ensureGuard(); }, 2500);   // انقطع التتابع: السلّم كاملاً من جديد
 });
 
 /* ---------- البداية ---------- */
