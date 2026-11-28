@@ -203,6 +203,7 @@
   /* ===== (3) أسود داكن وصريح: سماكة وحدّ خفيف للنص الأسود ===== */
   .bubble.mine, .pvbox { -webkit-text-stroke: var(--tb-stk, .3px #000000); font-weight: var(--tb-fw, 600); }
   html[data-tb] .composer textarea.msgbox { font-weight: var(--tb-fw, 600); -webkit-text-stroke: var(--tb-stk, 0px transparent); }
+  html[data-tb] .bubble.mine, html[data-tb] .composer textarea.msgbox, .pvbox { text-shadow: var(--tb-glow, none); }
 
   /* ===== (2) الساعة: أكبر قليلاً ===== */
   #focusbar { min-height: 58px; }
@@ -703,21 +704,21 @@ const T2 = {
   ar: { set_title: "الإعدادات", sec_text: "إعدادات النص", sec_chat: "المحادثة والشاشة", size: "حجم الخط", font: "نوع الخط", preview: "معاينة فورية", colors: "ألوان مربع النص", lang: "اللغة",
     ok: "موافق", cancel: "إلغاء", reset: "استعادة الافتراضي", online: "متصل", offline: "غير متصل", clock_toggle: "ساعة رقمية / ساعة بعقارب", focus: "وضع التركيز (شاشة كاملة)",
     f_sys: "نحلة افتراضية", f_serif: "نحلة سيريف", f_mono: "نحلة مونو", f_robot: "نحلة روبوتية", f_friendly: "نحلة ودودة",
-    c_by: "نحلة سوداء على قرص عسل أصفر", c_yb: "نحلة صفراء على قرص عسل أسود", c_wb: "نحلة بيضاء على قرص عسل أسود", c_bw: "نحلة سوداء على قرص عسل أبيض", c_gg: "نحلة خضراء على قرص عسل رمادي داكن", c_pv: "نحلة بنفسجية متوهجة على قرص عسل داكن عميق",
+    c_by: "نحلة سوداء على قرص عسل أصفر", c_yb: "نحلة صفراء على قرص عسل أسود", c_wb: "نحلة بيضاء على قرص عسل أسود", c_bw: "نحلة سوداء على قرص عسل أبيض", c_gg: "نحلة خضراء نيون على قرص عسل أخضر داكن", c_pv: "نحلة بنفسجية نيون على قرص عسل بنفسجي عميق",
     tuning: "ضبط اللون", tune_t: "درجة الخط", tune_b: "درجة الخلفية", fine_t: "ضبط دقيق للخط", fine_b: "ضبط دقيق للخلفية", darker: "أغمق", lighter: "أفتح", contrast: "التباين",
     vid_play: "تشغيل الفيديو",
     others: "ألوان رسائل الطرف الآخر", th_own: "أحتفظ بلوني الخاص", th_sender: "أقبل لون الطرف الآخر المقترح", th_hint: "لونك يظهر على رسائلك وحقل كتابتك فقط، ولا يُفرض على أحد." },
   en: { set_title: "Settings", sec_text: "Text settings", sec_chat: "Chat & screen", size: "Font size", font: "Font type", preview: "Live preview", colors: "Text box colors", lang: "Language",
     ok: "OK", cancel: "Cancel", reset: "Reset to default", online: "Online", offline: "Offline", clock_toggle: "Digital / Analog clock", focus: "Focus mode (full screen)",
     f_sys: "Default bee", f_serif: "Serif bee", f_mono: "Mono bee", f_robot: "Robotic bee", f_friendly: "Friendly bee",
-    c_by: "Black bee on yellow honeycomb", c_yb: "Yellow bee on black honeycomb", c_wb: "White bee on black honeycomb", c_bw: "Black bee on white honeycomb", c_gg: "Green bee on dark gray honeycomb", c_pv: "Glowing violet bee on deep dark honeycomb",
+    c_by: "Black bee on yellow honeycomb", c_yb: "Yellow bee on black honeycomb", c_wb: "White bee on black honeycomb", c_bw: "Black bee on white honeycomb", c_gg: "Neon green bee on dark green honeycomb", c_pv: "Neon violet bee on deep violet honeycomb",
     tuning: "Color tuning", tune_t: "Text tone", tune_b: "Background tone", fine_t: "Fine tuning: text", fine_b: "Fine tuning: background", darker: "Darker", lighter: "Lighter", contrast: "Contrast",
     vid_play: "Play video",
     others: "Friend's message colors", th_own: "Keep my own look", th_sender: "Accept my friend's chosen colors", th_hint: "Your color applies to your own messages and input only. It is never forced on anyone." },
   fr: { set_title: "Paramètres", sec_text: "Paramètres du texte", sec_chat: "Discussion et écran", size: "Taille du texte", font: "Type de police", preview: "Aperçu en direct", colors: "Couleurs de la zone de texte", lang: "Langue",
     ok: "OK", cancel: "Annuler", reset: "Réinitialiser", online: "En ligne", offline: "Hors ligne", clock_toggle: "Horloge numérique / analogique", focus: "Mode concentration (plein écran)",
     f_sys: "Abeille par défaut", f_serif: "Abeille Serif", f_mono: "Abeille Mono", f_robot: "Abeille robotique", f_friendly: "Abeille amicale",
-    c_by: "Abeille noire sur rayon de miel jaune", c_yb: "Abeille jaune sur rayon de miel noir", c_wb: "Abeille blanche sur rayon de miel noir", c_bw: "Abeille noire sur rayon de miel blanc", c_gg: "Abeille verte sur rayon de miel gris foncé", c_pv: "Abeille violette lumineuse sur rayon de miel très sombre",
+    c_by: "Abeille noire sur rayon de miel jaune", c_yb: "Abeille jaune sur rayon de miel noir", c_wb: "Abeille blanche sur rayon de miel noir", c_bw: "Abeille noire sur rayon de miel blanc", c_gg: "Abeille vert néon sur rayon de miel vert foncé", c_pv: "Abeille violet néon sur rayon de miel violet profond",
     tuning: "Réglage des couleurs", tune_t: "Ton du texte", tune_b: "Ton du fond", fine_t: "Réglage fin : texte", fine_b: "Réglage fin : fond", darker: "Plus foncé", lighter: "Plus clair", contrast: "Contraste",
     vid_play: "Lire la vidéo",
     others: "Couleurs des messages de l'ami", th_own: "Garder mon style", th_sender: "Accepter les couleurs choisies par l'ami", th_hint: "Votre couleur ne s'applique qu'à vos messages et à votre champ de saisie. Elle n'est imposée à personne." }
@@ -741,9 +742,11 @@ const TB_COLORS = [
   { id: "yb", bg: "#000000", fg: "#DDAE40" },
   { id: "wb", bg: "#000000", fg: "#FFFFFF" },
   { id: "bw", bg: "#FFFFFF", fg: "#000000" },
-  { id: "gg", bg: "#101214", fg: "#6EE7A0" },
-  { id: "pv", bg: "#140624", fg: "#C06BFF" }
+  { id: "gg", bg: "#042402", fg: "#39FF14" },   // نيون أخضر: غابة داكنة + أخضر كهربائي
+  { id: "pv", bg: "#1A0629", fg: "#C84BFF" }    // نيون بنفسجي: بنفسجي عميق + بنفسجي كهربائي
 ];
+const TB_GLOW = { gg: "57,255,20", pv: "157,36,242" };   // لون هالة النيون (RGB) لكل نمط
+const glowCss = (id) => TB_GLOW[id] ? "0 0 5px rgba(" + TB_GLOW[id] + ",.85), 0 0 12px rgba(" + TB_GLOW[id] + ",.4)" : "";
 const TB_FONTS = [
   { id: "sys", name: "", css: "" },
   { id: "serif", name: "Serif", css: 'Georgia, "Noto Naskh Arabic", "Times New Roman", serif' },
@@ -827,6 +830,7 @@ function setTB(el, s, explicit) {
   put("--tb-fg", c ? c.fg : (explicit ? "var(--mine-text)" : ""));
   put("--tb-stk", c ? (hexHsl(c.fg)[2] < 18 ? ".3px " + c.fg : "0px transparent") : (explicit ? ".3px #000000" : ""));
   put("--tb-fw", s.ff === "mono" ? "700" : "");
+  put("--tb-glow", c ? glowCss(c.id) : "");
 }
 function applyTB() {
   ensureFont(TB.ff);
@@ -1632,7 +1636,7 @@ function toast(msg) {
   document.body.append(el); setTimeout(() => el.remove(), 1500);
 }
 function backFromChat() {
-  const open = document.querySelector(".sheetbg, .overlay");
+  const open = [...document.querySelectorAll(".sheetbg, .overlay")].pop();   // أعلى نافذة مفتوحة
   if (open) { open.remove(); return; }
   if (history.state && history.state.chat) history.back(); else showList();
 }
@@ -1672,6 +1676,8 @@ function openChatSettings(c, redraw) {
       try { await updateDoc(doc(db, "users", me.uid, "contacts", c.id), { status: "blocked" }); close(); backFromChat(); }
       catch (e) { alert(explain(e)); }
     });
+    const tfBtn = h("button", { type: "button", class: "sbox" }, mkBar(h("span", { class: "emb" }, "Aa"), h("span", { class: "grow" }, s9("bx_text")), h("span", { class: "chev" }, LANG === "ar" ? "‹" : "›")));
+    tfBtn.addEventListener("click", openSettings);      // نفس نافذة النصوص والخطوط العامة (نفس TB و ibf_tb)
     return [
       h("h3", {}, s9("chat_set") + " · " + (dispName(c) || t(32))),
       h("h4", { class: "h4" }, s9("quick")),
@@ -1679,6 +1685,8 @@ function openChatSettings(c, redraw) {
       rangeRow(br, bv),
       mkBar(h("span", { class: "emb" }, "📖"), h("span", { class: "grow" }, s9("reading")), mkSwitch(!!UI.reading, () => { UI.reading = !UI.reading; saveUI(); applyUI(); render(); }, s9("reading"))),
       rstyleChips(),
+      h("h4", { class: "h4" }, s9("bx_text")),
+      tfBtn,
       h("h4", { class: "h4" }, s9("flow")),
       h("div", { class: "chips" },
         arrowChip("down", s9("flow_down"), CV.flow === "down", () => apply(() => { CV.flow = "down"; })),
@@ -2237,7 +2245,7 @@ function openSettings() {
 
   const colBtns = TB_COLORS.map((c) => {
     const b = h("button", { class: "sw", type: "button" }, h("span", { class: "sw-a" }, "Aa"), h("span", {}, t2("c_" + c.id)));
-    b.style.background = c.bg; b.style.color = c.fg;
+    b.style.background = c.bg; b.style.color = c.fg; if (TB_GLOW[c.id]) b.style.textShadow = glowCss(c.id);
     { const n = parseInt(c.bg.slice(1), 16); if ((0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255 > 0.55) b.classList.add("lite"); }
     b.addEventListener("click", () => { d.cs = c.id; d.tt = d.tg = d.ft = d.fb = 5; syncTunes(); refresh(); });
     return b;
@@ -2880,7 +2888,7 @@ async function sendMessage(c, payload, media) {
 function openChat(c, push = true) {
   stopMsgs();
   curChat = c.id; clearUnread(c.id);
-  if (push) history.pushState({ chat: c.id }, "");
+  if (push || !(history.state && history.state.chat)) history.pushState({ chat: c.id }, "");   // الاستئناف بعد إعادة التشغيل: مدخل للمحادثة ليعود زر الرجوع إلى القائمة
   try { sessionStorage.setItem("ibf_chat", c.id); } catch (_) {}
 
   const box = h("div", { class: "msgs" });
@@ -3016,9 +3024,31 @@ function openChat(c, push = true) {
     });
 }
 
+/* زر الرجوع في أندرويد: كل نافذة (.sheetbg / .overlay) تأخذ مدخلاً في سجل المتصفح،
+   فيغلق الزر النافذة العليا أولاً، ثم المحادثة، ثم لا يخرج من التطبيق إلا من القائمة الرئيسية */
+const LAYER_SEL = ".sheetbg, .overlay";
+const layerTracked = new Set();      // النوافذ التي لها مدخل في السجل
+let skipPops = 0;                    // popstate ناتج عن history.back() برمجي (إغلاق نافذة بزر الواجهة)
+new MutationObserver((muts) => {
+  for (const m of muts) {
+    m.addedNodes.forEach((n) => {
+      if (n.nodeType === 1 && n.matches(LAYER_SEL) && !layerTracked.has(n)) { layerTracked.add(n); history.pushState({ layer: true }, ""); }
+    });
+    m.removedNodes.forEach((n) => {
+      if (n.nodeType === 1 && layerTracked.delete(n)) { skipPops++; history.back(); }   // أُغلقت بزر الواجهة: نُزيل مدخلها
+    });
+  }
+}).observe(document.body, { childList: true });
+
 window.addEventListener("popstate", () => {
-  const open = document.querySelector(".sheetbg, .overlay");
-  if (open) { open.remove(); if (curChat) history.pushState({ chat: curChat }, ""); return; }
+  if (skipPops > 0) {
+    skipPops--;
+    // مدخل محادثة بلا شاشة (مثلاً بعد الحظر): نتخطاه
+    if (!skipPops && !curChat && history.state && history.state.chat) history.back();
+    return;
+  }
+  const layers = document.querySelectorAll(LAYER_SEL);
+  if (layers.length) { const top = layers[layers.length - 1]; layerTracked.delete(top); top.remove(); return; }
   if (me) showList();
 });
 
