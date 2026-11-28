@@ -615,7 +615,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, setDoc, addDoc, collection, query, orderBy, limit,
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, setDoc, addDoc, collection, query, orderBy, limit,
   onSnapshot, serverTimestamp, updateDoc, deleteDoc, deleteField
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
@@ -3047,7 +3047,13 @@ function start() {
   }
   const fbApp = initializeApp(firebaseConfig);
   auth = getAuth(fbApp);
-  db = getFirestore(fbApp);
+  try {
+    // ذاكرة محلية دائمة (IndexedDB): تبقى المحادثات والأصدقاء ظاهرة دون إنترنت وتُرسَل الرسائل المكتوبة عند عودته
+    db = initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) {
+    console.warn("offline cache unavailable", e);
+    db = getFirestore(fbApp);
+  }
 
   onAuthStateChanged(auth, async (user) => {
     if (busy) return;
@@ -3057,13 +3063,18 @@ function start() {
       if (snap.exists()) {
         const d = snap.data();
         me = { uid: user.uid, name: d.name, code: d.code, nameChanges: +d.nameChanges || 0 };
+        try { localStorage.setItem("ibf_me", JSON.stringify(me)); } catch (_) {}
         showList();
       } else {
         showNameForm();
       }
     } catch (e) {
       console.error(e);
-      showFatal(t(72) + explain(e));
+      // بلا إنترنت وبلا نسخة في الذاكرة: نفتح بنسخة الملف الشخصي المحفوظة بدل رسالة الخطأ
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem("ibf_me") || "null"); } catch (_) {}
+      if (saved && saved.uid === user.uid) { me = saved; showList(); }
+      else showFatal(t(72) + explain(e));
     }
   });
 
