@@ -745,8 +745,8 @@ const TB_COLORS = [
   { id: "gg", bg: "#042402", fg: "#39FF14" },   // نيون أخضر: غابة داكنة + أخضر كهربائي
   { id: "pv", bg: "#1A0629", fg: "#C84BFF" }    // نيون بنفسجي: بنفسجي عميق + بنفسجي كهربائي
 ];
-const TB_GLOW = { gg: "57,255,20", pv: "157,36,242" };   // لون هالة النيون (RGB) لكل نمط
-const glowCss = (id) => TB_GLOW[id] ? "0 0 5px rgba(" + TB_GLOW[id] + ",.85), 0 0 12px rgba(" + TB_GLOW[id] + ",.4)" : "";
+const TB_GLOW = { gg: "57,255,20", pv: "200,75,255" };   // لون هالة النيون (RGB) لكل نمط
+const glowCss = (id) => TB_GLOW[id] ? "0 0 3px rgba(" + TB_GLOW[id] + ",1), 0 0 8px rgba(" + TB_GLOW[id] + ",.9), 0 0 18px rgba(" + TB_GLOW[id] + ",.6)" : "";
 const TB_FONTS = [
   { id: "sys", name: "", css: "" },
   { id: "serif", name: "Serif", css: 'Georgia, "Noto Naskh Arabic", "Times New Roman", serif' },
@@ -810,7 +810,15 @@ function colorsOf(s) {
   const c = TB_COLORS.find((x) => x.id === s.cs);
   if (!c) return null;
   const n = (x) => (typeof x === "number" ? x : 5);
-  return { id: c.id, bg: tuneBg(c.bg, n(s.tg), n(s.fb)), fg: tuneFg(c.fg, n(s.tt), n(s.ft)) };
+  const bg = tuneBg(c.bg, n(s.tg), n(s.fb));
+  let fg = tuneFg(c.fg, n(s.tt), n(s.ft));
+  if (TB_GLOW[c.id]) {                  // نيون: لا يصير أخفت من لونه الأصلي، ويبقى مشبعاً ومقروءاً مهما كان الضبط
+    const [bh, bs, bl] = hexHsl(c.fg), [fh, fs, fl] = hexHsl(fg);
+    let L = Math.max(fl, bl); const S = Math.max(fs, bs);
+    fg = hslHex(fh, S, L);
+    while (contrastOf(bg, fg) < 4.5 && L < 96) { L += 2; fg = hslHex(fh, S, L); }
+  }
+  return { id: c.id, bg, fg };
 }
 function lumOf(hx) {
   const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
@@ -2656,6 +2664,7 @@ async function addFriend(rawCode) {
 }
 
 function showList() {
+  ensureGuard();
   stopMsgs();
   try { sessionStorage.removeItem("ibf_chat"); } catch (_) {}
   listEl = h("div", { class: "list" });
@@ -3040,6 +3049,14 @@ new MutationObserver((muts) => {
   }
 }).observe(document.body, { childList: true });
 
+/* الخروج من القائمة الرئيسية: ضغطتان. مدخل حارس في السجل يلتقط الضغطة الأولى */
+const EXIT_MSG = { ar: "اضغط مرة أخرى للخروج", en: "Press back again to exit", fr: "Appuyez encore pour quitter" };
+let guardPushed = false, rootArmed = false;
+function ensureGuard() {
+  if (guardPushed) return; guardPushed = true;
+  const st = history.state || {};
+  if (!st.guard && !st.chat && !st.layer) history.pushState({ guard: true }, "");
+}
 window.addEventListener("popstate", () => {
   if (skipPops > 0) {
     skipPops--;
@@ -3049,7 +3066,19 @@ window.addEventListener("popstate", () => {
   }
   const layers = document.querySelectorAll(LAYER_SEL);
   if (layers.length) { const top = layers[layers.length - 1]; layerTracked.delete(top); top.remove(); return; }
-  if (me) showList();
+  if (!me) return;
+  const st = history.state || {};
+  if (st.guard) { showList(); return; }          // رجعنا من محادثة إلى مدخل القائمة
+  // وصلنا لأول مدخل: هذه الضغطة الأولى. الثانية خلال ثانيتين تخرج من التطبيق طبيعياً
+  if (curChat) showList();
+  if (!rootArmed) {
+    rootArmed = true; toast(EXIT_MSG[LANG] || EXIT_MSG.en);
+    setTimeout(() => {
+      rootArmed = false;
+      const s2 = history.state || {};
+      if (!curChat && !s2.guard && !s2.chat && !s2.layer && !document.querySelector(LAYER_SEL)) history.pushState({ guard: true }, "");
+    }, 2000);
+  }
 });
 
 /* ---------- البداية ---------- */
